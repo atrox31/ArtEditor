@@ -192,7 +192,7 @@ namespace ArtCore_Editor
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader(GameProject.GetInstance().ProjectPath + "\\"+ folder+"\\" + File))
+                        using (StreamReader file = new StreamReader(GameProject.GetInstance().ProjectPath + "\\" + folder + "\\" + File))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -327,7 +327,8 @@ namespace ArtCore_Editor
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
                                 writer.WriteLine("[instance]");
-                                foreach (var sIns in scene.Value.SceneInstances) {
+                                foreach (var sIns in scene.Value.SceneInstances)
+                                {
                                     writer.WriteLine(sIns.instance.Name + "|" + sIns.x + "|" + sIns.y);
                                 }
                                 writer.WriteLine("[end]");
@@ -370,7 +371,7 @@ namespace ArtCore_Editor
 
         private void OutputLog_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if(OutputLog.SelectedIndex != -1)
+            if (OutputLog.SelectedIndex != -1)
             {
                 LineViewer lv = new LineViewer(OutputLog.SelectedItem.ToString());
                 lv.ShowDialog();

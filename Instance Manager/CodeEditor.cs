@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -58,13 +53,13 @@ namespace ArtCore_Editor
         {
             if (changes)
             {
-                switch(MessageBox.Show("Do You want to save code?", "Exit", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+                switch (MessageBox.Show("Do You want to save code?", "Exit", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
                 {
                     case DialogResult.Yes:
                         Code = richTextBox1.Text.Split('\n').ToList();
                         this.DialogResult = DialogResult.OK;
                         break;
-                   case DialogResult.No:
+                    case DialogResult.No:
                         this.DialogResult = DialogResult.No;
                         break;
                     case DialogResult.Cancel:

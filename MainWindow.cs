@@ -1,20 +1,11 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Shapes;
-using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 
 namespace ArtCore_Editor
@@ -32,7 +23,7 @@ namespace ArtCore_Editor
         {
             if (saved == false) return;
             saved = false;
-            this.Text = "ArtCore Editor - \""+Game_Project.ProjectName+"\" *";
+            this.Text = "ArtCore Editor - \"" + Game_Project.ProjectName + "\" *";
         }
         public void MakeSaved()
         {
@@ -46,7 +37,7 @@ namespace ArtCore_Editor
 
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
             InitializeComponent();
-            
+
             _instance = this;
 
 
@@ -60,14 +51,14 @@ namespace ArtCore_Editor
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Game_Project.SaveToFile();
-            foreach(var file in FilesToDeleteAtSave)
+            foreach (var file in FilesToDeleteAtSave)
             {
                 if (File.Exists(file))
                 {
                     File.Delete(file);
                 }
             }
-            foreach(var folder in FoldersToDeleteAtSave)
+            foreach (var folder in FoldersToDeleteAtSave)
             {
                 if (Directory.Exists(folder))
                 {
@@ -83,7 +74,7 @@ namespace ArtCore_Editor
         {
             if (!saved)
             {
-                if(MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?", "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
+                if (MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?", "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
 
             //folderBrowserDialog1.Reset();
@@ -129,7 +120,7 @@ namespace ArtCore_Editor
                         {
                             lines = File.ReadAllLines(Program.LAST_FILENAME).ToList();
                         }
-                        lines.Insert(0,path);
+                        lines.Insert(0, path);
                         File.WriteAllLines(Program.LAST_FILENAME, lines);
                         loadScreen.SetProgress(100);
                         loadScreen.Close();
@@ -193,7 +184,7 @@ namespace ArtCore_Editor
                 }
 
             }
-            
+
 
 
             List<string> lines = new List<string>();
@@ -211,13 +202,13 @@ namespace ArtCore_Editor
 
         }
 
-        
+
 
         private void AddToAssetList<T>(string category, Dictionary<string, T> objects, string category_icon, string default_icon = null)
         {
             int lastnode = ProjectAsserList.Nodes.Count;
             int category_index = ProjectAssetList_imagelist.Images.IndexOfKey(category_icon);
-            if(category_index < 0)
+            if (category_index < 0)
             {
                 ProjectAssetList_imagelist.Images.Add(Properties.Resources.ResourceManager.GetObject(category_icon) as Bitmap);
                 category_index = ProjectAssetList_imagelist.Images.Count - 1;
@@ -226,7 +217,7 @@ namespace ArtCore_Editor
             ProjectAsserList.Nodes[lastnode].Tag = "root";
 
 
-            if (objects.Count>0)
+            if (objects.Count > 0)
             {
 
                 foreach (var _asset in objects.Values.ToList())
@@ -264,7 +255,7 @@ namespace ArtCore_Editor
                 }
             }
         }
-        
+
         public void RefreshListView(bool rememberStates = true)
         {
             List<string> savedExpansionState = new List<string>();
@@ -293,7 +284,7 @@ namespace ArtCore_Editor
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {//texture
             TextureManager textureManager = new TextureManager();
-            if(textureManager.ShowDialog() == DialogResult.OK)
+            if (textureManager.ShowDialog() == DialogResult.OK)
             {
                 RefreshListView();
                 MakeChange();
@@ -382,7 +373,7 @@ namespace ArtCore_Editor
                         MakeChange();
                     }
                     spriteManager.Dispose();
-                    
+
                     break;
                 case "animations":
 
@@ -440,7 +431,7 @@ namespace ArtCore_Editor
         }
         void DeleteAssetFromList(string category, string name)
         {
-            if(MessageBox.Show("Do You really want to delete '"+name+"'?", "Question?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
+            if (MessageBox.Show("Do You really want to delete '" + name + "'?", "Question?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             switch (category)
             {
                 case "textures":
@@ -545,7 +536,7 @@ namespace ArtCore_Editor
                     return;
                 }
             }
-            
+
             RefreshListView();
             MakeSaved();
         }
@@ -618,9 +609,9 @@ namespace ArtCore_Editor
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if(e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
-                if(e.Node.Tag != null)
+                if (e.Node.Tag != null)
                 {
                     ProjectAsserList.SelectedNode = e.Node;
 
@@ -634,7 +625,7 @@ namespace ArtCore_Editor
 
                         cms.Show(MousePosition);
                     }
-                    else if(e.Node.Tag.ToString() == "folder")
+                    else if (e.Node.Tag.ToString() == "folder")
                     {
                         ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_folder;
@@ -645,7 +636,7 @@ namespace ArtCore_Editor
 
                         cms.Show(MousePosition);
                     }
-                    else if(e.Node.Tag.ToString() == "element")
+                    else if (e.Node.Tag.ToString() == "element")
                     {
                         ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_element;
@@ -694,7 +685,7 @@ namespace ArtCore_Editor
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ArtCore_Settings settings = new ArtCore_Settings();
-            if(settings.ShowDialog() == DialogResult.OK)
+            if (settings.ShowDialog() == DialogResult.OK)
             {
                 // appy is automatic
             }

@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 
 namespace ArtCore_Editor
 {
@@ -41,7 +34,7 @@ namespace ArtCore_Editor
         public static void GetGridDimensions(ref Point Dimensions)
         {
             GridControl gridControl = new GridControl(Dimensions.X, Dimensions.Y);
-            if(gridControl.ShowDialog() == DialogResult.OK)
+            if (gridControl.ShowDialog() == DialogResult.OK)
             {
                 Dimensions.X = gridControl.GWidth;
                 Dimensions.Y = gridControl.GHeight;

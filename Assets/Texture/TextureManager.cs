@@ -1,13 +1,8 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -37,7 +32,7 @@ namespace ArtCore_Editor
                 else
                 {
                     pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
-                SetInfoBox();
+                    SetInfoBox();
                 }
             }
         }
@@ -47,7 +42,7 @@ namespace ArtCore_Editor
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "PNG|*.png";
             openFileDialog.Title = "Select texture";
-            if(openFileDialog.ShowDialog() == DialogResult.OK)
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string ofile = openFileDialog.FileName;
                 if (textBox1.TextLength == 0)
@@ -56,7 +51,7 @@ namespace ArtCore_Editor
                 }
                 File.Copy(ofile, GameProject.GetInstance().ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png", true);
                 textBox2.Text = "assets\\texture\\" + textBox1.Text + ".png";
-                pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\"+textBox2.Text);
+                pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
                 SetInfoBox();
             }
         }
@@ -76,7 +71,7 @@ namespace ArtCore_Editor
                 }
                 MainWindow.GetInstance().Game_Project.Textures[aid].Name = textBox1.Text;
                 MainWindow.GetInstance().Game_Project.Textures[aid].FileName = textBox2.Text;
-                MainWindow.GetInstance().Game_Project.Textures[aid].EditorImage = Functions.ResizeImage(pictureBox1.Image, 32,32);
+                MainWindow.GetInstance().Game_Project.Textures[aid].EditorImage = Functions.ResizeImage(pictureBox1.Image, 32, 32);
 
                 if (aid != MainWindow.GetInstance().Game_Project.Textures[aid].Name)
                 {
@@ -91,7 +86,7 @@ namespace ArtCore_Editor
 
         private void button3_Click(object sender, EventArgs e)
         {// view in full
-            if(pictureBox1.Image != null)
+            if (pictureBox1.Image != null)
             {
                 Form _temp = new Form();
                 _temp.Size = pictureBox1.Image.Size;

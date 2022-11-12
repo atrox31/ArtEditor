@@ -1,14 +1,5 @@
-﻿using ArtCore_Editor.Assets;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -32,8 +23,8 @@ namespace ArtCore_Editor
             if (sprite != null)
             {
                 global_sprite = sprite;
-                if(sprite.name == "")
-                global_sprite.Load(GameProject.GetInstance().ProjectPath +  sprite.FileName);
+                if (sprite.name == "")
+                    global_sprite.Load(GameProject.GetInstance().ProjectPath + sprite.FileName);
             }
             else
             {
@@ -94,7 +85,7 @@ namespace ArtCore_Editor
             s_sprite_center_y.Maximum = global_sprite.sprite_width;
             s_aprite_center_x.Maximum = global_sprite.sprite_height;
 
-            s_col_mask_value.Maximum = Math.Max( global_sprite.sprite_height, global_sprite.sprite_width);
+            s_col_mask_value.Maximum = Math.Max(global_sprite.sprite_height, global_sprite.sprite_width);
 
             s_aprite_center_x.Value = global_sprite.sprite_center_x;
             s_sprite_center_y.Value = global_sprite.sprite_center_y;

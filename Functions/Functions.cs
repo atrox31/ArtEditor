@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ArtCore_Editor
 {
-    public static class Functions {
+    public static class Functions
+    {
         public static T ForceType<T>(this object o)
         {
             T res;

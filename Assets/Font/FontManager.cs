@@ -1,14 +1,9 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -54,7 +49,7 @@ namespace ArtCore_Editor
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string ofile = openFileDialog.FileName;
-                if(textBox1.TextLength == 0)
+                if (textBox1.TextLength == 0)
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
                 }

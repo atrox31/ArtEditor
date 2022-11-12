@@ -1,14 +1,9 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -19,7 +14,7 @@ namespace ArtCore_Editor
         bool can_play = false;
         string GetDuration(bool formated = false)
         {
-            return SoundInfo.GetSoundLength(GameProject.GetInstance().ProjectPath+"\\"+textBox2.Text).ToString();
+            return SoundInfo.GetSoundLength(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text).ToString();
         }
         private void SetInfoBox()
         {
@@ -27,7 +22,7 @@ namespace ArtCore_Editor
             soundPlayer.SoundLocation = GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text;
             can_play = false;
             soundPlayer.LoadAsync();
-            label1.Text = "Duration: "+ GetDuration(true) + " \n" +
+            label1.Text = "Duration: " + GetDuration(true) + " \n" +
                 "In project location:\n" + "assets/music/" + textBox1.Text;
         }
 
@@ -81,7 +76,7 @@ namespace ArtCore_Editor
                 }
                 catch (Exception ee)
                 {
-                    MessageBox.Show("Edytor jest upośledzony, ten plik muzyki najprawdopodobniej będzie działać w grze...\n"+ee.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Edytor jest upośledzony, ten plik muzyki najprawdopodobniej będzie działać w grze...\n" + ee.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -89,7 +84,7 @@ namespace ArtCore_Editor
         private void button5_Click(object sender, EventArgs e)
         {
             // pause
-            
+
         }
 
         private void button6_Click(object sender, EventArgs e)

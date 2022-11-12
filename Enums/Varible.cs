@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArtCore_Editor
 {
@@ -11,11 +7,11 @@ namespace ArtCore_Editor
     {
         public enum type
         {
-            INT,FLOAT,
+            INT, FLOAT,
             BOOL,
-            INSTANCE,OBJECT,
-            SPRITE,TEXTURE,SOUND,MUSIC,FONT,
-            POINT,RECTANGLE,STRING
+            INSTANCE, OBJECT,
+            SPRITE, TEXTURE, SOUND, MUSIC, FONT,
+            POINT, RECTANGLE, STRING
         }
         public type Type { get; set; }
         public string Name { get; set; }

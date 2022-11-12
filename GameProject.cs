@@ -2,18 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
-using static ArtCore_Editor.GameProject;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace ArtCore_Editor
 {
@@ -39,7 +31,7 @@ namespace ArtCore_Editor
         }
 
         // Game settings
-        
+
         public class ArtCorePreset
         {
             public int DefaultResolution_x { get; set; } = 1920;
@@ -67,7 +59,7 @@ namespace ArtCore_Editor
         public float Version = 0.0f;
         [JsonProperty]
         public string ProjectName = "New game";
-       // [JsonProperty]
+        // [JsonProperty]
         public string ProjectPath = "";
         [JsonProperty]
         public Scene StartingScene = null;
@@ -94,9 +86,10 @@ namespace ArtCore_Editor
         [JsonProperty]
         public Dictionary<string, Scene> Scenes { get; set; }
 
-        public GameProject(){
+        public GameProject()
+        {
             ArtCoreDefaultSettings = new ArtCorePreset();
-            }
+        }
         public void SaveToFile()
         {
             Version = Program.VERSION;
@@ -120,9 +113,9 @@ namespace ArtCore_Editor
             }
             //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
             GameProject? gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
-            
 
-            if(gameProject == null)
+
+            if (gameProject == null)
             {
                 MessageBox.Show("Target project file is propably corrupted or has beed created in older verion of editor.", "Cannot open", MessageBoxButton.OK, MessageBoxImage.Stop);
                 MainWindow.GetInstance().Game_Project = null;

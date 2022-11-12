@@ -1,6 +1,5 @@
 ﻿using ArtCore_Editor.Assets;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace ArtCore_Editor

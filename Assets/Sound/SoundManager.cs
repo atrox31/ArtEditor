@@ -1,14 +1,9 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -19,7 +14,7 @@ namespace ArtCore_Editor
         bool can_play = false;
         string GetDuration(bool formated = false)
         {
-            return SoundInfo.GetSoundLength(GameProject.GetInstance().ProjectPath + "\\"+textBox2.Text).ToString();
+            return SoundInfo.GetSoundLength(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text).ToString();
         }
         private void SetInfoBox()
         {
@@ -27,7 +22,7 @@ namespace ArtCore_Editor
             soundPlayer.SoundLocation = GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text;
             can_play = false;
             soundPlayer.LoadAsync();
-            label1.Text = "Duration: "+ GetDuration(true) + " \n" +
+            label1.Text = "Duration: " + GetDuration(true) + " \n" +
                 "In project location:\n" + "assets/music/" + textBox1.Text;
         }
 
@@ -52,15 +47,15 @@ namespace ArtCore_Editor
             if (AssetId != null)
             {
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].Name;
-                textBox2.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].FileName; 
+                textBox2.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].FileName;
                 if (!File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
                 }
                 else
                 {
-                //soundPlayer.
-                SetInfoBox();
+                    //soundPlayer.
+                    SetInfoBox();
 
                 }
             }
@@ -71,8 +66,8 @@ namespace ArtCore_Editor
         private void button3_Click(object sender, EventArgs e)
         {
             // paly
-            if(can_play)
-            soundPlayer.Play();
+            if (can_play)
+                soundPlayer.Play();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -88,7 +83,7 @@ namespace ArtCore_Editor
                 && (textBox2.Text.Length > 0)
                 && File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
             {
-                if(aid == null)
+                if (aid == null)
                 {
                     // add new
                     aid = textBox1.Text;

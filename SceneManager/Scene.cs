@@ -1,6 +1,5 @@
 ﻿using ArtCore_Editor.Assets;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -24,7 +23,7 @@ namespace ArtCore_Editor
                     this.x = x;
                     this.y = y;
                     this.instance = instance;
-                    if(instance == null)
+                    if (instance == null)
                     {
                         img = Properties.Resources.interrogation1;
                     }
@@ -39,7 +38,7 @@ namespace ArtCore_Editor
                             img = instance.Sprite.EditorImage;
                         }
                     }
-                    
+
                     editorMask = (img.Width + img.Height) / 4;
                 }
             }
@@ -48,7 +47,7 @@ namespace ArtCore_Editor
 
             [JsonProperty]
             public string GuiFile;
-            
+
             public class Region
             {
                 public int x1 { get; set; }
@@ -74,7 +73,7 @@ namespace ArtCore_Editor
                 GuiFile = "";
                 SceneInstances = new List<SceneInstance>();
                 SceneTriggers = new List<string>();
-                Name = "new_scene" ;
+                Name = "new_scene";
             }
             [JsonProperty]
             public List<string> SceneTriggers { get; set; }

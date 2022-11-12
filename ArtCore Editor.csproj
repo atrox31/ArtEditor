@@ -9,6 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <StartupObject>ArtCore_Editor.Program</StartupObject>
+    <ApplicationIcon>artSplash.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>full</DebugType>
@@ -36,6 +37,9 @@
     <Compile Remove="Assets\Sprite\SpriteManager.cs" />
     <Compile Remove="Assets\Sprite\SpriteManager.Designer.cs" />
     <EmbeddedResource Remove="Assets\Sprite\SpriteManager.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="artSplash.ico" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

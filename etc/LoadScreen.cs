@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -28,7 +22,7 @@ namespace ArtCore_Editor
         public void AddProgress(int val)
         {
             progressBar1.Value += val;
-            if(progressBar1.Value > progressBar1.Maximum)
+            if (progressBar1.Value > progressBar1.Maximum)
             {
                 progressBar1.Value = progressBar1.Maximum;
             }

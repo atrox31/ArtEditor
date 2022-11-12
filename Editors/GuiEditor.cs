@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SDL2;
 
 
 namespace ArtCore_Editor

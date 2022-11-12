@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.RenderTree;
-using SDL2;
+﻿using SDL2;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace ArtCore_Editor
 {

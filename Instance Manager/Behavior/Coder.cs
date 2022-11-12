@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -17,7 +12,7 @@ namespace ArtCore_Editor
         public string[] c_Return;
         public string fuction = "";
 
-        public Coder( ObjectManager _parrent)
+        public Coder(ObjectManager _parrent)
         {
             InitializeComponent();
             Category = new Dictionary<string, List<string>>();
@@ -47,7 +42,7 @@ namespace ArtCore_Editor
 
         void Picker(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            
+
         }
 
         public void ContentRefresh()

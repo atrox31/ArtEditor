@@ -1,14 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
 
@@ -110,9 +105,9 @@ namespace ArtCore_Editor
         {
             // add event - bellow Event_listbox
             object_event_picker object_Event_Picker = new object_event_picker();
-            if(object_Event_Picker.ShowDialog() == DialogResult.OK)
+            if (object_Event_Picker.ShowDialog() == DialogResult.OK)
             {
-               
+
                 Event.EventType type = object_Event_Picker.Type;
                 /*
                 if (type == Event.EventType.EV_TRIGGER)
@@ -127,7 +122,8 @@ namespace ArtCore_Editor
                 else
                 */
                 {
-                    if (Event_listobx.SelectedItem != null) {
+                    if (Event_listobx.SelectedItem != null)
+                    {
                         if (Functions.ErrorCheck(
                             instance.Events.TryGetValue(
                                 (Event.EventType)Enum.Parse(
@@ -141,12 +137,12 @@ namespace ArtCore_Editor
                         }
                     }
                     instance.Events.Add(type, type.ToString());
-                    events_data.Add(type, "//"+ type.ToString());
+                    events_data.Add(type, "//" + type.ToString());
                     Event_listobx.Items.Add(type.ToString());
 
                 }
-                
-                Event_listobx.SelectedIndex = Event_listobx.Items.Count-1;
+
+                Event_listobx.SelectedIndex = Event_listobx.Items.Count - 1;
                 button5.Enabled = true;
                 button8.Enabled = true;
             }
@@ -155,9 +151,9 @@ namespace ArtCore_Editor
         private void button2_Click(object sender, EventArgs e)
         {
             // delete event - bellow Event_listbox
-            if(Event_listobx.SelectedItem != null)
+            if (Event_listobx.SelectedItem != null)
             {
-                if(MessageBox.Show( "Are You sure to delete event '"+Event_listobx.SelectedItem.ToString()+"'","Delete event", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are You sure to delete event '" + Event_listobx.SelectedItem.ToString() + "'", "Delete event", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     instance.Events.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()));
                     events_data.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()));
@@ -168,13 +164,13 @@ namespace ArtCore_Editor
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(Event_listobx.SelectedItem != null)
+            if (Event_listobx.SelectedItem != null)
             {
-                if(events_data[((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()))] != null)
+                if (events_data[((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()))] != null)
                 {
                     Event_treeview.Nodes.Clear();
                     foreach (
-                        string line in 
+                        string line in
                         events_data[
                             (Event.EventType)
                                 Enum.Parse(
@@ -192,15 +188,15 @@ namespace ArtCore_Editor
         private void button5_Click(object sender, EventArgs e)
         {
             // action
-            
+
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
             VaribleEditor _varible = new VaribleEditor();
-            if(_varible.ShowDialog() == DialogResult.OK)
+            if (_varible.ShowDialog() == DialogResult.OK)
             {
-                foreach(Varible var in instance.Varible)
+                foreach (Varible var in instance.Varible)
                 {
                     if (var.Name == _varible.Name)
                     {
@@ -215,7 +211,7 @@ namespace ArtCore_Editor
                     Varible_listbox.Items.Add(item.Name + '[' + item.Type.ToString() + ']');
                 }
             }
-            
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -229,15 +225,15 @@ namespace ArtCore_Editor
         private void button8_Click(object sender, EventArgs e)
         {
             // code
-            if(Event_listobx.SelectedItem != null)
+            if (Event_listobx.SelectedItem != null)
             {
                 string code = events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())];
                 CodeEditor codeEditor = new CodeEditor(null, code);
-                if(codeEditor.ShowDialog() == DialogResult.OK)
+                if (codeEditor.ShowDialog() == DialogResult.OK)
                 {
                     events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
                     Event_treeview.Nodes.Clear();
-                    foreach(string line in codeEditor.Code)
+                    foreach (string line in codeEditor.Code)
                     {
                         Event_treeview.Nodes.Add(line);
                     }
@@ -273,7 +269,7 @@ namespace ArtCore_Editor
             instance.Sprite = null;
 
 
-            if(aid == null)
+            if (aid == null)
             {
                 GameProject.GetInstance().Instances.Add(instance.Name, instance);
                 aid = instance.Name;
@@ -308,13 +304,13 @@ namespace ArtCore_Editor
 
             if (instance.Events.Keys.Count > 0)
             {
-                
+
                 foreach (var item in instance.Events)
                 {
-                    if(events_data[item.Key] != null)
+                    if (events_data[item.Key] != null)
                     {
                         File.WriteAllText(path_to_object_data + "\\" + item.Value + ".asc", events_data[item.Key]);
-                        
+
                     }// else error
                 }
             }
@@ -322,8 +318,8 @@ namespace ArtCore_Editor
             {
                 string instance_main = "";
                 // main
-                instance_main += "object "+instance.Name+"\n";
-                foreach(var item in LocalVaribles)
+                instance_main += "object " + instance.Name + "\n";
+                foreach (var item in LocalVaribles)
                 {
                     instance_main += "local " + (item.ReadOnly ? "READ_ONLY " : "") + item.Type.ToString().ToLower() + " " + item.Name + "\n";
                 }
@@ -347,7 +343,7 @@ namespace ArtCore_Editor
                 foreach (var item in instance.Events)
                 {
                     instance_main += "function " + instance.Name + ":" + item.Key + "\n";
-                    instance_main += events_data[item.Key]+ "\n";
+                    instance_main += events_data[item.Key] + "\n";
                     instance_main += "@end\n";
                 }
                 File.WriteAllText(GameProject.GetInstance().ProjectPath + "\\object\\" + instance.Name + "\\main.asc", instance_main);

@@ -1,18 +1,10 @@
-﻿using ArtCore_Editor.Assets;
-using Newtonsoft.Json;
-using SDL2;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
 using ListViewItem = System.Windows.Forms.ListViewItem;
@@ -58,7 +50,7 @@ namespace ArtCore_Editor
                 Content.Width = cScene.Width;
                 numericUpDown1.Value = Content.Width;
                 numericUpDown2.Value = Content.Height;
-                for (int i = 0; i< cScene.SceneTriggers.Count; i++)
+                for (int i = 0; i < cScene.SceneTriggers.Count; i++)
                 {
                     // convert path to script -> script
                     cScene.SceneTriggers[i] = System.IO.File.ReadAllText(TriggerPath() + "\\" + cScene.SceneTriggers[i]);
@@ -160,7 +152,7 @@ namespace ArtCore_Editor
 
             }
             Content.Image = bmp;
-            
+
         }
 
         private void Content_DragDrop(object sender, DragEventArgs e)
@@ -187,7 +179,7 @@ namespace ArtCore_Editor
             Point point = new Point(e.X, e.Y);
             foreach (var item in cScene.SceneInstances)
             {
-                if(Functions.GetDistance(point, new Point(item.x, item.y)) < item.editorMask)
+                if (Functions.GetDistance(point, new Point(item.x, item.y)) < item.editorMask)
                 {
                     selected_sceneInstance = item;
                     RedrawScene();
@@ -286,7 +278,7 @@ namespace ArtCore_Editor
             Process process = new Process();
             process.StartInfo.FileName = "..\\Core\\gui-bulider\\gui-builder.exe";
             bool fex = File.Exists(GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt");
-            process.StartInfo.Arguments = (fex?"":"-new ") + GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt";
+            process.StartInfo.Arguments = (fex ? "" : "-new ") + GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt";
             process.StartInfo.UseShellExecute = false;
 
 

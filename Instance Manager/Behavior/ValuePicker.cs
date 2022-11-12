@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
 {
     public partial class ValuePicker : Form
-{
+    {
         static Dictionary<string, List<string>> Functions = new Dictionary<string, List<string>>();
         List<string> usedFunctions = new List<string>();
         List<string> returnedValues = new List<string>();
@@ -19,12 +13,12 @@ namespace ArtCore_Editor
 
         string _value;
         public string Return;
-    public ValuePicker(string value)
-    {
+        public ValuePicker(string value)
+        {
             Return = "";
             this._value = value;
-        InitializeComponent();
-            Functions.Add("math",new List<string>()
+            InitializeComponent();
+            Functions.Add("math", new List<string>()
             {
                 "math_min_i;Minimum;Minum value from |value| and |value|.;int",
                 "math_max_i;Maximum;Maximum value from |value| and |value|.;int",
@@ -33,20 +27,20 @@ namespace ArtCore_Editor
                 "math_max_f;Maximum;Maximum value from |value| and |value|.;float",
                 "math_random_f;Random;Random value from |value| to |value|.;float",
 
-            } );
-            Functions.Add("point",new List<string>()
+            });
+            Functions.Add("point", new List<string>()
             {
                 "point_create_i;Create point;Create int point with value \nx = |value| \ny = |value|.;int",
                 "point_create_f;Create point;Create float point with value \nx = |value| \ny = |value|.;float",
                 "point_variable;Use variable;Use instance variable |variable|.;point",
-            } );
-    }
+            });
+        }
 
-    private void ValuePicker_Load(object sender, EventArgs e)
-    {
+        private void ValuePicker_Load(object sender, EventArgs e)
+        {
             foreach (string key in Functions.Keys)
             {
-                foreach(string value in Functions[key])
+                foreach (string value in Functions[key])
                 {
                     if (value.Split(';')[3].Contains(_value.Split(':')[0]))
                     {
@@ -55,8 +49,8 @@ namespace ArtCore_Editor
                     }
                 }
             }
-            
-    }
+
+        }
         public void ContentRefresh()
         {
             string[] tokens = c_Content.Split('|');
@@ -79,7 +73,7 @@ namespace ArtCore_Editor
 
                     Content.Text += text_to_add;
                     Content.Links.Add(current_pos, text_to_add.Length);
-                    Content.Links[current_link].Description = token+":"+tokens[3];
+                    Content.Links[current_link].Description = token + ":" + tokens[3];
                     current_link++;
 
                     current_pos += text_to_add.Length;
@@ -114,15 +108,15 @@ namespace ArtCore_Editor
             string value_pick = e.Link.Description.Split(':')[0];
             string value_type = e.Link.Description.Split(':')[1];
 
-            if(value_pick == "value")
+            if (value_pick == "value")
             {
                 ValuePicker picker = new ValuePicker(e.Link.Description);
-                if(picker.ShowDialog() == DialogResult.OK)
+                if (picker.ShowDialog() == DialogResult.OK)
                 {
-                    
+
                 }
             }
-            if(value_pick == "variable")
+            if (value_pick == "variable")
             {
 
             }

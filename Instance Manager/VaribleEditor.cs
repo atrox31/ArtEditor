@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -15,9 +9,9 @@ namespace ArtCore_Editor
         public static Varible GetValue()
         {
             VaribleEditor v = new VaribleEditor();
-            if(v.ShowDialog() == DialogResult.OK)
+            if (v.ShowDialog() == DialogResult.OK)
             {
-                return new Varible( v._Type, v._Name, v._Default);
+                return new Varible(v._Type, v._Name, v._Default);
             }
             return null;
         }
@@ -32,7 +26,7 @@ namespace ArtCore_Editor
             InitializeComponent();
             FieldType.DataSource = Enum.GetValues(typeof(Varible.type));
             this._var = var;
-            if(var!= null)
+            if (var != null)
             {
                 FieldName.Text = var.Name;
                 FieldDefault.Text = var.Default;
@@ -72,7 +66,7 @@ namespace ArtCore_Editor
                         break;
                     case Varible.type.INSTANCE:
                         {
-                            if(Functions.ErrorCheck(false, "instance is defined on runtime, not allow to default in editor!")) return;
+                            if (Functions.ErrorCheck(false, "instance is defined on runtime, not allow to default in editor!")) return;
                         }
                         break;
                     case Varible.type.OBJECT:
@@ -147,7 +141,7 @@ namespace ArtCore_Editor
                     return;
 
             }
-            button3.Enabled=false;
+            button3.Enabled = false;
         }
 
         private void button3_Click(object sender, EventArgs e)

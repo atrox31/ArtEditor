@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Drawing;
-using System.Text.Json.Serialization;
 
 namespace ArtCore_Editor.Assets
 {

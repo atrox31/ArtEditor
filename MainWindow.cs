@@ -39,8 +39,6 @@ namespace ArtCore_Editor
             InitializeComponent();
 
             _instance = this;
-
-
         }
 
         public static MainWindow GetInstance()

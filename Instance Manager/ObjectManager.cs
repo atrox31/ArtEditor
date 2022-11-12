@@ -44,17 +44,12 @@ namespace ArtCore_Editor
                     return;
                 }
 
-                string fileContents;
                 using (StreamReader reader = new StreamReader(File.Open(openingFileName, FileMode.Open)))
                 {
-                    fileContents = reader.ReadToEnd();
+                    instance = JsonConvert.DeserializeObject<Instance>(reader.ReadToEnd());
                 }
-                //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
-                instance = JsonConvert.DeserializeObject<Instance>(fileContents);
 
 
-
-                //instance = (GameProject.Instance)GameProject.GetInstance().Instances[AssetId].Clone();
                 textBox1.Text = instance.Name;
                 if (instance.Sprite != null)
                 {

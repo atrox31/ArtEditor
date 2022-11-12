@@ -1,0 +1,2 @@
+# Spite przy zmianie nazwy dubluje się na liście
+# SpriteEditor - po wejściu ilość klatek nie jest zaczytywana

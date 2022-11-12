@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE1006: Style nazewnictwa
+dotnet_diagnostic.IDE1006.severity = none

@@ -6,7 +6,7 @@ namespace ArtCore_Editor
     {
         public LineViewer(string message)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             richTextBox1.Text = message;
         }
     }

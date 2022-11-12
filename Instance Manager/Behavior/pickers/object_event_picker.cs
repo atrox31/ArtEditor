@@ -7,7 +7,7 @@ namespace ArtCore_Editor
     {
         public object_event_picker()
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
         }
         public Event.EventType Type;
 

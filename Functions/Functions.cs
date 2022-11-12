@@ -11,6 +11,7 @@ namespace ArtCore_Editor
 {
     public static class Functions
     {
+        
         public static T ForceType<T>(this object o)
         {
             T res;

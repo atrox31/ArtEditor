@@ -41,7 +41,7 @@ namespace ArtCore_Editor
         public static bool isdebug;
         public GameCompiler(bool debug)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             _instance = this;
             isdebug = debug;
         }

@@ -52,7 +52,7 @@ namespace ArtCore_Editor
         }
 
         public string name;
-        public Image[] textures;
+        public List<Image> textures;
         int textures_count = 0;
         public enum Type
         {
@@ -122,8 +122,7 @@ namespace ArtCore_Editor
             byte[] content = File.ReadAllBytes(file);
             using (Image image = Image.FromStream(new MemoryStream(content)))
             {
-
-                textures[textures_count++] = new Bitmap(new MemoryStream(content));
+                textures.Add(new Bitmap(new MemoryStream(content)) );
             }
         }
 
@@ -131,14 +130,15 @@ namespace ArtCore_Editor
         {
             if (textures != null)
             {
-                if (textures.Length > 0)
+                if (textures.Count> 0)
                 {
-                    for (int i = 0; i < textures.Length; i++)
+                    for (int i = 0; i < textures.Count; i++)
                     {
                         textures[i].Dispose();
                     }
                 }
             }
+            textures_count = 0;
         }
 
         public void Save()
@@ -202,12 +202,12 @@ namespace ArtCore_Editor
             buffer += "[/sprite]\n";
             buffer += "[image_list]\n";
 
-            buffer += "count=" + (textures == null ? "0" : textures.Length.ToString()) + "\n";
+            buffer += "count=" + (textures == null ? "0" : textures.Count.ToString()) + "\n";
 
             string FilePath = GameProject.GetInstance().ProjectPath + "\\assets\\sprite\\" + name;
             Directory.CreateDirectory(FilePath + "\\img\\");
 
-            if (textures != null && textures.Length > 0)
+            if (textures != null && textures.Count > 0)
             {
                 int i = 0;
                 foreach (Image img in textures)
@@ -227,7 +227,7 @@ namespace ArtCore_Editor
 
             FileName = "\\assets\\sprite\\" + name + "\\" + name + ".spr";
             Name = name;
-            ProjectPath = FilePath + "\\" + name;
+            ProjectPath = "\\assets\\sprite\\" + name + "\\";
         }
 
         public bool Load(string file)
@@ -323,7 +323,7 @@ namespace ArtCore_Editor
                                 if (tmp[0] == "count")
                                 {
                                     imgc = Convert.ToInt32(tmp[1]);
-                                    textures = new Image[imgc];
+                                    textures = new List<Image>(imgc);
                                 }
 
                             }

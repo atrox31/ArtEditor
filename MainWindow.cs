@@ -36,7 +36,7 @@ namespace ArtCore_Editor
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
 
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
 
             _instance = this;
         }
@@ -364,7 +364,7 @@ namespace ArtCore_Editor
                     textureManager.Dispose();
                     break;
                 case "sprites":
-                    SpriteEditor spriteManager = new SpriteEditor(Game_Project.Sprites[name]);
+                    SpriteEditor spriteManager = new SpriteEditor(name);
                     if (spriteManager.ShowDialog() == DialogResult.OK)
                     {
                         RefreshListView();
@@ -561,7 +561,11 @@ namespace ArtCore_Editor
                 case "Add new folder":
 
                     break;
-                default: break;
+                default:
+                    //"New item '" + e.Node.Text + "'"
+                    string item = e.ClickedItem.Text.Split("'")[1];
+                    OpenAssetFromList(item, null);
+                    break;
             }
         }
         private void listContext_element(object Sender, ToolStripItemClickedEventArgs e)
@@ -617,6 +621,9 @@ namespace ArtCore_Editor
                     {
                         ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_root;
+
+                        cms.Items.Add("New item '" + e.Node.Text + "'");
+
                         cms.Items.Add("Expand All");
                         cms.Items.Add("Coolapse All");
                         cms.Items.Add("Add new folder");

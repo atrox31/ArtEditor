@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace ArtCore_Editor
 {
@@ -16,15 +17,15 @@ namespace ArtCore_Editor
             global_sprite = new Sprite();
         }
 
-        public SpriteEditor(Sprite sprite)
+        public SpriteEditor(string sprite)
         {
             //this.parrent = parrent;
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             if (sprite != null)
             {
-                global_sprite = sprite;
-                if (sprite.name == "")
-                    global_sprite.Load(GameProject.GetInstance().ProjectPath + sprite.FileName);
+                global_sprite = GameProject.GetInstance().Sprites[sprite];
+                if (global_sprite.name == "")
+                    global_sprite.Load(GameProject.GetInstance().ProjectPath + global_sprite.FileName);
             }
             else
             {
@@ -53,7 +54,7 @@ namespace ArtCore_Editor
 
             global_sprite.editor_fps = (int)s_preview_fps.Value;
             p_currentFrame = p_firstFrame;
-            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Length - 1);
+            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
 
             global_sprite.Save();
 
@@ -123,16 +124,17 @@ namespace ArtCore_Editor
             s_preview_fps.Value = global_sprite.editor_fps;
 
             p_firstFrame = 0;
-            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Length - 1);
+            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
+            
 
             p_currentFrame = p_firstFrame;
 
             s_preview_loop.Checked = global_sprite.editor_preview_loop;
             s_sprite_center_show.Checked = global_sprite.editor_show_center;
             s_col_mask_show.Checked = global_sprite.editor_show_mask;
-            label4.Text = "Current: " + (global_sprite.textures == null ? 0 : global_sprite.textures.Length).ToString();
+            label4.Text = "Current: " + (global_sprite.textures == null ? 0 : global_sprite.textures.Count).ToString();
             label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = (global_sprite.textures == null || global_sprite.textures.Length == 0 ? null : global_sprite.textures[p_currentFrame]);
+            s_preview.Image = (global_sprite.textures == null || global_sprite.textures.Count == 0 ? null : global_sprite.textures[p_currentFrame]);
 
             s_animationSequencePreview.Items.Clear();
             s_animationSequencePreview.Items.Add("<All frames>");
@@ -154,17 +156,9 @@ namespace ArtCore_Editor
                 {
                     global_sprite.ClearImages();
                     GC.Collect();
-                    global_sprite.textures = new Image[openFileDialog1.FileNames.Length];
+                    global_sprite.textures = new System.Collections.Generic.List<Image>(openFileDialog1.FileNames.Length);
                 }
-                else
-                {
-                    //Image[] tmp = new Image[global_sprite.textures.Length+1];
-                    //global_sprite.textures.CopyTo(tmp, 0);
-                    global_sprite.ClearImages();
-                    GC.Collect();
-                    global_sprite.textures = new Image[openFileDialog1.FileNames.Length];
-                    MessageBox.Show("Not implemented yet", "sorry", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                
 
                 int max_x = 0;
                 int max_y = 0;
@@ -177,8 +171,8 @@ namespace ArtCore_Editor
                     i++;
                 }
                 s_preview.Image = global_sprite.textures[0];
-                label4.Text = "Current: " + global_sprite.textures.Length.ToString();
-                p_lastFrame = global_sprite.textures.Length - 1;
+                label4.Text = "Current: " + global_sprite.textures.Count.ToString();
+                p_lastFrame = global_sprite.textures.Count - 1;
                 p_currentFrame = p_firstFrame;
 
                 global_sprite.sprite_width = max_x;
@@ -542,9 +536,9 @@ namespace ArtCore_Editor
         {
             animationSequencerForm asf = new animationSequencerForm();
             asf.f_frameFromMin = 0;
-            asf.f_frameFromMax = global_sprite.textures.Length - 1;
+            asf.f_frameFromMax = global_sprite.textures.Count - 1;
             asf.f_frameToMin = 0;
-            asf.f_frameToMax = global_sprite.textures.Length - 1;
+            asf.f_frameToMax = global_sprite.textures.Count - 1;
             asf.ShowDialog();
             if (asf.DialogResult == DialogResult.OK)
             {
@@ -558,7 +552,7 @@ namespace ArtCore_Editor
             if (s_animationSequencePreview.SelectedIndex == 0)
             {
                 p_firstFrame = 0;
-                p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Length - 1);
+                p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
 
                 p_currentFrame = p_firstFrame;
             }
@@ -577,9 +571,9 @@ namespace ArtCore_Editor
             {
                 animationSequencerForm asf = new animationSequencerForm();
                 asf.f_frameFromMin = 0;
-                asf.f_frameFromMax = global_sprite.textures.Length - 1;
+                asf.f_frameFromMax = global_sprite.textures.Count - 1;
                 asf.f_frameToMin = 0;
-                asf.f_frameToMax = global_sprite.textures.Length - 1;
+                asf.f_frameToMax = global_sprite.textures.Count - 1;
 
                 string tmp_index = listBox1.SelectedItem.ToString().Split(']')[0].Split('[')[1];
                 asf.f_fullName = global_sprite.sprite_animationSquence[tmp_index].name;

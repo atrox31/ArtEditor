@@ -18,7 +18,7 @@ namespace ArtCore_Editor
         }
         public TextureManager(string AssetId = null)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             aid = AssetId;
             if (AssetId != null)
             {

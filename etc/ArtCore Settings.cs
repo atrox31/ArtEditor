@@ -42,7 +42,7 @@ namespace ArtCore_Editor
         }
         public ArtCore_Settings()
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
                 var f_name = property.Name;

@@ -18,7 +18,13 @@ namespace ArtCore_Editor
         List<Varible> LocalVaribles;
         public ObjectManager(string AssetId = null)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
+
+            foreach(var sprite in GameProject.GetInstance().Sprites)
+            {
+                comboBox1.Items.Add(sprite.Key);
+            }
+
             aid = AssetId;
             events_data = new Dictionary<Event.EventType, string>();
             LocalVaribles = new List<Varible>()
@@ -37,7 +43,7 @@ namespace ArtCore_Editor
 
             if (AssetId != null)
             {
-                string openingFileName = GameProject.GetInstance().ProjectPath + "\\" + GameProject.GetInstance().Instances[AssetId].FileName;
+                string openingFileName = GameProject.GetInstance().ProjectPath + GameProject.GetInstance().Instances[AssetId].FileName;
                 if (!File.Exists(openingFileName))
                 {
                     MessageBox.Show("File: '" + openingFileName + "' not exists", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -261,8 +267,14 @@ namespace ArtCore_Editor
             if (Functions.ErrorCheck(textBox1.TextLength < 24, "Object name too long")) return;
 
             instance.Name = textBox1.Text;
-            instance.Sprite = null;
-
+            if (GameProject.GetInstance().Sprites.ContainsKey(comboBox1.Text))
+            {
+                instance.Sprite = GameProject.GetInstance().Sprites[comboBox1.Text];
+            }
+            else
+            {
+                instance.Sprite = null;
+            }
 
             if (aid == null)
             {

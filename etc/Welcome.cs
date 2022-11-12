@@ -10,7 +10,7 @@ namespace ArtCore_Editor
     {
         public Welcome()
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
         }
         bool have_last = false;
         public string open_project = null;

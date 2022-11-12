@@ -16,7 +16,7 @@ namespace ArtCore_Editor
 
         public animationSequencerForm()
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
         }
 
         private void animationSequencerForm_Load(object sender, EventArgs e)

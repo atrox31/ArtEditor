@@ -42,7 +42,7 @@ namespace ArtCore_Editor
         {
             soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
             soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             aid = AssetId;
             if (AssetId != null)
             {

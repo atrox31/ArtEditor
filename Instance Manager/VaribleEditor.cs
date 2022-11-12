@@ -23,7 +23,7 @@ namespace ArtCore_Editor
         public Varible _var;
         public VaribleEditor(Varible var = null)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             FieldType.DataSource = Enum.GetValues(typeof(Varible.type));
             this._var = var;
             if (var != null)

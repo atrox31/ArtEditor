@@ -9,7 +9,7 @@ namespace ArtCore_Editor
         public string Selected;
         public PicFromList(List<string> vars)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             Selected = "";
             listBox1.Items.AddRange(vars.ToArray());
         }

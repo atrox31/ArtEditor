@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -23,6 +24,15 @@ namespace ArtCore_Editor
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
         }
+
+        public static void ApplyTheme(Control type)
+        {
+            foreach (var c in Functions.GetAllControls(type))
+            {
+                c.BackColor = Color.FromKnownColor(KnownColor.ControlDarkDark);
+            }
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public const string LAST_FILENAME = "last.txt";
         public const string PROJECT_FILENAME = "Project.acg";

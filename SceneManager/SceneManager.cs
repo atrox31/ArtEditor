@@ -24,7 +24,7 @@ namespace ArtCore_Editor
         public SceneManager(string assetId = null)
         {
             aid = assetId;
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             ContentHandle = Content.Handle;
             Content.AllowDrop = true;
             Grid = new Point(32, 32);
@@ -79,7 +79,7 @@ namespace ArtCore_Editor
                 }
                 else
                 {
-                    Instance_imagelist.Images.Add(item.Value.Sprite.EditorImage);
+                    Instance_imagelist.Images.Add( Image.FromFile( GameProject.GetInstance().ProjectPath + item.Value.Sprite.ProjectPath + "\\img\\0.png").GetThumbnailImage(64,64,null,IntPtr.Zero));
                     instanceListView.Items.Add(item.Key, Instance_imagelist.Images.Count - 1);
                 }
             }

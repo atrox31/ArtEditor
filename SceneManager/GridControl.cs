@@ -10,7 +10,7 @@ namespace ArtCore_Editor
         public int GHeight;
         public GridControl(int width, int height)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             GWidth = width;
             GHeight = height;
             numericUpDown1.Value = width;

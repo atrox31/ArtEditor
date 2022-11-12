@@ -14,7 +14,7 @@ namespace ArtCore_Editor
 
         public Coder(ObjectManager _parrent)
         {
-            InitializeComponent();
+            InitializeComponent();Program.ApplyTheme(this);
             Category = new Dictionary<string, List<string>>();
         }
 

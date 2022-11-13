@@ -229,7 +229,6 @@ namespace ArtCore_Editor
             GameProject.GetInstance().Scenes[aid] = (GameProject.Scene)cScene.Clone();
             GC.Collect();
 
-            DialogResult = DialogResult.OK;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)

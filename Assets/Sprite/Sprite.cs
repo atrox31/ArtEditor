@@ -236,9 +236,6 @@ namespace ArtCore_Editor
             if (!File.Exists(file)) return false;
 
 
-            FileName = "\\assets\\" + file.Split("assets")[1];
-            ProjectPath = "\\assets\\sprite\\" + name;
-
             int phase = 0;
             int nlin = -1;
             int imgc = -1;
@@ -343,6 +340,10 @@ namespace ArtCore_Editor
                         return false;
                 }
             }
+
+            FileName = "\\assets\\" + file.Split("assets")[1];
+            ProjectPath = "\\assets\\sprite\\" + name;
+
             SetImgId(true);
             return true;
         }

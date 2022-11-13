@@ -56,6 +56,7 @@ namespace ArtCore_Editor
             p_currentFrame = p_firstFrame;
             p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
 
+            global_sprite.name = s_spritename.Text;
             global_sprite.Save();
 
             if (!MainWindow.GetInstance().Game_Project.Sprites.ContainsKey(global_sprite.name))
@@ -71,7 +72,6 @@ namespace ArtCore_Editor
                 }
             }
 
-            global_sprite.name = s_spritename.Text;
             global_sprite.Name = s_spritename.Text;
             MainWindow.GetInstance().Game_Project.Sprites[global_sprite.name] = global_sprite;
 
@@ -208,10 +208,6 @@ namespace ArtCore_Editor
             saved = true;
         }
 
-        private void SpriteAddForm_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void SpriteAddForm_FormClosing(object sender, FormClosingEventArgs e)
         {

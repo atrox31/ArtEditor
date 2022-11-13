@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArtCore_Editor.Assets;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -6,12 +7,41 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Media;
+using Color = System.Drawing.Color;
+using System.Reflection;
 
 namespace ArtCore_Editor
 {
     public static class Functions
     {
-        
+        public static string ColorToHex(Color color)
+        {
+            return "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+        }
+
+        public static Color HexToColor(string hex)
+        {
+            return (Color)System.Drawing.ColorTranslator.FromHtml(hex);
+        }
+
+        public static void ButtonAlter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+            dynamic btn = (Button)sender;
+            dynamic drawBrush = new SolidBrush( btn.Enabled ? btn.ForeColor : Color.FromArgb(57, 91, 100));
+            
+            dynamic sf = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+            e.Graphics.DrawString(btn.Text, btn.Font, drawBrush, e.ClipRectangle, sf);
+            //btn.Text = string.Empty;
+            drawBrush.Dispose();
+            sf.Dispose();
+
+        }
+
         public static T ForceType<T>(this object o)
         {
             T res;

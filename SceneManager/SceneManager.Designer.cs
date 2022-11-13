@@ -54,6 +54,22 @@
             this.instanceListView = new System.Windows.Forms.ListView();
             this.Instance_imagelist = new System.Windows.Forms.ImageList(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.gb_bc_tex = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.rb_td_w_h = new System.Windows.Forms.RadioButton();
+            this.rb_td_w = new System.Windows.Forms.RadioButton();
+            this.rb_td_h = new System.Windows.Forms.RadioButton();
+            this.rb_td_normal = new System.Windows.Forms.RadioButton();
+            this.button3 = new System.Windows.Forms.Button();
+            this.bc_selected_preview = new System.Windows.Forms.PictureBox();
+            this.r_bc_texture = new System.Windows.Forms.RadioButton();
+            this.r_bc_solidcolor = new System.Windows.Forms.RadioButton();
+            this.gb_bc_color_pic = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.bc_color_pick_value = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.bc_color_box = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -72,6 +88,12 @@
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.gb_bc_tex.SuspendLayout();
+            this.groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bc_selected_preview)).BeginInit();
+            this.gb_bc_color_pic.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bc_color_box)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Content)).BeginInit();
             this.SuspendLayout();
@@ -211,6 +233,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(255, 23);
             this.textBox2.TabIndex = 0;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // groupBox1
             // 
@@ -278,7 +301,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Size = new System.Drawing.Size(286, 339);
+            this.groupBox2.Size = new System.Drawing.Size(286, 365);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Object picker";
@@ -295,7 +318,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(278, 317);
+            this.tabControl1.Size = new System.Drawing.Size(278, 343);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -305,7 +328,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Size = new System.Drawing.Size(270, 289);
+            this.tabPage1.Size = new System.Drawing.Size(270, 315);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Instance";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -318,7 +341,7 @@
             this.instanceListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.instanceListView.MultiSelect = false;
             this.instanceListView.Name = "instanceListView";
-            this.instanceListView.Size = new System.Drawing.Size(262, 283);
+            this.instanceListView.Size = new System.Drawing.Size(262, 309);
             this.instanceListView.TabIndex = 0;
             this.instanceListView.UseCompatibleStateImageBehavior = false;
             this.instanceListView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.instanceListView_ItemDrag);
@@ -332,21 +355,200 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.gb_bc_tex);
+            this.tabPage2.Controls.Add(this.r_bc_texture);
+            this.tabPage2.Controls.Add(this.r_bc_solidcolor);
+            this.tabPage2.Controls.Add(this.gb_bc_color_pic);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(270, 289);
+            this.tabPage2.Size = new System.Drawing.Size(270, 315);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Background";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // gb_bc_tex
+            // 
+            this.gb_bc_tex.Controls.Add(this.button4);
+            this.gb_bc_tex.Controls.Add(this.groupBox7);
+            this.gb_bc_tex.Controls.Add(this.button3);
+            this.gb_bc_tex.Controls.Add(this.bc_selected_preview);
+            this.gb_bc_tex.Location = new System.Drawing.Point(7, 121);
+            this.gb_bc_tex.Name = "gb_bc_tex";
+            this.gb_bc_tex.Size = new System.Drawing.Size(256, 188);
+            this.gb_bc_tex.TabIndex = 3;
+            this.gb_bc_tex.TabStop = false;
+            this.gb_bc_tex.Text = "Pick texture";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(136, 22);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(111, 23);
+            this.button4.TabIndex = 5;
+            this.button4.Text = "Pick";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.rb_td_w_h);
+            this.groupBox7.Controls.Add(this.rb_td_w);
+            this.groupBox7.Controls.Add(this.rb_td_h);
+            this.groupBox7.Controls.Add(this.rb_td_normal);
+            this.groupBox7.Location = new System.Drawing.Point(136, 51);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(111, 124);
+            this.groupBox7.TabIndex = 4;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Texture drawing";
+            // 
+            // rb_td_w_h
+            // 
+            this.rb_td_w_h.AutoSize = true;
+            this.rb_td_w_h.Location = new System.Drawing.Point(6, 97);
+            this.rb_td_w_h.Name = "rb_td_w_h";
+            this.rb_td_w_h.Size = new System.Drawing.Size(81, 19);
+            this.rb_td_w_h.TabIndex = 3;
+            this.rb_td_w_h.TabStop = true;
+            this.rb_td_w_h.Text = "Flip W + H";
+            this.rb_td_w_h.UseVisualStyleBackColor = true;
+            // 
+            // rb_td_w
+            // 
+            this.rb_td_w.AutoSize = true;
+            this.rb_td_w.Location = new System.Drawing.Point(6, 47);
+            this.rb_td_w.Name = "rb_td_w";
+            this.rb_td_w.Size = new System.Drawing.Size(58, 19);
+            this.rb_td_w.TabIndex = 2;
+            this.rb_td_w.TabStop = true;
+            this.rb_td_w.Text = "Flip W";
+            this.rb_td_w.UseVisualStyleBackColor = true;
+            // 
+            // rb_td_h
+            // 
+            this.rb_td_h.AutoSize = true;
+            this.rb_td_h.Location = new System.Drawing.Point(6, 72);
+            this.rb_td_h.Name = "rb_td_h";
+            this.rb_td_h.Size = new System.Drawing.Size(56, 19);
+            this.rb_td_h.TabIndex = 1;
+            this.rb_td_h.TabStop = true;
+            this.rb_td_h.Text = "Flip H";
+            this.rb_td_h.UseVisualStyleBackColor = true;
+            // 
+            // rb_td_normal
+            // 
+            this.rb_td_normal.AutoSize = true;
+            this.rb_td_normal.Location = new System.Drawing.Point(6, 22);
+            this.rb_td_normal.Name = "rb_td_normal";
+            this.rb_td_normal.Size = new System.Drawing.Size(65, 19);
+            this.rb_td_normal.TabIndex = 0;
+            this.rb_td_normal.TabStop = true;
+            this.rb_td_normal.Text = "Normal";
+            this.rb_td_normal.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(6, 152);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(124, 23);
+            this.button3.TabIndex = 2;
+            this.button3.Text = "Apply";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // bc_selected_preview
+            // 
+            this.bc_selected_preview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.bc_selected_preview.Location = new System.Drawing.Point(6, 22);
+            this.bc_selected_preview.Name = "bc_selected_preview";
+            this.bc_selected_preview.Size = new System.Drawing.Size(124, 124);
+            this.bc_selected_preview.TabIndex = 0;
+            this.bc_selected_preview.TabStop = false;
+            // 
+            // r_bc_texture
+            // 
+            this.r_bc_texture.AutoSize = true;
+            this.r_bc_texture.Location = new System.Drawing.Point(13, 96);
+            this.r_bc_texture.Name = "r_bc_texture";
+            this.r_bc_texture.Size = new System.Drawing.Size(63, 19);
+            this.r_bc_texture.TabIndex = 2;
+            this.r_bc_texture.TabStop = true;
+            this.r_bc_texture.Text = "Texture";
+            this.r_bc_texture.UseVisualStyleBackColor = true;
+            this.r_bc_texture.CheckedChanged += new System.EventHandler(this.r_bc_texture_CheckedChanged);
+            // 
+            // r_bc_solidcolor
+            // 
+            this.r_bc_solidcolor.AutoSize = true;
+            this.r_bc_solidcolor.Checked = true;
+            this.r_bc_solidcolor.Location = new System.Drawing.Point(13, 6);
+            this.r_bc_solidcolor.Name = "r_bc_solidcolor";
+            this.r_bc_solidcolor.Size = new System.Drawing.Size(81, 19);
+            this.r_bc_solidcolor.TabIndex = 1;
+            this.r_bc_solidcolor.TabStop = true;
+            this.r_bc_solidcolor.Text = "Solid color";
+            this.r_bc_solidcolor.UseVisualStyleBackColor = true;
+            this.r_bc_solidcolor.CheckedChanged += new System.EventHandler(this.r_bc_solidcolor_CheckedChanged);
+            // 
+            // gb_bc_color_pic
+            // 
+            this.gb_bc_color_pic.Controls.Add(this.button2);
+            this.gb_bc_color_pic.Controls.Add(this.bc_color_pick_value);
+            this.gb_bc_color_pic.Controls.Add(this.button1);
+            this.gb_bc_color_pic.Controls.Add(this.bc_color_box);
+            this.gb_bc_color_pic.Location = new System.Drawing.Point(7, 24);
+            this.gb_bc_color_pic.Name = "gb_bc_color_pic";
+            this.gb_bc_color_pic.Size = new System.Drawing.Size(256, 66);
+            this.gb_bc_color_pic.TabIndex = 0;
+            this.gb_bc_color_pic.TabStop = false;
+            this.gb_bc_color_pic.Text = "Color";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(181, 31);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "Apply";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // bc_color_pick_value
+            // 
+            this.bc_color_pick_value.Location = new System.Drawing.Point(94, 31);
+            this.bc_color_pick_value.MaxLength = 7;
+            this.bc_color_pick_value.Name = "bc_color_pick_value";
+            this.bc_color_pick_value.Size = new System.Drawing.Size(76, 23);
+            this.bc_color_pick_value.TabIndex = 2;
+            this.bc_color_pick_value.TextChanged += new System.EventHandler(this.bc_color_pick_value_TextChanged);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(50, 22);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(38, 38);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Pick";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // bc_color_box
+            // 
+            this.bc_color_box.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.bc_color_box.Location = new System.Drawing.Point(6, 22);
+            this.bc_color_box.Name = "bc_color_box";
+            this.bc_color_box.Size = new System.Drawing.Size(38, 38);
+            this.bc_color_box.TabIndex = 0;
+            this.bc_color_box.TabStop = false;
             // 
             // tabPage3
             // 
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(270, 289);
+            this.tabPage3.Size = new System.Drawing.Size(270, 315);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Particle";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -356,7 +558,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 24);
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(270, 289);
+            this.tabPage4.Size = new System.Drawing.Size(270, 315);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Region";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -366,14 +568,14 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 24);
             this.tabPage5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(270, 289);
+            this.tabPage5.Size = new System.Drawing.Size(270, 315);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Path";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
-            this.groupBox6.Location = new System.Drawing.Point(3, 489);
+            this.groupBox6.Location = new System.Drawing.Point(3, 515);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(288, 344);
             this.groupBox6.TabIndex = 3;
@@ -414,6 +616,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SceneManager";
             this.Text = "SceneManager";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SceneManager_FormClosing);
             this.Load += new System.EventHandler(this.SceneManager_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -429,6 +632,15 @@
             this.groupBox2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.gb_bc_tex.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bc_selected_preview)).EndInit();
+            this.gb_bc_color_pic.ResumeLayout(false);
+            this.gb_bc_color_pic.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bc_color_box)).EndInit();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Content)).EndInit();
             this.ResumeLayout(false);
@@ -468,5 +680,21 @@
         private System.Windows.Forms.ToolStripMenuItem gUIEditorToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RadioButton r_bc_solidcolor;
+        private System.Windows.Forms.GroupBox gb_bc_color_pic;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox bc_color_pick_value;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PictureBox bc_color_box;
+        private System.Windows.Forms.RadioButton r_bc_texture;
+        private System.Windows.Forms.GroupBox gb_bc_tex;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.PictureBox bc_selected_preview;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.RadioButton rb_td_w_h;
+        private System.Windows.Forms.RadioButton rb_td_w;
+        private System.Windows.Forms.RadioButton rb_td_h;
+        private System.Windows.Forms.RadioButton rb_td_normal;
     }
 }

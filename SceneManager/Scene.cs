@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace ArtCore_Editor
 {
@@ -67,6 +68,20 @@ namespace ArtCore_Editor
             [JsonProperty]
             public int Height;
             [JsonProperty]
+            public Color BackGroundColor;
+            [JsonProperty]
+            public string BackGroundTexture;
+            [JsonProperty]
+            public string BackGroundTexture_name;
+            public enum BackGroundTypeEnum
+            {
+                DrawColor,DrawTexture
+            };
+            [JsonProperty]
+            public BackGroundTypeEnum BackGroundType;
+            [JsonProperty]
+            public WrapMode BackGroundWrapMode;
+            [JsonProperty]
             public List<Region> regions { get; set; } = new List<Region>();
             public Scene()
             {
@@ -74,6 +89,11 @@ namespace ArtCore_Editor
                 SceneInstances = new List<SceneInstance>();
                 SceneTriggers = new List<string>();
                 Name = "new_scene";
+                BackGroundColor = Functions.HexToColor("#E7F6F2");
+                BackGroundTexture = null;
+                BackGroundTexture_name = null;
+                BackGroundType = BackGroundTypeEnum.DrawColor;
+                BackGroundWrapMode = WrapMode.Tile;
             }
             [JsonProperty]
             public List<string> SceneTriggers { get; set; }

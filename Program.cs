@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -9,7 +10,7 @@ namespace ArtCore_Editor
     {
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
+        public static extern bool AllocConsole();
         /// <summary>
         /// Główny punkt wejścia dla aplikacji.
         /// </summary>
@@ -26,8 +27,15 @@ namespace ArtCore_Editor
         {
             foreach (var c in Functions.GetAllControls(type))
             {
-                c.BackColor = Color.FromKnownColor(KnownColor.ControlDarkDark);
+                c.BackColor = Color.FromArgb(57, 91, 100);
+                c.ForeColor = Color.FromArgb(165, 201, 202);
+                if (c.GetType() == typeof(Button))
+                {
+                    c.Paint += Functions.ButtonAlter_Paint;
+                    
+                }
             }
+            
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -65,7 +65,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(74, 27);
             this.button1.TabIndex = 2;
-            this.button1.Text = "Open Project";
+            this.button1.Text = "Open";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -96,7 +96,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(628, 316);
+            this.ClientSize = new System.Drawing.Size(624, 312);
             this.ControlBox = false;
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);

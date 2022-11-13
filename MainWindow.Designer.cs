@@ -74,6 +74,7 @@
             this.ProjectAsserList = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
+            this.showConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -121,7 +122,8 @@
             this.loadProjectToolStripMenuItem,
             this.moveProjectToolStripMenuItem,
             this.toolStripSeparator5,
-            this.updateCoreToolStripMenuItem});
+            this.updateCoreToolStripMenuItem,
+            this.showConsoleToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -131,39 +133,39 @@
             // newProjectToolStripMenuItem
             // 
             this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newProjectToolStripMenuItem.Text = "New Project";
             this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
             // saveProjectToolStripMenuItem
             // 
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProjectToolStripMenuItem.Text = "Save Project";
             this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // loadProjectToolStripMenuItem
             // 
             this.loadProjectToolStripMenuItem.Name = "loadProjectToolStripMenuItem";
-            this.loadProjectToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.loadProjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadProjectToolStripMenuItem.Text = "Load Project";
             this.loadProjectToolStripMenuItem.Click += new System.EventHandler(this.loadProjectToolStripMenuItem_Click);
             // 
             // moveProjectToolStripMenuItem
             // 
             this.moveProjectToolStripMenuItem.Name = "moveProjectToolStripMenuItem";
-            this.moveProjectToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.moveProjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.moveProjectToolStripMenuItem.Text = "Move Project";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // updateCoreToolStripMenuItem
             // 
             this.updateCoreToolStripMenuItem.Name = "updateCoreToolStripMenuItem";
-            this.updateCoreToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.updateCoreToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.updateCoreToolStripMenuItem.Text = "Update Core";
             this.updateCoreToolStripMenuItem.Click += new System.EventHandler(this.updateCoreToolStripMenuItem_Click);
             // 
@@ -457,6 +459,13 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // showConsoleToolStripMenuItem
+            // 
+            this.showConsoleToolStripMenuItem.Name = "showConsoleToolStripMenuItem";
+            this.showConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showConsoleToolStripMenuItem.Text = "Show Console";
+            this.showConsoleToolStripMenuItem.Click += new System.EventHandler(this.showConsoleToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -524,6 +533,7 @@
         private System.Windows.Forms.ToolStripMenuItem gUIEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ImageList ProjectAssetList_imagelist;
+        private System.Windows.Forms.ToolStripMenuItem showConsoleToolStripMenuItem;
     }
 }
 

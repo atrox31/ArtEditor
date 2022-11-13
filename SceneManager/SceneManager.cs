@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
 using ListViewItem = System.Windows.Forms.ListViewItem;
@@ -21,13 +24,34 @@ namespace ArtCore_Editor
         GameProject.Scene.SceneInstance selected_sceneInstance = null;
         //GameProject.Instance shadow_sceneInstance = null;
         Point Grid;
+        bool saved = false;
+        ImageList BcPreviewList = new ImageList();
+        Image BcTexture = null;
+
+        public void MakeChange()
+        {
+            //if (saved == false) return;
+            saved = false;
+            this.Text = "SceneManager - \"" + cScene.Name + "\" *";
+        }
+        public void MakeSaved()
+        {
+            saved = true;
+            this.Text = "SceneManager - \"" + cScene.Name + "\"";
+        }
+
         public SceneManager(string assetId = null)
         {
             aid = assetId;
             InitializeComponent();Program.ApplyTheme(this);
+            BcPreviewList.ImageSize = new Size(128, 128);
             ContentHandle = Content.Handle;
             Content.AllowDrop = true;
             Grid = new Point(32, 32);
+            foreach (var item in GameProject.GetInstance().Textures)
+            {
+                BcPreviewList.Images.Add(Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName).GetThumbnailImage(128, 128, null, IntPtr.Zero));
+            }
             if (assetId != null)
             {
                 string openingFileName = GameProject.GetInstance().ProjectPath + "\\" + GameProject.GetInstance().Scenes[assetId].FileName;
@@ -43,13 +67,38 @@ namespace ArtCore_Editor
                     fileContents = reader.ReadToEnd();
                 }
                 cScene = JsonConvert.DeserializeObject<Scene>(fileContents);
-
+                
                 Name = cScene.Name;
                 textBox2.Text = cScene.Name;
                 Content.Height = cScene.Height;
                 Content.Width = cScene.Width;
                 numericUpDown1.Value = Content.Width;
                 numericUpDown2.Value = Content.Height;
+
+                // background 
+
+                if (cScene.BackGroundType == Scene.BackGroundTypeEnum.DrawColor)
+                {
+                    r_bc_solidcolor.Select();
+                    bc_color_pick_value.Text = Functions.ColorToHex(cScene.BackGroundColor);
+                    bc_color_box.BackColor = cScene.BackGroundColor;
+                }
+                else
+                {
+
+                    BcTexture = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + cScene.BackGroundTexture);
+                    r_bc_texture.Select();
+                    if (cScene.BackGroundWrapMode == WrapMode.Tile) rb_td_normal.Checked = true;
+                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipX) rb_td_w.Checked = true;
+                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipY) rb_td_h.Checked = true;
+                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipXY) rb_td_w_h.Checked = true;
+
+                    bc_selected_preview.BackgroundImage = BcTexture.GetThumbnailImage(128,128,null,IntPtr.Zero);
+                    
+                }
+
+                MakeSaved();
+
                 for (int i = 0; i < cScene.SceneTriggers.Count; i++)
                 {
                     // convert path to script -> script
@@ -112,10 +161,32 @@ namespace ArtCore_Editor
 
             Bitmap bmp = new Bitmap(Content.Width, Content.Height);
 
-
-            using (Graphics gr = Graphics.FromImage(bmp))
+            // czyszczenie content
+            if (cScene.BackGroundType == Scene.BackGroundTypeEnum.DrawColor)
             {
-                gr.Clear(Color.FromKnownColor(KnownColor.ScrollBar));
+                using (Graphics gr = Graphics.FromImage(bmp))
+                {
+                    gr.Clear(cScene.BackGroundColor);
+                }
+            }
+            else
+            {
+                if (BcTexture != null) {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        TextureBrush tBrush = new TextureBrush(BcTexture);
+                        /*
+                         *  Tile = 0,
+                            TileFlipX = 1,
+                            TileFlipY = 2,
+                            TileFlipXY = 3,
+                        */
+
+                        tBrush.WrapMode = cScene.BackGroundWrapMode;
+                        
+                        g.FillRectangle(tBrush, new Rectangle(0, 0, Content.Width, Content.Height));
+                    }
+                }
             }
             using (Graphics g = Graphics.FromImage(bmp))
             {
@@ -171,6 +242,7 @@ namespace ArtCore_Editor
             }
 
             cScene.SceneInstances.Add(new GameProject.Scene.SceneInstance(point.X, point.Y, t_ins));
+            saved = false;
             RedrawScene();
         }
 
@@ -226,8 +298,17 @@ namespace ArtCore_Editor
                 System.IO.File.WriteAllText(TriggerPath() + "\\trigger_" + i.ToString() + ".art", cScene.SceneTriggers[i].ToString());
                 cScene.SceneTriggers[i] = "trigger_" + i.ToString() + ".art"; ;
             }
+
+            if(aid != cScene.Name)
+            {
+                Functions.RenameKey(GameProject.GetInstance().Scenes, aid, cScene.Name);
+                aid = cScene.Name;
+            }
+
             GameProject.GetInstance().Scenes[aid] = (GameProject.Scene)cScene.Clone();
+
             GC.Collect();
+            MakeSaved();
 
         }
 
@@ -236,13 +317,44 @@ namespace ArtCore_Editor
             // save
             Save();
         }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                bc_color_pick_value.Text = Functions.ColorToHex(colorDialog.Color);
+                bc_color_box.BackColor = colorDialog.Color;
+            }
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            r_bc_solidcolor.Select();
+            if (!bc_color_pick_value.Text.StartsWith('#'))
+            {
+                bc_color_pick_value.Text.Insert(0, "#");
+            }
+
+            if (!Functions.ErrorCheck(bc_color_pick_value.Text.Length > 0, "Hex color value is empty"))
+            {
+                if (!Functions.ErrorCheck(Regex.IsMatch(bc_color_pick_value.Text, @"[#][0-9A-Fa-f]{6}\b"), "Hex color value is inwalid"))
+                {
+                    cScene.BackGroundColor = Functions.HexToColor(bc_color_pick_value.Text);
+                    cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawColor;
+                    RedrawScene();
+                    MakeChange();
+
+                }
+            }
+
+        }
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             // width change
             cScene.Width = (int)numericUpDown1.Value;
             Content.Width = cScene.Width;
             RedrawScene();
+            MakeChange();
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
@@ -251,6 +363,7 @@ namespace ArtCore_Editor
             cScene.Height = (int)numericUpDown2.Value;
             Content.Height = cScene.Height;
             RedrawScene();
+            MakeChange();
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -287,7 +400,90 @@ namespace ArtCore_Editor
             if(File.Exists(guiFile))
             {
                 cScene.GuiFile = guiFile;
+                MakeChange();
             }
+        }
+
+        private void SceneManager_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (saved)
+            {
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                DialogResult = DialogResult.No;
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            MakeChange();
+        }
+
+        private void bc_color_pick_value_TextChanged(object sender, EventArgs e)
+        {
+            if(bc_color_pick_value.Text.Length == 6)
+            {
+                if (!bc_color_pick_value.Text.StartsWith('#'))
+                {
+                    bc_color_pick_value.Text.Insert(0, "#");
+                }
+            }
+            if(bc_color_pick_value.Text.Length == 7)
+            {
+                Color tmp = Functions.HexToColor(bc_color_pick_value.Text);
+                if(!tmp.IsEmpty)
+                {
+                    bc_color_box.BackColor = tmp;
+                    MakeChange();
+                }
+            }
+        }
+
+        private void r_bc_texture_CheckedChanged(object sender, EventArgs e)
+        {
+            gb_bc_color_pic.Enabled = false;
+            gb_bc_tex.Enabled = true;
+        }
+
+        private void r_bc_solidcolor_CheckedChanged(object sender, EventArgs e)
+        {
+            gb_bc_tex.Enabled = false;
+            gb_bc_color_pic.Enabled = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (cScene.BackGroundTexture_name == null) return;
+            r_bc_texture.Select();
+            
+            BcTexture?.Dispose();
+            GC.Collect();
+
+            cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawTexture;
+
+            cScene.BackGroundTexture = GameProject.GetInstance().Textures[cScene.BackGroundTexture_name].ProjectPath + GameProject.GetInstance().Textures[cScene.BackGroundTexture_name].FileName;
+            BcTexture = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + cScene.BackGroundTexture);
+
+            if (rb_td_normal.Checked) cScene.BackGroundWrapMode = WrapMode.Tile;
+            if (rb_td_w.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipX;
+            if (rb_td_h.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipY;
+            if (rb_td_w_h.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipXY;
+
+            MakeChange();
+            RedrawScene();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            PicFromList picFromList = new PicFromList(GameProject.GetInstance().Textures.Keys.ToList());
+            if (picFromList.ShowDialog() == DialogResult.OK)
+            {
+                bc_selected_preview.BackgroundImage = BcPreviewList.Images[picFromList.SelectedIndex];
+                cScene.BackGroundTexture_name = picFromList.Selected;
+            }
+               
         }
     }
 }

@@ -16,14 +16,22 @@ namespace ArtCore_Editor
                 "Height: " + pictureBox1.Image.Height.ToString() + "px\n" +
                 "In project location:\n" + "assets/textures/" + textBox1.Text;
         }
+
+        string ProjectPath;
+        string FileName;
+
         public TextureManager(string AssetId = null)
         {
             InitializeComponent();Program.ApplyTheme(this);
             aid = AssetId;
             if (AssetId != null)
             {
+
+                ProjectPath = MainWindow.GetInstance().Game_Project.Textures[AssetId].ProjectPath;
+                FileName = MainWindow.GetInstance().Game_Project.Textures[AssetId].FileName;
+
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Textures[AssetId].Name;
-                textBox2.Text = MainWindow.GetInstance().Game_Project.Textures[AssetId].FileName;
+                textBox2.Text = ProjectPath + FileName;
 
                 if (!File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
                 {
@@ -49,8 +57,13 @@ namespace ArtCore_Editor
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
                 }
+                pictureBox1.Image?.Dispose();
                 File.Copy(ofile, GameProject.GetInstance().ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png", true);
-                textBox2.Text = "assets\\texture\\" + textBox1.Text + ".png";
+
+                ProjectPath = "assets\\texture\\";
+                FileName = textBox1.Text + ".png";
+
+                textBox2.Text = ProjectPath + FileName;
                 pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
                 SetInfoBox();
             }
@@ -70,7 +83,8 @@ namespace ArtCore_Editor
                     MainWindow.GetInstance().Game_Project.Textures.Add(textBox1.Text, new Asset());
                 }
                 MainWindow.GetInstance().Game_Project.Textures[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Textures[aid].FileName = textBox2.Text;
+                MainWindow.GetInstance().Game_Project.Textures[aid].FileName = FileName;
+                MainWindow.GetInstance().Game_Project.Textures[aid].ProjectPath = ProjectPath;
                 MainWindow.GetInstance().Game_Project.Textures[aid].EditorImage = Functions.ResizeImage(pictureBox1.Image, 32, 32);
 
                 if (aid != MainWindow.GetInstance().Game_Project.Textures[aid].Name)

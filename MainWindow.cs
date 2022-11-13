@@ -696,11 +696,6 @@ namespace ArtCore_Editor
             }
         }
 
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            GuiEditor ged = new GuiEditor();
-            ged.ShowDialog();
-        }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {

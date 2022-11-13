@@ -110,7 +110,7 @@ namespace ArtCore_Editor
             if (Content.Image != null) Content.Image.Dispose();
             GC.Collect();
 
-            Bitmap bmp = new Bitmap(Width, Height);
+            Bitmap bmp = new Bitmap(Content.Width, Content.Height);
 
 
             using (Graphics gr = Graphics.FromImage(bmp))
@@ -275,15 +275,20 @@ namespace ArtCore_Editor
 
         private void gUIEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string guiFile = GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt";
             Process process = new Process();
             process.StartInfo.FileName = "..\\Core\\gui-bulider\\gui-builder.exe";
-            bool fex = File.Exists(GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt");
-            process.StartInfo.Arguments = (fex ? "" : "-new ") + GameProject.GetInstance().ProjectPath + cScene.ProjectPath + "\\gui.txt";
+            bool fex = File.Exists(guiFile);
+            process.StartInfo.Arguments = (fex ? "" : "-new ") + guiFile;
             process.StartInfo.UseShellExecute = false;
 
 
             process.Start();
             process.WaitForExit();
+            if(File.Exists(guiFile))
+            {
+                cScene.GuiFile = guiFile;
+            }
         }
     }
 }

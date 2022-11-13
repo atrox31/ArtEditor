@@ -37,6 +37,8 @@
             this.dimensionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.gUIEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -55,10 +57,9 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Content = new System.Windows.Forms.PictureBox();
-            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.gUIEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -83,7 +84,7 @@
             this.toolStripDropDownButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(2000, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1585, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -115,13 +116,13 @@
             this.showToolStripMenuItem,
             this.snapToGridToolStripMenuItem});
             this.gridToolStripMenuItem.Name = "gridToolStripMenuItem";
-            this.gridToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gridToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.gridToolStripMenuItem.Text = "Grid";
             // 
             // dimensionsToolStripMenuItem
             // 
             this.dimensionsToolStripMenuItem.Name = "dimensionsToolStripMenuItem";
-            this.dimensionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dimensionsToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.dimensionsToolStripMenuItem.Text = "Dimensions";
             this.dimensionsToolStripMenuItem.Click += new System.EventHandler(this.dimensionsToolStripMenuItem_Click);
             // 
@@ -130,7 +131,7 @@
             this.showToolStripMenuItem.Checked = true;
             this.showToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
@@ -139,15 +140,33 @@
             this.snapToGridToolStripMenuItem.Checked = true;
             this.snapToGridToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.snapToGridToolStripMenuItem.Name = "snapToGridToolStripMenuItem";
-            this.snapToGridToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.snapToGridToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.snapToGridToolStripMenuItem.Text = "Snap to Grid";
             this.snapToGridToolStripMenuItem.Click += new System.EventHandler(this.snapToGridToolStripMenuItem_Click);
+            // 
+            // toolStripDropDownButton2
+            // 
+            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gUIEditorToolStripMenuItem});
+            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
+            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(66, 22);
+            this.toolStripDropDownButton2.Text = "Interface";
+            // 
+            // gUIEditorToolStripMenuItem
+            // 
+            this.gUIEditorToolStripMenuItem.Name = "gUIEditorToolStripMenuItem";
+            this.gUIEditorToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.gUIEditorToolStripMenuItem.Text = "GUI Editor";
+            this.gUIEditorToolStripMenuItem.Click += new System.EventHandler(this.gUIEditorToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.72812F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 81.27188F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -157,7 +176,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 955F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(2000, 959);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1585, 836);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -165,11 +184,12 @@
             this.flowLayoutPanel1.Controls.Add(this.groupBox3);
             this.flowLayoutPanel1.Controls.Add(this.groupBox1);
             this.flowLayoutPanel1.Controls.Add(this.groupBox2);
+            this.flowLayoutPanel1.Controls.Add(this.groupBox6);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 3);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(366, 953);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(292, 949);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // groupBox3
@@ -179,7 +199,7 @@
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Size = new System.Drawing.Size(361, 55);
+            this.groupBox3.Size = new System.Drawing.Size(286, 55);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scene name";
@@ -189,7 +209,7 @@
             this.textBox2.Location = new System.Drawing.Point(7, 22);
             this.textBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(350, 23);
+            this.textBox2.Size = new System.Drawing.Size(255, 23);
             this.textBox2.TabIndex = 0;
             // 
             // groupBox1
@@ -200,7 +220,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(361, 74);
+            this.groupBox1.Size = new System.Drawing.Size(286, 74);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Dimensions";
@@ -258,7 +278,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox2.Size = new System.Drawing.Size(365, 447);
+            this.groupBox2.Size = new System.Drawing.Size(286, 339);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Object picker";
@@ -275,7 +295,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(357, 425);
+            this.tabControl1.Size = new System.Drawing.Size(278, 317);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -285,7 +305,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Size = new System.Drawing.Size(349, 397);
+            this.tabPage1.Size = new System.Drawing.Size(270, 289);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Instance";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -298,7 +318,7 @@
             this.instanceListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.instanceListView.MultiSelect = false;
             this.instanceListView.Name = "instanceListView";
-            this.instanceListView.Size = new System.Drawing.Size(341, 391);
+            this.instanceListView.Size = new System.Drawing.Size(262, 283);
             this.instanceListView.TabIndex = 0;
             this.instanceListView.UseCompatibleStateImageBehavior = false;
             this.instanceListView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.instanceListView_ItemDrag);
@@ -316,7 +336,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(349, 397);
+            this.tabPage2.Size = new System.Drawing.Size(270, 289);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Background";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -326,7 +346,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(349, 397);
+            this.tabPage3.Size = new System.Drawing.Size(270, 289);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Particle";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -336,7 +356,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 24);
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(349, 397);
+            this.tabPage4.Size = new System.Drawing.Size(270, 289);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Region";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -346,18 +366,29 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 24);
             this.tabPage5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(349, 397);
+            this.tabPage5.Size = new System.Drawing.Size(270, 289);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Path";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Location = new System.Drawing.Point(3, 489);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(288, 344);
+            this.groupBox6.TabIndex = 3;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Properties";
+            // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
+            this.panel1.AutoScrollMargin = new System.Drawing.Size(1, 1);
+            this.panel1.AutoScrollMinSize = new System.Drawing.Size(1280, 720);
             this.panel1.Controls.Add(this.Content);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(377, 3);
+            this.panel1.Location = new System.Drawing.Point(303, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1620, 953);
+            this.panel1.Size = new System.Drawing.Size(1280, 720);
             this.panel1.TabIndex = 2;
             // 
             // Content
@@ -366,36 +397,18 @@
             this.Content.Location = new System.Drawing.Point(0, 0);
             this.Content.Margin = new System.Windows.Forms.Padding(0);
             this.Content.Name = "Content";
-            this.Content.Size = new System.Drawing.Size(143, 123);
+            this.Content.Size = new System.Drawing.Size(1280, 720);
             this.Content.TabIndex = 0;
             this.Content.TabStop = false;
             this.Content.DragDrop += new System.Windows.Forms.DragEventHandler(this.Content_DragDrop);
             this.Content.DragEnter += new System.Windows.Forms.DragEventHandler(this.Content_DragEnter);
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
             // 
-            // toolStripDropDownButton2
-            // 
-            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.gUIEditorToolStripMenuItem});
-            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
-            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(66, 22);
-            this.toolStripDropDownButton2.Text = "Interface";
-            // 
-            // gUIEditorToolStripMenuItem
-            // 
-            this.gUIEditorToolStripMenuItem.Name = "gUIEditorToolStripMenuItem";
-            this.gUIEditorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.gUIEditorToolStripMenuItem.Text = "GUI Editor";
-            this.gUIEditorToolStripMenuItem.Click += new System.EventHandler(this.gUIEditorToolStripMenuItem_Click);
-            // 
             // SceneManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2000, 984);
+            this.ClientSize = new System.Drawing.Size(1585, 861);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.toolStrip1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -450,9 +463,10 @@
         private System.Windows.Forms.ToolStripMenuItem gridToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dimensionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem snapToGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem gUIEditorToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -16,9 +16,6 @@ namespace ArtCore_Editor
         [STAThread]
         static void Main()
         {
-#if DEBUG
-            //AllocConsole();
-#endif
             Application.EnableVisualStyles();
             //Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);

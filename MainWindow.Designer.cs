@@ -39,6 +39,7 @@
             this.moveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.updateCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.testInDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +75,7 @@
             this.ProjectAsserList = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.showConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanupFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -123,7 +124,8 @@
             this.moveProjectToolStripMenuItem,
             this.toolStripSeparator5,
             this.updateCoreToolStripMenuItem,
-            this.showConsoleToolStripMenuItem});
+            this.showConsoleToolStripMenuItem,
+            this.cleanupFilesToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -168,6 +170,13 @@
             this.updateCoreToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.updateCoreToolStripMenuItem.Text = "Update Core";
             this.updateCoreToolStripMenuItem.Click += new System.EventHandler(this.updateCoreToolStripMenuItem_Click);
+            // 
+            // showConsoleToolStripMenuItem
+            // 
+            this.showConsoleToolStripMenuItem.Name = "showConsoleToolStripMenuItem";
+            this.showConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showConsoleToolStripMenuItem.Text = "Show Console";
+            this.showConsoleToolStripMenuItem.Click += new System.EventHandler(this.showConsoleToolStripMenuItem_Click);
             // 
             // toolStripDropDownButton2
             // 
@@ -459,12 +468,12 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // showConsoleToolStripMenuItem
+            // cleanupFilesToolStripMenuItem
             // 
-            this.showConsoleToolStripMenuItem.Name = "showConsoleToolStripMenuItem";
-            this.showConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.showConsoleToolStripMenuItem.Text = "Show Console";
-            this.showConsoleToolStripMenuItem.Click += new System.EventHandler(this.showConsoleToolStripMenuItem_Click);
+            this.cleanupFilesToolStripMenuItem.Name = "cleanupFilesToolStripMenuItem";
+            this.cleanupFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cleanupFilesToolStripMenuItem.Text = "Cleanup files";
+            this.cleanupFilesToolStripMenuItem.Click += new System.EventHandler(this.cleanupFilesToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -534,6 +543,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ImageList ProjectAssetList_imagelist;
         private System.Windows.Forms.ToolStripMenuItem showConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cleanupFilesToolStripMenuItem;
     }
 }
 

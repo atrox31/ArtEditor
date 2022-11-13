@@ -711,5 +711,65 @@ namespace ArtCore_Editor
         {
             Program.AllocConsole();
         }
+
+        private void cleanupFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int total = 0;
+            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\texture"))
+            {
+                if (!Game_Project.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                    File.Delete(item);
+                    total++;
+                }
+            }
+            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\font"))
+            {
+                if (!Game_Project.Fonts.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                    File.Delete(item);
+                    total++;
+                }
+            }
+            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\music"))
+            {
+                if (!Game_Project.Music.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                    File.Delete(item);
+                    total++;
+                }
+            }
+            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\sound"))
+            {
+                if (!Game_Project.Sounds.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                    File.Delete(item);
+                    total++;
+                }
+            }
+
+            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\assets\\sprite"))
+            {
+                if (!Game_Project.Sprites.ContainsKey(item.Split('\\').Last())){
+                    Directory.Delete(item, true);
+                    total++;
+                }
+            }
+
+            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\scene"))
+            {
+                if (!Game_Project.Scenes.ContainsKey(item.Split('\\').Last())){
+                    Directory.Delete(item, true);
+                    total++;
+                }
+            }
+            
+            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\object"))
+            {
+                if (!Game_Project.Instances.ContainsKey(item.Split('\\').Last())){
+                    Directory.Delete(item, true);
+                    total++;
+                }
+            }
+
+
+            MessageBox.Show("Cleanup complite, deleted " + total.ToString() + " elements", "Cleanup");
+        }
     }
 }

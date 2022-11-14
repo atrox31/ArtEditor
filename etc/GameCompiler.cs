@@ -47,7 +47,7 @@ namespace ArtCore_Editor
         }
         public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, int progress_min, int progress_max)
         {
-            string output = GameProject.GetInstance().ProjectPath + "\\" + "assets.pak";
+            string output = GameProject.ProjectPath + "\\" + "assets.pak";
 
             int max_count = asset.Count();
             int current_item = 0;
@@ -63,14 +63,14 @@ namespace ArtCore_Editor
 
                 sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
 
-                if (!File.Exists(GameProject.GetInstance().ProjectPath + "\\" + FileName))
+                if (!File.Exists(GameProject.ProjectPath + "\\" + FileName))
                 {
                     sender.ReportProgress(1, new Message("Asset type: '" + asset + "' file not exists", current_progress, false));
                     return;
                 }
                 if (File_MD5 == null)
                 {
-                    File_MD5 = Functions.CalculateMD5(GameProject.GetInstance().ProjectPath + "\\" + FileName);
+                    File_MD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + FileName);
                     typeof(T).GetProperty("File_MD5").SetValue(item.Value, File_MD5);
                 }
 
@@ -98,7 +98,7 @@ namespace ArtCore_Editor
                             ZipArchiveEntry FileEntry = archive.CreateEntry(FileName);
                             using (StreamWriter writer = new StreamWriter(FileEntry.Open()))
                             {
-                                using (StreamReader file = new StreamReader(GameProject.GetInstance().ProjectPath + "\\" + FileName))
+                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + FileName))
                                 {
                                     file.BaseStream.CopyTo(writer.BaseStream);
                                 }
@@ -128,9 +128,9 @@ namespace ArtCore_Editor
             string inputs = "";
             foreach (var obj in GameProject.GetInstance().Instances)
             {
-                inputs += "-obj \"" + GameProject.GetInstance().ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
+                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + GameProject.GetInstance().ProjectPath + "\\AScript.lib\" -output \"" + GameProject.GetInstance().ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + GameProject.ProjectPath + "\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
             compiler.StartInfo.FileName = "D:\\projekt\\ACompiler\\x64\\Debug\\ACompiler.exe";
@@ -146,10 +146,10 @@ namespace ArtCore_Editor
             }
 
             compiler.WaitForExit();
-            if (File.Exists(GameProject.GetInstance().ProjectPath + "\\object_compile.acp"))
+            if (File.Exists(GameProject.ProjectPath + "\\object_compile.acp"))
             {
 
-                using (FileStream zipToOpen = new FileStream(GameProject.GetInstance().ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+                using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
@@ -162,7 +162,7 @@ namespace ArtCore_Editor
                         }
                         using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                         {
-                            using (StreamReader file = new StreamReader(GameProject.GetInstance().ProjectPath + "\\object_compile.acp"))
+                            using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\object_compile.acp"))
                             {
                                 file.BaseStream.CopyTo(writer.BaseStream);
                             }
@@ -181,7 +181,7 @@ namespace ArtCore_Editor
 
         void UpdateCoreFiles(string folder, string File, int c, int max)
         {
-            using (FileStream zipToOpen = new FileStream(GameProject.GetInstance().ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
@@ -192,7 +192,7 @@ namespace ArtCore_Editor
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader(GameProject.GetInstance().ProjectPath + "\\" + folder + "\\" + File))
+                        using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + folder + "\\" + File))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -272,7 +272,7 @@ namespace ArtCore_Editor
 
             // setup.ini
             Bgw.ReportProgress(1, new Message("Game settings", 60, false));
-            using (FileStream zipToOpen = new FileStream(GameProject.GetInstance().ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
@@ -317,7 +317,7 @@ namespace ArtCore_Editor
         private void CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e)
         {
             foreach (var scene in GameProject.GetInstance().Scenes)
-                using (FileStream zipToOpen = new FileStream(GameProject.GetInstance().ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+                using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {

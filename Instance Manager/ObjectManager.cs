@@ -43,7 +43,7 @@ namespace ArtCore_Editor
 
             if (AssetId != null)
             {
-                string openingFileName = GameProject.GetInstance().ProjectPath + GameProject.GetInstance().Instances[AssetId].FileName;
+                string openingFileName = GameProject.ProjectPath + GameProject.GetInstance().Instances[AssetId].FileName;
                 if (!File.Exists(openingFileName))
                 {
                     MessageBox.Show("File: '" + openingFileName + "' not exists", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -83,7 +83,7 @@ namespace ArtCore_Editor
                     button8.Enabled = true;
                     foreach (var item in instance.Events)
                     {
-                        string path = GameProject.GetInstance().ProjectPath + "\\object\\" + instance.Name + "\\" + item.Value + ".asc";
+                        string path = GameProject.ProjectPath + "\\object\\" + instance.Name + "\\" + item.Value + ".asc";
                         if (File.Exists(path))
                         {
                             Event_listobx.Items.Add(item.Key);
@@ -188,8 +188,11 @@ namespace ArtCore_Editor
 
         private void button5_Click(object sender, EventArgs e)
         {
-            // action
-
+            ScriptEditor scriptEditor = new ScriptEditor(ScriptEditor.Function.type._null, instance);
+            if(scriptEditor.ShowDialog() == DialogResult.OK)
+            {
+                // populate
+            }
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -293,7 +296,7 @@ namespace ArtCore_Editor
                 GameProject.GetInstance().Instances[aid] = (GameProject.Instance)instance.Clone();
             }
 
-            string path_to_object_data = GameProject.GetInstance().ProjectPath + "\\object\\" + instance.Name;
+            string path_to_object_data = GameProject.ProjectPath + "\\object\\" + instance.Name;
             if (Directory.Exists(path_to_object_data))
             {
                 Directory.Delete(path_to_object_data, true);
@@ -302,7 +305,7 @@ namespace ArtCore_Editor
 
             instance.FileName = "\\object\\" + instance.Name + "\\" + instance.Name + ".obj";
 
-            using (FileStream createStream = File.Create(GameProject.GetInstance().ProjectPath + instance.FileName))
+            using (FileStream createStream = File.Create(GameProject.ProjectPath + instance.FileName))
             {
                 byte[] buffer = JsonConvert.SerializeObject(instance).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
@@ -353,7 +356,7 @@ namespace ArtCore_Editor
                     instance_main += events_data[item.Key] + "\n";
                     instance_main += "@end\n";
                 }
-                File.WriteAllText(GameProject.GetInstance().ProjectPath + "\\object\\" + instance.Name + "\\main.asc", instance_main);
+                File.WriteAllText(GameProject.ProjectPath + "\\object\\" + instance.Name + "\\main.asc", instance_main);
             }
         }
         private void button9_Click(object sender, EventArgs e)

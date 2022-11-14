@@ -20,14 +20,14 @@ namespace ArtCore_Editor
             {
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Fonts[AssetId].Name;
                 textBox2.Text = MainWindow.GetInstance().Game_Project.Fonts[AssetId].FileName;
-                if (!File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
+                if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
                 }
                 else
                 {
                     PrivateFontCollection collection = new PrivateFontCollection();
-                    collection.AddFontFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
+                    collection.AddFontFile(GameProject.ProjectPath + "\\" + textBox2.Text);
                     FontFamily fontFamily = new FontFamily(collection.Families[0].Name, collection);
                     font = new Font(fontFamily, 8);
                     richTextBox1.Font = font;
@@ -53,11 +53,11 @@ namespace ArtCore_Editor
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
                 }
-                File.Copy(ofile, GameProject.GetInstance().ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf", true);
+                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf", true);
                 textBox2.Text = "assets\\font\\" + textBox1.Text + ".ttf";
 
                 PrivateFontCollection collection = new PrivateFontCollection();
-                collection.AddFontFile(GameProject.GetInstance().ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf");
+                collection.AddFontFile(GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf");
                 FontFamily fontFamily = new FontFamily(collection.Families[0].Name, collection);
                 font = new Font(fontFamily, 8);
                 richTextBox1.Font = font;
@@ -70,7 +70,7 @@ namespace ArtCore_Editor
             // apply
             if ((textBox1.Text.Length > 0)
                 && (textBox2.Text.Length > 0)
-                && File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
+                && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
             {
                 if (aid == null)
                 {

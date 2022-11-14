@@ -7,9 +7,9 @@ namespace ArtCore_Editor
     {
         public enum type
         {
-            INT, FLOAT,
+            NULL, INT, FLOAT,
             BOOL,
-            INSTANCE, OBJECT,
+            INSTANCE, OBJECT, COLOR, SCENE,
             SPRITE, TEXTURE, SOUND, MUSIC, FONT,
             POINT, RECTANGLE, STRING
         }

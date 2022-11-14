@@ -577,7 +577,7 @@
             // 
             this.groupBox6.Location = new System.Drawing.Point(3, 515);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(288, 344);
+            this.groupBox6.Size = new System.Drawing.Size(288, 318);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Properties";
@@ -605,6 +605,7 @@
             this.Content.DragDrop += new System.Windows.Forms.DragEventHandler(this.Content_DragDrop);
             this.Content.DragEnter += new System.Windows.Forms.DragEventHandler(this.Content_DragEnter);
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
+            this.Content.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Content_MouseMove);
             // 
             // SceneManager
             // 

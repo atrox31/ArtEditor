@@ -49,11 +49,11 @@ namespace ArtCore_Editor
             this.editor_preview_play = false;
             this.editor_show_center = false;
             this.editor_show_mask = false;
+            textures = new List<Image>();
         }
 
         public string name;
         public List<Image> textures;
-        int textures_count = 0;
         public enum Type
         {
             asset, core, particle
@@ -138,7 +138,6 @@ namespace ArtCore_Editor
                     }
                 }
             }
-            textures_count = 0;
         }
 
         public void Save()
@@ -204,7 +203,7 @@ namespace ArtCore_Editor
 
             buffer += "count=" + (textures == null ? "0" : textures.Count.ToString()) + "\n";
 
-            string FilePath = GameProject.GetInstance().ProjectPath + "\\assets\\sprite\\" + name;
+            string FilePath = GameProject.ProjectPath + "\\assets\\sprite\\" + name;
             Directory.CreateDirectory(FilePath + "\\img\\");
 
             if (textures != null && textures.Count > 0)
@@ -326,7 +325,7 @@ namespace ArtCore_Editor
                             }
                             else
                             {
-                                AddImage(GameProject.GetInstance().ProjectPath + line);
+                                AddImage(GameProject.ProjectPath + line);
                             }
 
                         }

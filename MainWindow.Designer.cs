@@ -40,6 +40,7 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.updateCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanupFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.testInDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,12 +71,10 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.ProjectAsserList = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.cleanupFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -106,8 +105,7 @@
             this.toolStripSeparator2,
             this.toolStripButton1,
             this.toolStripButton2,
-            this.toolStripSeparator3,
-            this.toolStripButton4});
+            this.toolStripSeparator3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(2031, 25);
@@ -177,6 +175,13 @@
             this.showConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showConsoleToolStripMenuItem.Text = "Show Console";
             this.showConsoleToolStripMenuItem.Click += new System.EventHandler(this.showConsoleToolStripMenuItem_Click);
+            // 
+            // cleanupFilesToolStripMenuItem
+            // 
+            this.cleanupFilesToolStripMenuItem.Name = "cleanupFilesToolStripMenuItem";
+            this.cleanupFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cleanupFilesToolStripMenuItem.Text = "Cleanup files";
+            this.cleanupFilesToolStripMenuItem.Click += new System.EventHandler(this.cleanupFilesToolStripMenuItem_Click);
             // 
             // toolStripDropDownButton2
             // 
@@ -422,16 +427,6 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton4
-            // 
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
-            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -467,13 +462,6 @@
             this.ProjectAssetList_imagelist.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // cleanupFilesToolStripMenuItem
-            // 
-            this.cleanupFilesToolStripMenuItem.Name = "cleanupFilesToolStripMenuItem";
-            this.cleanupFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cleanupFilesToolStripMenuItem.Text = "Cleanup files";
-            this.cleanupFilesToolStripMenuItem.Click += new System.EventHandler(this.cleanupFilesToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -540,7 +528,6 @@
         private System.Windows.Forms.ToolStripMenuItem moveProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gUIEditorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ImageList ProjectAssetList_imagelist;
         private System.Windows.Forms.ToolStripMenuItem showConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cleanupFilesToolStripMenuItem;

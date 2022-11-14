@@ -93,7 +93,7 @@ namespace ArtCore_Editor
                         Game_Project = new GameProject();
                         Game_Project.Prepare_new();
                         Game_Project.ProjectName = path.Split('\\').Last();
-                        Game_Project.ProjectPath = path;
+                        GameProject.ProjectPath = path;
 
                         loadScreen.SetProgress(20);
 
@@ -168,6 +168,7 @@ namespace ArtCore_Editor
                 }
                 GC.Collect();
 
+                GameProject.ProjectPath = System.IO.Path.GetDirectoryName(pathname);
                 Game_Project = GameProject.LoadFromFile(pathname);
 
                 ls.Close();
@@ -433,50 +434,50 @@ namespace ArtCore_Editor
             switch (category)
             {
                 case "textures":
-                    FilesToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Textures[name].FileName);
+                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Textures[name].FileName);
                     Game_Project.Textures.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "sprites":
-                    FoldersToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Sprites[name].Name);
+                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Sprites[name].Name);
                     Game_Project.Sprites.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "objects":
-                    FoldersToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Instances[name].Name);
+                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Instances[name].Name);
                     Game_Project.Instances.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "music":
-                    FilesToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Music[name].FileName);
+                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Music[name].FileName);
                     Game_Project.Music.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "sounds":
-                    FilesToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Sounds[name].FileName);
+                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Sounds[name].FileName);
                     Game_Project.Sounds.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "font":
-                    FilesToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Fonts[name].FileName);
+                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Fonts[name].FileName);
                     Game_Project.Fonts.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
 
                 case "instances":
-                    FoldersToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Instances[name].Name);
+                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Instances[name].Name);
                     Game_Project.Instances.Remove(name);
                     RefreshListView();
                     MakeChange();
                     break;
                 case "scenes":
-                    FoldersToDeleteAtSave.Add(Game_Project.ProjectPath + "\\" + Game_Project.Scenes[name].Name);
+                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Scenes[name].Name);
                     Game_Project.Scenes.Remove(name);
                     RefreshListView();
                     MakeChange();
@@ -710,28 +711,28 @@ namespace ArtCore_Editor
         private void cleanupFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int total = 0;
-            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\texture"))
+            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\texture"))
             {
                 if (!Game_Project.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item))){
                     File.Delete(item);
                     total++;
                 }
             }
-            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\font"))
+            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\font"))
             {
                 if (!Game_Project.Fonts.ContainsKey(Path.GetFileNameWithoutExtension(item))){
                     File.Delete(item);
                     total++;
                 }
             }
-            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\music"))
+            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\music"))
             {
                 if (!Game_Project.Music.ContainsKey(Path.GetFileNameWithoutExtension(item))){
                     File.Delete(item);
                     total++;
                 }
             }
-            foreach (var item in Directory.GetFiles(Game_Project.ProjectPath + "\\assets\\sound"))
+            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\sound"))
             {
                 if (!Game_Project.Sounds.ContainsKey(Path.GetFileNameWithoutExtension(item))){
                     File.Delete(item);
@@ -739,7 +740,7 @@ namespace ArtCore_Editor
                 }
             }
 
-            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\assets\\sprite"))
+            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\assets\\sprite"))
             {
                 if (!Game_Project.Sprites.ContainsKey(item.Split('\\').Last())){
                     Directory.Delete(item, true);
@@ -747,7 +748,7 @@ namespace ArtCore_Editor
                 }
             }
 
-            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\scene"))
+            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\scene"))
             {
                 if (!Game_Project.Scenes.ContainsKey(item.Split('\\').Last())){
                     Directory.Delete(item, true);
@@ -755,7 +756,7 @@ namespace ArtCore_Editor
                 }
             }
             
-            foreach (var item in Directory.GetDirectories(Game_Project.ProjectPath + "\\object"))
+            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\object"))
             {
                 if (!Game_Project.Instances.ContainsKey(item.Split('\\').Last())){
                     Directory.Delete(item, true);

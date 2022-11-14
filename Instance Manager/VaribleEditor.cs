@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -19,6 +20,7 @@ namespace ArtCore_Editor
         public string _Name;
         public Varible.type _Type;
         public string _Default;
+        bool DefaultIsNeeded = false;
 
         public Varible _var;
         public VaribleEditor(Varible var = null)
@@ -33,6 +35,17 @@ namespace ArtCore_Editor
                 FieldType.SelectedIndex = (int)var.Type;
             }
         }
+        public VaribleEditor(bool GetValueForCodeEditor, string VarType, string Value = "")
+        {
+            InitializeComponent();Program.ApplyTheme(this);
+            DefaultIsNeeded = true;
+            FieldName.Text = "Value";
+            FieldName.ReadOnly = true;
+            FieldDefault.Text = Value;
+            FieldType.DataSource = Enum.GetValues(typeof(Varible.type));
+            FieldType.SelectedItem = Enum.Parse(typeof(Varible.type), VarType.ToUpper());
+            FieldType.Enabled = false;
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {// apply
@@ -43,6 +56,11 @@ namespace ArtCore_Editor
             Varible.type status;
             Enum.TryParse<Varible.type>(FieldType.SelectedValue.ToString(), out status);
             _Type = status;
+
+            if (DefaultIsNeeded)
+            {
+                if (Functions.ErrorCheck(FieldDefault.Text.Length > 0, "Type varible value in default field.")) return;
+            }
 
             if (FieldDefault.Text.Length > 0)
             {
@@ -99,9 +117,28 @@ namespace ArtCore_Editor
                             if (Functions.ErrorCheck(GameProject.GetInstance().Fonts.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                         }
                         break;
+                    case Varible.type.SCENE:
+                        {
+                            if (Functions.ErrorCheck(GameProject.GetInstance().Scenes.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                        }
+                        break;
+                    case Varible.type.STRING:
+                        {
+                            if (!FieldDefault.Text.StartsWith('"'))
+                            {
+                                FieldDefault.Text.Insert(0,"\"");
+                            }
+                            if (!FieldDefault.Text.EndsWith('"'))
+                            {
+                                FieldDefault.Text+="\"";
+                            }
+                            if (Functions.ErrorCheck(FieldDefault.Text.Count(c => c == '"') == 2, "Wrong default value.")) return;
+                        }
+                        break;
 
                 }
             }
+
 
             _Default = FieldDefault.Text;
             if (_var == null)

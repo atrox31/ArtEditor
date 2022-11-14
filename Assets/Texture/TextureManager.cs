@@ -33,13 +33,13 @@ namespace ArtCore_Editor
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Textures[AssetId].Name;
                 textBox2.Text = ProjectPath + FileName;
 
-                if (!File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
+                if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
                 }
                 else
                 {
-                    pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
+                    pictureBox1.Image = Image.FromFile(GameProject.ProjectPath + "\\" + textBox2.Text);
                     SetInfoBox();
                 }
             }
@@ -58,13 +58,13 @@ namespace ArtCore_Editor
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
                 }
                 pictureBox1.Image?.Dispose();
-                File.Copy(ofile, GameProject.GetInstance().ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png", true);
+                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png", true);
 
                 ProjectPath = "assets\\texture\\";
                 FileName = textBox1.Text + ".png";
 
                 textBox2.Text = ProjectPath + FileName;
-                pictureBox1.Image = Image.FromFile(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text);
+                pictureBox1.Image = Image.FromFile(GameProject.ProjectPath + "\\" + textBox2.Text);
                 SetInfoBox();
             }
         }
@@ -74,7 +74,7 @@ namespace ArtCore_Editor
             if ((textBox1.Text.Length > 0)
                 && (textBox2.Text.Length > 0)
                 && pictureBox1.Image != null
-                && File.Exists(GameProject.GetInstance().ProjectPath + "\\" + textBox2.Text))
+                && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
             {
                 if (aid == null)
                 {

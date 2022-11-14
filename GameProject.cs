@@ -12,6 +12,7 @@ namespace ArtCore_Editor
     [JsonObject(MemberSerialization.OptIn)]
     public partial class GameProject : IDisposable
     {
+        public static string ProjectPath;
         public static GameProject GetInstance()
         {
             return MainWindow.GetInstance().Game_Project;
@@ -59,8 +60,6 @@ namespace ArtCore_Editor
         public float Version = 0.0f;
         [JsonProperty]
         public string ProjectName = "New game";
-        // [JsonProperty]
-        public string ProjectPath = "";
         [JsonProperty]
         public Scene StartingScene = null;
 
@@ -122,32 +121,6 @@ namespace ArtCore_Editor
                 return null;
             }
 
-            /*
-                s.Close ();
-                if(MessageBox.Show("Target project file is propably corrupted or has beed created in older verion of editor.\nDo You want to try to recover it?", "Cannot open", MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.Yes)
-                {
-                    gameProject = new GameProject();
-                    gameProject.ProjectPath = Project.Remove(Project.Length- ("\\"+ Program.PROJECT_FILENAME).Length, ("\\" + Program.PROJECT_FILENAME).Length);
-                    MainWindow.GetInstance().Game_Project = gameProject;
-                    gameProject.backup_import(false);
-                    if (gameProject.Sprites == null) gameProject.Sprites = new Dictionary<string, Asset_Sprite>();
-                    if (gameProject.Sounds == null) gameProject.Sounds = new Dictionary<string, Asset_Sound>();
-                    if (gameProject.Music == null) gameProject.Music = new Dictionary<string, Asset_Music>();
-                    if (gameProject.Fonts == null) gameProject.Fonts = new Dictionary<string, Asset_Font>();
-                    if (gameProject.Textures == null) gameProject.Textures = new Dictionary<string, Asset_Texture>();
-                    if (gameProject.Instances == null) gameProject.Instances = new Dictionary<string, Instance>();
-                    if (gameProject.Scenes == null) gameProject.Scenes = new Dictionary<string, Scene>();
-                    if (gameProject.ArtCoreDefaultSettings == null) gameProject.ArtCoreDefaultSettings = new ArtCorePreset();
-                    gameProject.Version = Program.VERSION;
-                }
-                else
-                {
-                    MainWindow.GetInstance().Game_Project = null;
-                    return null;
-                }
-            };
-            */
-            gameProject.ProjectPath = System.IO.Path.GetDirectoryName(Project);
             if (gameProject.Version < Program.VERSION)
             {
                 // update needed

@@ -11,6 +11,7 @@ namespace ArtCore_Editor
         [JsonObject(MemberSerialization.OptIn)]
         public class Scene : Asset
         {
+            static Dictionary<string, Image> InstanceSprites = new Dictionary<string, Image>();
             public class SceneInstance
             {
                 public int x { get; set; }
@@ -24,6 +25,7 @@ namespace ArtCore_Editor
                     this.x = x;
                     this.y = y;
                     this.instance = instance;
+
                     if (instance == null)
                     {
                         img = Properties.Resources.interrogation1;
@@ -36,7 +38,12 @@ namespace ArtCore_Editor
                         }
                         else
                         {
-                            img = instance.Sprite.EditorImage;
+                            if (!InstanceSprites.ContainsKey(instance.Sprite.FileName))
+                            {
+                                Image tmp = Image.FromFile(GameProject.ProjectPath + "\\" + instance.Sprite.ProjectPath + "\\img\\0.png");
+                               InstanceSprites.Add(instance.Sprite.FileName, tmp);
+                            }
+                            img = InstanceSprites[instance.Sprite.FileName];
                         }
                     }
 

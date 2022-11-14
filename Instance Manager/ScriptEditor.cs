@@ -27,7 +27,7 @@ namespace ArtCore_Editor
             string AditionalText { get; }
             string Name { get; }
             string MainText;
-            List<type> Arguments;
+            public List<type> Arguments;
             public bool IsType(string ThisType)
             {
                 return Enum.TryParse(typeof(type), '_' + ThisType, out _);
@@ -46,6 +46,7 @@ namespace ArtCore_Editor
                 string tmp = Name.Split('_')[0];
                 return char.ToUpper(tmp[0]) + tmp.Substring(1);
             }
+
             public Function(string line)
             {
 
@@ -54,6 +55,7 @@ namespace ArtCore_Editor
                 MainText = "";
                 Name = "<error>";
                 Arguments = new List<type>();
+                ReturnedArguments = new Dictionary<int, string>();
 
                 var segment = line.Split(';');
 
@@ -89,12 +91,15 @@ namespace ArtCore_Editor
 
             }
 
+            public Dictionary<int, string> ReturnedArguments;
+
             public void MakeLinkText(ref LinkLabel linkLabel)
             {
                 linkLabel.Links.Clear();
-                linkLabel.Text = MainText;
+                linkLabel.Text = "";
 
                 int lStart = 0;
+                int fno = 0;
                 
                 for(int i=0; i<MainText.Length; i++)
                 {
@@ -105,12 +110,26 @@ namespace ArtCore_Editor
                     }
                     if (MainText[i] == '>')
                     {
-                        string tmp = MainText.Substring(lStart, i - lStart);
-                        linkLabel.Links.Add(lStart, i - lStart, "_" + tmp);
+                        int oldValueLen = i - lStart;
+                        string value = MainText.Substring(lStart, oldValueLen);
+                        string newValue = null;
+                        if (ReturnedArguments.Keys.Contains(fno))
+                        {
+                            newValue = ReturnedArguments[fno];
+                            MainText = MainText.Remove(i - oldValueLen, oldValueLen);
+                            MainText = MainText.Insert(i - oldValueLen, newValue);
+                            int diffrence = newValue.Length - oldValueLen;
+                            i += diffrence;
+                            oldValueLen += diffrence;
+                        }
 
+                        // link no + varible + selected_value
+                        linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" +  Arguments[fno].ToString() + (newValue != null ? ":" + newValue : ""));
+                        fno++;
                     }
 
                 }
+                linkLabel.Text = MainText;
 
             }
             public void MakeAditionalText(ref Label label)
@@ -122,20 +141,49 @@ namespace ArtCore_Editor
         List<Function> functions = new List<Function>();
         Function.type RequiredType;
         Instance instance;
-        public string ReturnedValue = null;
+        static List<Function> FunctionsList = null;
 
-        public ScriptEditor(Function.type RequiredType, Instance instance)
+        public class DeliverArgs
+        {
+            public enum DType
+            {
+                _value, _varible, _function
+            }
+            public DType Type { get; set; }
+            public string Data { get; set; }
+            public DeliverArgs Tree = new DeliverArgs();
+        }
+
+        DeliverArgs deliverArgs;
+        public ScriptEditor(Function.type RequiredType, Instance instance, DeliverArgs deliverArgs = null)
         {
             InitializeComponent();Program.ApplyTheme(this);
             this.RequiredType = RequiredType;
             this.instance = instance;
-            foreach (var line in System.IO.File.ReadAllLines("..\\Core\\AScript.lib"))
+            if (deliverArgs == null)
             {
-                if (line.StartsWith("//")) continue;
-                var tmp = new Function(line);
-                if (tmp.IsType(RequiredType))
+                deliverArgs = new DeliverArgs();
+            }
+            else
+            {
+                this.deliverArgs = deliverArgs.Tree;
+            }
+
+            if (FunctionsList == null)
+            {
+                FunctionsList = new List<Function>();
+                foreach (var line in System.IO.File.ReadAllLines("..\\Core\\AScript.lib"))
                 {
-                    functions.Add(tmp);
+                    if (line.StartsWith("//")) continue;
+                    FunctionsList.Add( new Function(line));
+                }
+            }
+
+            foreach (var fun in FunctionsList)
+            {
+                if (fun.IsType(RequiredType))
+                {
+                    functions.Add(fun);
                 }
 
             }
@@ -178,12 +226,10 @@ namespace ArtCore_Editor
                 }
             }
             button1.Enabled = false;
-            ReturnedValue = null;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ReturnedValue = null;
             if (comboBox2.SelectedItem.ToString() == "New Value")
             {
                 VaribleEditor varibleEditor = new VaribleEditor(true, RequiredType.ToString().Substring(1));
@@ -193,7 +239,6 @@ namespace ArtCore_Editor
                     linkLabel1.Text = varibleEditor._Default;
                     linkLabel1.Links.Clear();
                     button1.Enabled = true;
-                    ReturnedValue = varibleEditor._Default;
                 }
                 return;
             }
@@ -230,16 +275,35 @@ namespace ArtCore_Editor
         private void button1_Click(object sender, EventArgs e)
         {
 
+            DialogResult = DialogResult.OK;
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string target = e.Link.LinkData as string;
+            string[] target = (e.Link.LinkData as string).Split(':');
 
-            ScriptEditor scriptEditor = new ScriptEditor((Function.type)Enum.Parse(typeof(Function.type), target), instance);
+            ScriptEditor scriptEditor = new ScriptEditor((Function.type)Enum.Parse(typeof(Function.type), target[1]), instance, deliverArgs);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {
                 // populate
+                int linkNo = Convert.ToInt32(target[0]);
+                deliverArgs.Tree = scriptEditor.deliverArgs;
+                /*
+                if (CurrentFunction.ReturnedArguments.ContainsKey(linkNo))
+                {
+                    CurrentFunction.ReturnedArguments[linkNo] = scriptEditor.ReturnedValue;
+                }
+                else
+                {
+                    CurrentFunction.ReturnedArguments.Add(linkNo, scriptEditor.ReturnedValue);
+                }
+                CurrentFunction.MakeLinkText(ref linkLabel1);
+                if(CurrentFunction.ReturnedArguments.Count == CurrentFunction.Arguments.Count)
+                {
+
+                    button1.Enabled = true;
+                }
+                */
             }
 
         }

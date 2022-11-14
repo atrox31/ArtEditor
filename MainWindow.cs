@@ -767,5 +767,13 @@ namespace ArtCore_Editor
 
             MessageBox.Show("Cleanup complite, deleted " + total.ToString() + " elements", "Cleanup");
         }
+
+        private void setStartSceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Functions.ErrorCheck(Game_Project.Scenes.Count > 0, "There is no scenes!")) return;
+            string scene = PicFromList.Get(Game_Project.Scenes.Keys.ToList());
+            if (scene == null) return;
+            Game_Project.StartingScene = Game_Project.Scenes[scene];
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace ArtCore_Editor
             process.WaitForExit();
             if(File.Exists(guiFile))
             {
-                cScene.GuiFile = guiFile;
+                cScene.GuiFile = cScene.ProjectPath + "\\gui.txt";
                 MakeChange();
             }
         }

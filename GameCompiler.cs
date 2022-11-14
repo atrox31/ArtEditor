@@ -51,6 +51,7 @@ namespace ArtCore_Editor
 
             int max_count = asset.Count();
             int current_item = 0;
+            int skipped = 0;
             sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + current_item.ToString() + "/" + max_count.ToString() + ")", progress_min, false));
             foreach (var item in asset)
             {
@@ -62,7 +63,7 @@ namespace ArtCore_Editor
                 string FileName = ((string)(typeof(T).GetProperty("FileName").GetValue(item.Value, null))).Split('\\').Last();
                 string ProjectPath = (string)(typeof(T).GetProperty("ProjectPath").GetValue(item.Value, null));
 
-                Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
+                //Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
 
                 sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
 
@@ -83,13 +84,14 @@ namespace ArtCore_Editor
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
                         string MD5 = null;
-                        if (archive.GetEntry(FileName + ".MD5") != null)
+                        string MD5_File = $"DEBUG\\{(typeof(T)).FullName}.{FileName}.MD5";
+                        if (archive.GetEntry(MD5_File) != null)
                         {
-                            MD5 = new StreamReader(archive.GetEntry(FileName + ".MD5").Open()).ReadToEnd();
+                            MD5 = new StreamReader(archive.GetEntry(MD5_File).Open()).ReadToEnd();
                         }
                         else
                         {
-                            ZipArchiveEntry readmeEntry = archive.CreateEntry(FileName + ".MD5");
+                            ZipArchiveEntry readmeEntry = archive.CreateEntry(MD5_File);
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
                                 writer.Write(File_MD5);
@@ -117,12 +119,16 @@ namespace ArtCore_Editor
                                 }
                             }
                         }
-                        // else file ok
+                        else
+                        {
+                            skipped++;
+                        }
                     }
                 }
                 sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (++current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
             }
             sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") ", progress_max, true));
+            sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progress_max, false));
         }
 
         public static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
@@ -142,7 +148,7 @@ namespace ArtCore_Editor
             {
                 inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + GameProject.ProjectPath + "\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + "\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
             compiler.StartInfo.FileName = "..\\Core\\ACompiler.exe";

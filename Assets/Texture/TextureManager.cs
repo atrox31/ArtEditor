@@ -64,6 +64,7 @@ namespace ArtCore_Editor
                 FileName = textBox1.Text + ".png";
 
                 textBox2.Text = ProjectPath + FileName;
+                pictureBox1.Image?.Dispose();
                 pictureBox1.Image = Image.FromFile(GameProject.ProjectPath + "\\" + textBox2.Text);
                 SetInfoBox();
             }
@@ -112,6 +113,7 @@ namespace ArtCore_Editor
 
         private void button4_Click(object sender, EventArgs e)
         {
+            pictureBox1.Dispose();
             DialogResult = DialogResult.Cancel;
             Close();
         }

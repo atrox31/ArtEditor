@@ -250,7 +250,7 @@ namespace ArtCore_Editor
         {
             if (Varible_listbox.SelectedItem != null)
             {
-                if (MessageBox.Show("Delete varible", "Are You sure to delete varible '" + Varible_listbox.SelectedItem.ToString() + "'", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are You sure to delete varible '" + Varible_listbox.SelectedItem.ToString() + "'","Delete varible",  MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     foreach (Varible var in instance.Varible)
                     {

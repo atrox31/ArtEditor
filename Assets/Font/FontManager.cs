@@ -62,6 +62,7 @@ namespace ArtCore_Editor
                 }
                 File.Copy(ofile, GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf", true);
                 textBox2.Text = "assets\\font\\" + textBox1.Text + ".ttf";
+                FileName = ofile.Split('\\').Last();
 
                 PrivateFontCollection collection = new PrivateFontCollection();
                 collection.AddFontFile(GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf");

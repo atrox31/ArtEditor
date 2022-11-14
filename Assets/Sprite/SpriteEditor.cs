@@ -20,11 +20,16 @@ namespace ArtCore_Editor
         {
             //this.parrent = parrent;
             InitializeComponent(); Program.ApplyTheme(this);
+            s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
             if (sprite != null)
             {
                 global_sprite = GameProject.GetInstance().Sprites[sprite];
-                if (global_sprite.Name == "")
-                    global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\" + global_sprite.FileName);
+                global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\" + global_sprite.FileName);
+                p_firstFrame = 0;
+                p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
+
+                p_currentFrame = p_firstFrame;
+                
             }
             else
             {
@@ -32,6 +37,7 @@ namespace ArtCore_Editor
             }
             //importSpriteImages();
             updateForm();
+            s_preview.Refresh();
 
         }
 
@@ -492,10 +498,10 @@ namespace ArtCore_Editor
 
         private void SpriteAddForm_Load_1(object sender, EventArgs e)
         {
-            s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
-            p_firstFrame = 0;
-            p_lastFrame = 0;
-            p_currentFrame = p_firstFrame;
+            //s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
+            //p_firstFrame = 0;
+            //p_lastFrame = 0;
+            //p_currentFrame = p_firstFrame;
         }
 
         private void s_col_mask_circle_CheckedChanged(object sender, EventArgs e)

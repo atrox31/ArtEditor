@@ -137,7 +137,7 @@ namespace ArtCore_Editor
         {
             // open
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "WAV|*.wav";
+            openFileDialog.Filter = "WAV|*.wav|OGG|*.ogg";
             openFileDialog.Title = "Select file";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -145,7 +145,7 @@ namespace ArtCore_Editor
                 if (textBox1.TextLength == 0)
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
-                    FileName = textBox1.Text + ".wav";
+                    FileName = textBox1.Text + "." + ofile.Split('\\').Last().Split('.').Last();
                 }
                 File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + FileName, true);
                 textBox2.Text = ProjectPath + "\\" + FileName;

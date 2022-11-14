@@ -121,6 +121,7 @@ namespace ArtCore_Editor
             using (Image image = Image.FromStream(new MemoryStream(content)))
             {
                 textures.Add(new Bitmap(new MemoryStream(content)));
+                editor_frame_max = textures.Count() - 1;
             }
         }
 
@@ -134,6 +135,7 @@ namespace ArtCore_Editor
                     {
                         textures[i].Dispose();
                     }
+                    textures.Clear();
                 }
             }
         }
@@ -316,7 +318,7 @@ namespace ArtCore_Editor
                                 textures = new List<Image>(imgc);
                                 for (int i = 0; i < imgc; i++)
                                 {
-                                    AddImage(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + Name + "\\img\\" + i.ToString() + ".png");
+                                    AddImage(GameProject.ProjectPath + "\\" + ProjectPath  + "\\img\\" + i.ToString() + ".png");
                                 }
                             }
                         }

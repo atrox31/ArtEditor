@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media;
 using static ArtCore_Editor.GameProject;
 
 namespace ArtCore_Editor
@@ -100,12 +93,12 @@ namespace ArtCore_Editor
 
                 int lStart = 0;
                 int fno = 0;
-                
-                for(int i=0; i<MainText.Length; i++)
+
+                for (int i = 0; i < MainText.Length; i++)
                 {
                     if (MainText[i] == '<')
                     {
-                        lStart = i+1;
+                        lStart = i + 1;
                         continue;
                     }
                     if (MainText[i] == '>')
@@ -124,7 +117,7 @@ namespace ArtCore_Editor
                         }
 
                         // link no + varible + selected_value
-                        linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" +  Arguments[fno].ToString() + (newValue != null ? ":" + newValue : ""));
+                        linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" + Arguments[fno].ToString() + (newValue != null ? ":" + newValue : ""));
                         fno++;
                     }
 
@@ -157,7 +150,7 @@ namespace ArtCore_Editor
         DeliverArgs deliverArgs;
         public ScriptEditor(Function.type RequiredType, Instance instance, DeliverArgs deliverArgs = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             this.RequiredType = RequiredType;
             this.instance = instance;
             if (deliverArgs == null)
@@ -175,7 +168,7 @@ namespace ArtCore_Editor
                 foreach (var line in System.IO.File.ReadAllLines("..\\Core\\AScript.lib"))
                 {
                     if (line.StartsWith("//")) continue;
-                    FunctionsList.Add( new Function(line));
+                    FunctionsList.Add(new Function(line));
                 }
             }
 
@@ -187,7 +180,7 @@ namespace ArtCore_Editor
                 }
 
             }
-            if(RequiredType != Function.type._null)
+            if (RequiredType != Function.type._null)
             {
                 comboBox1.Items.Add("Value");
             }
@@ -242,7 +235,7 @@ namespace ArtCore_Editor
                 }
                 return;
             }
-            if(comboBox2.SelectedItem.ToString() == "Varible")
+            if (comboBox2.SelectedItem.ToString() == "Varible")
             {
                 Varible.type ConvertedEnum = (Varible.type)Enum.Parse(typeof(Varible.type), RequiredType.ToString().Substring(1).ToUpper());
 
@@ -250,7 +243,7 @@ namespace ArtCore_Editor
                 string answer = PicFromList.Get(((IEnumerable)VarList).Cast<Varible>()
                                  .Select(x => x.Name)
                                  .ToList());
-                if(answer != null)
+                if (answer != null)
                 {
                     linkLabel1.Text = answer;
                     linkLabel1.Links.Clear();

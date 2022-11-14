@@ -1,7 +1,6 @@
 ﻿using SDL2;
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace ArtCore_Editor
 {

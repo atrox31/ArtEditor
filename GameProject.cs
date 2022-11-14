@@ -111,8 +111,7 @@ namespace ArtCore_Editor
                 fileContents = reader.ReadToEnd();
             }
             //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
-            GameProject? gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
-
+            GameProject gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
 
             if (gameProject == null)
             {

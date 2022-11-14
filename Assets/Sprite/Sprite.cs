@@ -120,7 +120,7 @@ namespace ArtCore_Editor
             byte[] content = File.ReadAllBytes(file);
             using (Image image = Image.FromStream(new MemoryStream(content)))
             {
-                textures.Add(new Bitmap(new MemoryStream(content)) );
+                textures.Add(new Bitmap(new MemoryStream(content)));
             }
         }
 
@@ -128,7 +128,7 @@ namespace ArtCore_Editor
         {
             if (textures != null)
             {
-                if (textures.Count> 0)
+                if (textures.Count > 0)
                 {
                     for (int i = 0; i < textures.Count; i++)
                     {
@@ -314,7 +314,7 @@ namespace ArtCore_Editor
                             {
                                 imgc = Convert.ToInt32(tmp[1]);
                                 textures = new List<Image>(imgc);
-                                for (int i = 0; i< imgc; i++)
+                                for (int i = 0; i < imgc; i++)
                                 {
                                     AddImage(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + Name + "\\img\\" + i.ToString() + ".png");
                                 }

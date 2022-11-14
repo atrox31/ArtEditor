@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace ArtCore_Editor
 {
@@ -20,12 +19,12 @@ namespace ArtCore_Editor
         public SpriteEditor(string sprite)
         {
             //this.parrent = parrent;
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             if (sprite != null)
             {
                 global_sprite = GameProject.GetInstance().Sprites[sprite];
                 if (global_sprite.Name == "")
-                    global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\"+ global_sprite.FileName);
+                    global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\" + global_sprite.FileName);
             }
             else
             {
@@ -33,7 +32,7 @@ namespace ArtCore_Editor
             }
             //importSpriteImages();
             updateForm();
-            
+
         }
 
 
@@ -125,7 +124,7 @@ namespace ArtCore_Editor
 
             p_firstFrame = 0;
             p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
-            
+
 
             p_currentFrame = p_firstFrame;
 
@@ -158,7 +157,7 @@ namespace ArtCore_Editor
                     GC.Collect();
                     global_sprite.textures = new System.Collections.Generic.List<Image>(openFileDialog1.FileNames.Length);
                 }
-                
+
 
                 int max_x = 0;
                 int max_y = 0;
@@ -408,8 +407,8 @@ namespace ArtCore_Editor
                                 Rectangle r = new Rectangle(
                                     x - global_sprite.collision_mask_value / 2,
                                     y - global_sprite.collision_mask_value / 2,
-                                    global_sprite.collision_mask_value ,
-                                    global_sprite.collision_mask_value 
+                                    global_sprite.collision_mask_value,
+                                    global_sprite.collision_mask_value
                                     );
                                 e.Graphics.FillRectangle(fillPen, r);
                                 e.Graphics.DrawRectangle(redPen, r);
@@ -526,7 +525,7 @@ namespace ArtCore_Editor
         private void s_col_mask_value_Scroll(object sender, EventArgs e)
         {
             global_sprite.collision_mask_value = Convert.ToInt32((Convert.ToDecimal(s_col_mask_value.Value) / 100) * Convert.ToDecimal((global_sprite.sprite_width + global_sprite.sprite_height) / 2));
-            label3.Text = "Value ( "+ global_sprite.collision_mask_value + " px)";
+            label3.Text = "Value ( " + global_sprite.collision_mask_value + " px)";
             s_preview.Refresh();
         }
 

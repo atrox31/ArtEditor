@@ -10,7 +10,7 @@ namespace ArtCore_Editor
         public int SelectedIndex;
         public PicFromList(List<string> vars)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             Selected = null;
             SelectedIndex = -1;
             listBox1.Items.AddRange(vars.ToArray());

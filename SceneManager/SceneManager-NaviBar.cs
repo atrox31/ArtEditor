@@ -1,20 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Data;
+﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using static ArtCore_Editor.GameProject;
-using ListViewItem = System.Windows.Forms.ListViewItem;
 namespace ArtCore_Editor
 {
     public partial class SceneManager
-    { 
+    {
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowGrid = !ShowGrid;
@@ -41,7 +31,7 @@ namespace ArtCore_Editor
         }
         private void gUIEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string guiFile = GameProject.ProjectPath + cScene.ProjectPath + "\\gui\\" + cScene.Name + "_" +"gui.txt";
+            string guiFile = GameProject.ProjectPath + cScene.ProjectPath + "\\gui\\" + cScene.Name + "_" + "gui.txt";
             Process process = new Process();
             process.StartInfo.FileName = "..\\Core\\gui-bulider\\gui-builder.exe";
             bool fex = File.Exists(guiFile);
@@ -51,7 +41,7 @@ namespace ArtCore_Editor
 
             process.Start();
             process.WaitForExit();
-            if(File.Exists(guiFile))
+            if (File.Exists(guiFile))
             {
                 cScene.GuiFile = cScene.ProjectPath + "\\" + cScene.Name + "_" + "gui.txt";
                 MakeChange();

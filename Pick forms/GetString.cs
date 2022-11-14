@@ -17,7 +17,7 @@ namespace ArtCore_Editor
         }
         public GetString(string name, string default_value = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             groupBox1.Text = name;
             textBox1.Focus();
             if (default_value != null)

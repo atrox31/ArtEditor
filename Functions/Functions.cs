@@ -1,5 +1,4 @@
-﻿using ArtCore_Editor.Assets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -7,9 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media;
 using Color = System.Drawing.Color;
-using System.Reflection;
 
 namespace ArtCore_Editor
 {
@@ -28,8 +25,8 @@ namespace ArtCore_Editor
         public static void ButtonAlter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             dynamic btn = (Button)sender;
-            dynamic drawBrush = new SolidBrush( btn.Enabled ? btn.ForeColor : Color.FromArgb(57, 91, 100));
-            
+            dynamic drawBrush = new SolidBrush(btn.Enabled ? btn.ForeColor : Color.FromArgb(57, 91, 100));
+
             dynamic sf = new StringFormat
             {
                 Alignment = StringAlignment.Center,

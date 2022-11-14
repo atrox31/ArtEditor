@@ -39,13 +39,13 @@ namespace ArtCore_Editor
         }
 
         string FileName;
-        string ProjectPath= "assets\\sound\\";
+        string ProjectPath = "assets\\sound\\";
 
         public SoundManager(string AssetId = null)
         {
             soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
             soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             aid = AssetId;
             if (AssetId != null)
             {

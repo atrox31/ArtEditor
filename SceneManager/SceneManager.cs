@@ -1,16 +1,12 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
-using ListViewItem = System.Windows.Forms.ListViewItem;
 
 namespace ArtCore_Editor
 {
@@ -43,7 +39,7 @@ namespace ArtCore_Editor
         public SceneManager(string assetId = null)
         {
             aid = assetId;
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             BcPreviewList.ImageSize = new Size(128, 128);
             ContentHandle = Content.Handle;
             Content.AllowDrop = true;
@@ -67,7 +63,7 @@ namespace ArtCore_Editor
                     fileContents = reader.ReadToEnd();
                 }
                 cScene = JsonConvert.DeserializeObject<Scene>(fileContents);
-                
+
                 Name = cScene.Name;
                 textBox2.Text = cScene.Name;
                 Content.Height = cScene.Height;
@@ -93,8 +89,8 @@ namespace ArtCore_Editor
                     if (cScene.BackGroundWrapMode == WrapMode.TileFlipY) rb_td_h.Checked = true;
                     if (cScene.BackGroundWrapMode == WrapMode.TileFlipXY) rb_td_w_h.Checked = true;
 
-                    bc_selected_preview.BackgroundImage = BcTexture.GetThumbnailImage(128,128,null,IntPtr.Zero);
-                    
+                    bc_selected_preview.BackgroundImage = BcTexture.GetThumbnailImage(128, 128, null, IntPtr.Zero);
+
                 }
 
                 MakeSaved();
@@ -128,7 +124,7 @@ namespace ArtCore_Editor
                 }
                 else
                 {
-                    Instance_imagelist.Images.Add( Image.FromFile( GameProject.ProjectPath + item.Value.Sprite.ProjectPath + "\\img\\0.png").GetThumbnailImage(64,64,null,IntPtr.Zero));
+                    Instance_imagelist.Images.Add(Image.FromFile(GameProject.ProjectPath + item.Value.Sprite.ProjectPath + "\\img\\0.png").GetThumbnailImage(64, 64, null, IntPtr.Zero));
                     instanceListView.Items.Add(item.Key, Instance_imagelist.Images.Count - 1);
                 }
             }
@@ -152,7 +148,8 @@ namespace ArtCore_Editor
             }
             else
             {
-                if (BcTexture != null) {
+                if (BcTexture != null)
+                {
                     using (Graphics g = Graphics.FromImage(bmp))
                     {
                         TextureBrush tBrush = new TextureBrush(BcTexture);
@@ -164,7 +161,7 @@ namespace ArtCore_Editor
                         */
 
                         tBrush.WrapMode = cScene.BackGroundWrapMode;
-                        
+
                         g.FillRectangle(tBrush, new Rectangle(0, 0, Content.Width, Content.Height));
                     }
                 }
@@ -245,7 +242,7 @@ namespace ArtCore_Editor
                 cScene.SceneTriggers[i] = "trigger_" + i.ToString() + ".art"; ;
             }
 
-            if(aid != cScene.Name)
+            if (aid != cScene.Name)
             {
                 Functions.RenameKey(GameProject.GetInstance().Scenes, aid, cScene.Name);
                 aid = cScene.Name;
@@ -293,7 +290,7 @@ namespace ArtCore_Editor
 
 
 
-        
-        
+
+
     }
 }

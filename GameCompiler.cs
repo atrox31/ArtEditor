@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -43,7 +41,7 @@ namespace ArtCore_Editor
         public static bool isdebug;
         public GameCompiler(bool debug)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
             isdebug = debug;
         }
@@ -107,8 +105,9 @@ namespace ArtCore_Editor
                                 {
                                     file.BaseStream.CopyTo(writer.BaseStream);
                                 }
-                                if(typeof(T) == typeof(Sprite)){
-                                    foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath+ "\\img\\"))
+                                if (typeof(T) == typeof(Sprite))
+                                {
+                                    foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
                                     {
                                         using (StreamReader file = new StreamReader(_f))
                                         {
@@ -248,7 +247,7 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
-            
+
             {
                 List<string[]> coreFiles = new List<string[]>()
                 {
@@ -324,7 +323,7 @@ namespace ArtCore_Editor
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
                                 writer.WriteLine("[setup]");
-                                writer.WriteLine("GuiFile="+scene.Value.GuiFile);
+                                writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
                                 writer.WriteLine("Width=" + scene.Value.Width);
                                 writer.WriteLine("Height=" + scene.Value.Height);
                                 writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
@@ -340,7 +339,7 @@ namespace ArtCore_Editor
                                     writer.WriteLine(regions.ToString());
                                 }
                                 writer.WriteLine("[end]");
-                                
+
                                 writer.WriteLine("[triggers]");
                                 foreach (var triggers in scene.Value.SceneTriggers)
                                 {

@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Data;
-using System.Diagnostics;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
-using ListViewItem = System.Windows.Forms.ListViewItem;
 
 namespace ArtCore_Editor
 {
@@ -25,13 +19,13 @@ namespace ArtCore_Editor
                 bc_selected_preview.BackgroundImage = BcPreviewList.Images[picFromList.SelectedIndex];
                 cScene.BackGroundTexture_name = picFromList.Selected;
             }
-               
+
         }
         private void button3_Click(object sender, EventArgs e)
         {
             if (cScene.BackGroundTexture_name == null) return;
             r_bc_texture.Select();
-            
+
             BcTexture?.Dispose();
             GC.Collect();
 
@@ -85,17 +79,17 @@ namespace ArtCore_Editor
 
         private void bc_color_pick_value_TextChanged(object sender, EventArgs e)
         {
-            if(bc_color_pick_value.Text.Length == 6)
+            if (bc_color_pick_value.Text.Length == 6)
             {
                 if (!bc_color_pick_value.Text.StartsWith('#'))
                 {
                     bc_color_pick_value.Text.Insert(0, "#");
                 }
             }
-            if(bc_color_pick_value.Text.Length == 7)
+            if (bc_color_pick_value.Text.Length == 7)
             {
                 Color tmp = Functions.HexToColor(bc_color_pick_value.Text);
-                if(!tmp.IsEmpty)
+                if (!tmp.IsEmpty)
                 {
                     bc_color_box.BackColor = tmp;
                     MakeChange();

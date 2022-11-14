@@ -19,7 +19,7 @@ namespace ArtCore_Editor
 
         public FontManager(string AssetId = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             aid = AssetId;
             if (AssetId != null)
             {

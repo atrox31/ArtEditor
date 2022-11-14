@@ -15,7 +15,7 @@ namespace ArtCore_Editor
                 Close();
             }
             this_sprite = sprite_data;
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
         }
 
         private void ImageListViewer_Load(object sender, EventArgs e)

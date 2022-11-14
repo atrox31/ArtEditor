@@ -9,7 +9,7 @@ namespace ArtCore_Editor
         bool _fake;
         public LoadScreen(bool fake)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             _fake = fake;
             progressBar1.Value = 10;
             progressBar1.Visible = true;

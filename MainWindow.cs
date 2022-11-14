@@ -36,7 +36,7 @@ namespace ArtCore_Editor
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
 
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
 
             _instance = this;
         }
@@ -714,28 +714,32 @@ namespace ArtCore_Editor
             int total = 0;
             foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\texture"))
             {
-                if (!Game_Project.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                if (!Game_Project.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+                {
                     File.Delete(item);
                     total++;
                 }
             }
             foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\font"))
             {
-                if (!Game_Project.Fonts.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                if (!Game_Project.Fonts.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+                {
                     File.Delete(item);
                     total++;
                 }
             }
             foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\music"))
             {
-                if (!Game_Project.Music.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                if (!Game_Project.Music.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+                {
                     File.Delete(item);
                     total++;
                 }
             }
             foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\sound"))
             {
-                if (!Game_Project.Sounds.ContainsKey(Path.GetFileNameWithoutExtension(item))){
+                if (!Game_Project.Sounds.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+                {
                     File.Delete(item);
                     total++;
                 }
@@ -743,7 +747,8 @@ namespace ArtCore_Editor
 
             foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\assets\\sprite"))
             {
-                if (!Game_Project.Sprites.ContainsKey(item.Split('\\').Last())){
+                if (!Game_Project.Sprites.ContainsKey(item.Split('\\').Last()))
+                {
                     Directory.Delete(item, true);
                     total++;
                 }
@@ -751,15 +756,17 @@ namespace ArtCore_Editor
 
             foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\scene"))
             {
-                if (!Game_Project.Scenes.ContainsKey(item.Split('\\').Last())){
+                if (!Game_Project.Scenes.ContainsKey(item.Split('\\').Last()))
+                {
                     Directory.Delete(item, true);
                     total++;
                 }
             }
-            
+
             foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\object"))
             {
-                if (!Game_Project.Instances.ContainsKey(item.Split('\\').Last())){
+                if (!Game_Project.Instances.ContainsKey(item.Split('\\').Last()))
+                {
                     Directory.Delete(item, true);
                     total++;
                 }

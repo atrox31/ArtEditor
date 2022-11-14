@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -32,10 +31,10 @@ namespace ArtCore_Editor
                 if (c.GetType() == typeof(Button))
                 {
                     c.Paint += Functions.ButtonAlter_Paint;
-                    
+
                 }
             }
-            
+
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

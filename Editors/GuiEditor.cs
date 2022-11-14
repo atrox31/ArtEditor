@@ -9,7 +9,7 @@ namespace ArtCore_Editor
         //[DllImport("SDL2#.dll")]
         public GuiEditor()
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
         }
 
         private void GuiEditor_Load(object sender, EventArgs e)

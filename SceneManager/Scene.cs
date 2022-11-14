@@ -41,7 +41,7 @@ namespace ArtCore_Editor
                             if (!InstanceSprites.ContainsKey(instance.Sprite.FileName))
                             {
                                 Image tmp = Image.FromFile(GameProject.ProjectPath + "\\" + instance.Sprite.ProjectPath + "\\img\\0.png");
-                               InstanceSprites.Add(instance.Sprite.FileName, tmp);
+                                InstanceSprites.Add(instance.Sprite.FileName, tmp);
                             }
                             img = InstanceSprites[instance.Sprite.FileName];
                         }
@@ -86,7 +86,7 @@ namespace ArtCore_Editor
             public string BackGroundTexture_name;
             public enum BackGroundTypeEnum
             {
-                DrawColor,DrawTexture
+                DrawColor, DrawTexture
             };
             [JsonProperty]
             public BackGroundTypeEnum BackGroundType;

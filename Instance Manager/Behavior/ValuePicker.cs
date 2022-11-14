@@ -17,7 +17,7 @@ namespace ArtCore_Editor
         {
             Return = "";
             this._value = value;
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             Functions.Add("math", new List<string>()
             {
                 "math_min_i;Minimum;Minum value from |value| and |value|.;int",

@@ -32,7 +32,7 @@ namespace ArtCore_Editor
 
         public CodeEditor(List<Varible> instance_varibles, string text = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             if (text != null)
             {
                 Code = text.Split('\n').ToList();

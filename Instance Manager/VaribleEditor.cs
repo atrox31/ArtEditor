@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -25,7 +24,7 @@ namespace ArtCore_Editor
         public Varible _var;
         public VaribleEditor(Varible var = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             FieldType.DataSource = Enum.GetValues(typeof(Varible.type));
             this._var = var;
             if (var != null)
@@ -37,7 +36,7 @@ namespace ArtCore_Editor
         }
         public VaribleEditor(bool GetValueForCodeEditor, string VarType, string Value = "")
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
             DefaultIsNeeded = true;
             FieldName.Text = "Value";
             FieldName.ReadOnly = true;
@@ -126,11 +125,11 @@ namespace ArtCore_Editor
                         {
                             if (!FieldDefault.Text.StartsWith('"'))
                             {
-                                FieldDefault.Text.Insert(0,"\"");
+                                FieldDefault.Text.Insert(0, "\"");
                             }
                             if (!FieldDefault.Text.EndsWith('"'))
                             {
-                                FieldDefault.Text+="\"";
+                                FieldDefault.Text += "\"";
                             }
                             if (Functions.ErrorCheck(FieldDefault.Text.Count(c => c == '"') == 2, "Wrong default value.")) return;
                         }

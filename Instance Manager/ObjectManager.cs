@@ -18,9 +18,9 @@ namespace ArtCore_Editor
         List<Varible> LocalVaribles;
         public ObjectManager(string AssetId = null)
         {
-            InitializeComponent();Program.ApplyTheme(this);
+            InitializeComponent(); Program.ApplyTheme(this);
 
-            foreach(var sprite in GameProject.GetInstance().Sprites)
+            foreach (var sprite in GameProject.GetInstance().Sprites)
             {
                 comboBox1.Items.Add(sprite.Key);
             }
@@ -43,7 +43,7 @@ namespace ArtCore_Editor
 
             if (AssetId != null)
             {
-                string openingFileName = GameProject.ProjectPath + GameProject.GetInstance().Instances[AssetId].FileName;
+                string openingFileName = GameProject.ProjectPath + "\\" + GameProject.GetInstance().Instances[AssetId].ProjectPath + "\\" + GameProject.GetInstance().Instances[AssetId].FileName;
                 if (!File.Exists(openingFileName))
                 {
                     MessageBox.Show("File: '" + openingFileName + "' not exists", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -189,7 +189,7 @@ namespace ArtCore_Editor
         private void button5_Click(object sender, EventArgs e)
         {
             ScriptEditor scriptEditor = new ScriptEditor(ScriptEditor.Function.type._null, instance);
-            if(scriptEditor.ShowDialog() == DialogResult.OK)
+            if (scriptEditor.ShowDialog() == DialogResult.OK)
             {
                 // populate
             }
@@ -286,14 +286,10 @@ namespace ArtCore_Editor
             }
             else
             {
-                if (Functions.ErrorCheck(MainWindow.GetInstance().Game_Project.Instances.TryGetValue(instance.Name, out _), "Can not change name to existing object")) return;
-                /*
-                if (aid != Form1.GetInstance().Game_Project.Instances[aid].Name)
+                if (aid != instance.Name)
                 {
-                    Program.RenameKey(Form1.GetInstance().Game_Project.Instances, aid, textBox1.Text);
+                    Functions.RenameKey(GameProject.GetInstance().Instances, aid, instance.Name);
                 }
-                */
-                GameProject.GetInstance().Instances[aid] = (GameProject.Instance)instance.Clone();
             }
 
             string path_to_object_data = GameProject.ProjectPath + "\\object\\" + instance.Name;
@@ -303,9 +299,12 @@ namespace ArtCore_Editor
             }
             Directory.CreateDirectory(path_to_object_data);
 
-            instance.FileName = "\\object\\" + instance.Name + "\\" + instance.Name + ".obj";
+            instance.FileName = instance.Name + ".obj";
+            instance.ProjectPath = "\\object\\" + instance.Name + "\\";
 
-            using (FileStream createStream = File.Create(GameProject.ProjectPath + instance.FileName))
+            GameProject.GetInstance().Instances[aid] = (GameProject.Instance)instance.Clone();
+
+            using (FileStream createStream = File.Create(GameProject.ProjectPath + "\\" + instance.ProjectPath + "\\" + instance.FileName))
             {
                 byte[] buffer = JsonConvert.SerializeObject(instance).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
@@ -346,7 +345,7 @@ namespace ArtCore_Editor
                 instance_main += "function " + instance.Name + ":" + "DEF_VALUES" + "\n";
                 foreach (var item in LocalVaribles)
                 {
-                    instance_main += item.Name + " = " + (item.Default==null?"null": item.Default) + "\n";
+                    instance_main += item.Name + " = " + (item.Default == null ? "null" : item.Default) + "\n";
                 }
                 instance_main += "@end\n";
                 // events

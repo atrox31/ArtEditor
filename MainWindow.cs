@@ -108,6 +108,7 @@ namespace ArtCore_Editor
                         Directory.CreateDirectory(path + "\\scene");
                         Directory.CreateDirectory(path + "\\levels");
                         Directory.CreateDirectory(path + "\\output");
+                        Directory.CreateDirectory(path + "\\gui");
 
                         Game_Project.SaveToFile();
                         MakeSaved();

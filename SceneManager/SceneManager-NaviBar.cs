@@ -41,7 +41,7 @@ namespace ArtCore_Editor
         }
         private void gUIEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string guiFile = GameProject.ProjectPath + cScene.ProjectPath + "\\gui.txt";
+            string guiFile = GameProject.ProjectPath + cScene.ProjectPath + "\\gui\\" + cScene.Name + "_" +"gui.txt";
             Process process = new Process();
             process.StartInfo.FileName = "..\\Core\\gui-bulider\\gui-builder.exe";
             bool fex = File.Exists(guiFile);
@@ -53,7 +53,7 @@ namespace ArtCore_Editor
             process.WaitForExit();
             if(File.Exists(guiFile))
             {
-                cScene.GuiFile = cScene.ProjectPath + "\\gui.txt";
+                cScene.GuiFile = cScene.ProjectPath + "\\" + cScene.Name + "_" + "gui.txt";
                 MakeChange();
             }
         }

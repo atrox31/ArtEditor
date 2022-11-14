@@ -24,8 +24,8 @@ namespace ArtCore_Editor
             if (sprite != null)
             {
                 global_sprite = GameProject.GetInstance().Sprites[sprite];
-                if (global_sprite.name == "")
-                    global_sprite.Load(GameProject.ProjectPath + global_sprite.FileName);
+                if (global_sprite.Name == "")
+                    global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\"+ global_sprite.FileName);
             }
             else
             {
@@ -56,31 +56,31 @@ namespace ArtCore_Editor
             p_currentFrame = p_firstFrame;
             p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
 
-            global_sprite.name = s_spritename.Text;
+            global_sprite.Name = s_spritename.Text;
             global_sprite.Save();
 
-            if (!MainWindow.GetInstance().Game_Project.Sprites.ContainsKey(global_sprite.name))
+            if (!MainWindow.GetInstance().Game_Project.Sprites.ContainsKey(global_sprite.Name))
             {
                 // add new
                 MainWindow.GetInstance().Game_Project.Sprites.Add(s_spritename.Text, new Sprite());
             }
             else
             {
-                if (global_sprite.name != MainWindow.GetInstance().Game_Project.Sprites[global_sprite.name].Name)
+                if (global_sprite.Name != MainWindow.GetInstance().Game_Project.Sprites[global_sprite.Name].Name)
                 {
-                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Sprites, global_sprite.name, s_spritename.Text);
+                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Sprites, global_sprite.Name, s_spritename.Text);
                 }
             }
 
             global_sprite.Name = s_spritename.Text;
-            MainWindow.GetInstance().Game_Project.Sprites[global_sprite.name] = global_sprite;
+            MainWindow.GetInstance().Game_Project.Sprites[global_sprite.Name] = global_sprite;
 
         }
 
 
         void updateForm()
         {
-            s_spritename.Text = global_sprite.name;
+            s_spritename.Text = global_sprite.Name;
             s_sprite_type.SelectedIndex = (int)global_sprite.type;
 
             s_sprite_center_y.Maximum = global_sprite.sprite_width;
@@ -232,7 +232,7 @@ namespace ArtCore_Editor
             }
             else
             {
-                if (global_sprite.name.Length == 0)
+                if (global_sprite.Name.Length == 0)
                 {
                     this.DialogResult = DialogResult.No;
                 }

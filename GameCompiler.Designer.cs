@@ -36,16 +36,18 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 426);
+            this.progressBar1.Location = new System.Drawing.Point(14, 492);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(329, 23);
+            this.progressBar1.Size = new System.Drawing.Size(384, 27);
             this.progressBar1.TabIndex = 1;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(347, 426);
+            this.button1.Location = new System.Drawing.Point(405, 492);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(88, 27);
             this.button1.TabIndex = 2;
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
@@ -54,9 +56,11 @@
             // OutputLog
             // 
             this.OutputLog.FormattingEnabled = true;
-            this.OutputLog.Location = new System.Drawing.Point(12, 12);
+            this.OutputLog.ItemHeight = 15;
+            this.OutputLog.Location = new System.Drawing.Point(14, 14);
+            this.OutputLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.OutputLog.Name = "OutputLog";
-            this.OutputLog.Size = new System.Drawing.Size(410, 407);
+            this.OutputLog.Size = new System.Drawing.Size(478, 469);
             this.OutputLog.TabIndex = 3;
             this.OutputLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OutputLog_MouseDoubleClick);
             // 
@@ -70,15 +74,17 @@
             // 
             // GameCompiler
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(434, 461);
+            this.ClientSize = new System.Drawing.Size(506, 532);
             this.ControlBox = false;
             this.Controls.Add(this.OutputLog);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "GameCompiler";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "GameCompiler";

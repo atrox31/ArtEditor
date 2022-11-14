@@ -278,7 +278,7 @@ namespace ArtCore_Editor
             {
                 instance.Sprite = null;
             }
-
+            LocalVaribles.Single(n => n.Name == "self_sprite").Default = instance.Sprite?.Name;
             if (aid == null)
             {
                 GameProject.GetInstance().Instances.Add(instance.Name, instance);
@@ -346,7 +346,7 @@ namespace ArtCore_Editor
                 instance_main += "function " + instance.Name + ":" + "DEF_VALUES" + "\n";
                 foreach (var item in LocalVaribles)
                 {
-                    instance_main += item.Name + " = " + item.Default + "\n";
+                    instance_main += item.Name + " = " + (item.Default==null?"null": item.Default) + "\n";
                 }
                 instance_main += "@end\n";
                 // events
@@ -386,6 +386,12 @@ namespace ArtCore_Editor
                     }
                 }
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            LocalVaribles.Single(n => n.Name == "self_sprite").Default = instance.Sprite?.Name;
         }
     }
 }

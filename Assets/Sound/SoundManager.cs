@@ -38,6 +38,9 @@ namespace ArtCore_Editor
             can_play = true;
         }
 
+        string FileName;
+        string ProjectPath= "assets\\sound\\";
+
         public SoundManager(string AssetId = null)
         {
             soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
@@ -47,7 +50,9 @@ namespace ArtCore_Editor
             if (AssetId != null)
             {
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].Name;
-                textBox2.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].FileName;
+                FileName = MainWindow.GetInstance().Game_Project.Sounds[AssetId].FileName;
+
+                textBox2.Text = ProjectPath + "\\" + FileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -60,7 +65,6 @@ namespace ArtCore_Editor
                 }
             }
         }
-
 
 
         private void button3_Click(object sender, EventArgs e)
@@ -90,7 +94,8 @@ namespace ArtCore_Editor
                     MainWindow.GetInstance().Game_Project.Sounds.Add(textBox1.Text, new Asset());
                 }
                 MainWindow.GetInstance().Game_Project.Sounds[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Sounds[aid].FileName = textBox2.Text;
+                MainWindow.GetInstance().Game_Project.Sounds[aid].FileName = FileName;
+                MainWindow.GetInstance().Game_Project.Sounds[aid].ProjectPath = ProjectPath;
 
 
                 if (aid != MainWindow.GetInstance().Game_Project.Sounds[aid].Name)
@@ -123,9 +128,10 @@ namespace ArtCore_Editor
                 if (textBox1.TextLength == 0)
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
+                    FileName = textBox1.Text + ".wav";
                 }
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\sound\\" + textBox1.Text + ".wav", true);
-                textBox2.Text = "assets\\sound\\" + textBox1.Text + ".wav";
+                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\sound\\" + FileName, true);
+                textBox2.Text = ProjectPath + "\\" + FileName;
 
                 SetInfoBox();
             }

@@ -69,6 +69,10 @@ namespace ArtCore_Editor
                     this.x2 = x2;
                     this.y2 = y2;
                 }
+                public override string ToString()
+                {
+                    return x1.ToString() + "," + y1.ToString() + "," + x2.ToString() + "," + y2.ToString();
+                }
             }
             [JsonProperty]
             public int Width;

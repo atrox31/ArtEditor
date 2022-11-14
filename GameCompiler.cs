@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -59,18 +61,21 @@ namespace ArtCore_Editor
 
                 string Name = (string)(typeof(T).GetProperty("Name").GetValue(item.Value, null));
                 string File_MD5 = (string)(typeof(T).GetProperty("File_MD5").GetValue(item.Value, null));
-                string FileName = (string)(typeof(T).GetProperty("FileName").GetValue(item.Value, null));
+                string FileName = ((string)(typeof(T).GetProperty("FileName").GetValue(item.Value, null))).Split('\\').Last();
+                string ProjectPath = (string)(typeof(T).GetProperty("ProjectPath").GetValue(item.Value, null));
+
+                Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
 
                 sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
 
-                if (!File.Exists(GameProject.ProjectPath + "\\" + FileName))
+                if (!File.Exists(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
                 {
-                    sender.ReportProgress(1, new Message("Asset type: '" + asset + "' file not exists", current_progress, false));
+                    sender.ReportProgress(1, new Message("Asset type: '" + Name + "' file not exists", current_progress, false));
                     return;
                 }
-                if (File_MD5 == null)
+                if (File_MD5?.Length == 0)
                 {
-                    File_MD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + FileName);
+                    File_MD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName);
                     typeof(T).GetProperty("File_MD5").SetValue(item.Value, File_MD5);
                 }
 
@@ -98,11 +103,19 @@ namespace ArtCore_Editor
                             ZipArchiveEntry FileEntry = archive.CreateEntry(FileName);
                             using (StreamWriter writer = new StreamWriter(FileEntry.Open()))
                             {
-                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + FileName))
+                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
                                 {
                                     file.BaseStream.CopyTo(writer.BaseStream);
                                 }
-
+                                if(typeof(T) == typeof(Sprite)){
+                                    foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath+ "\\img\\"))
+                                    {
+                                        using (StreamReader file = new StreamReader(_f))
+                                        {
+                                            file.BaseStream.CopyTo(writer.BaseStream);
+                                        }
+                                    }
+                                }
                             }
                         }
                         // else file ok
@@ -133,7 +146,7 @@ namespace ArtCore_Editor
             string args = "-lib \"" + GameProject.ProjectPath + "\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
-            compiler.StartInfo.FileName = "D:\\projekt\\ACompiler\\x64\\Debug\\ACompiler.exe";
+            compiler.StartInfo.FileName = "..\\Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
@@ -192,7 +205,7 @@ namespace ArtCore_Editor
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + folder + "\\" + File))
+                        using (StreamReader file = new StreamReader("..\\Core\\" + folder + "\\" + File))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -235,31 +248,15 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
-            /* 
-	            []files
-		            gamecontrollerdb.txt
-		            TitilliumWeb-Light.ttf
-		            bloom.frag
-		            color.frag
-		            common.vert
-*	            []object_definitions.sdsd
-*	            []scene_definitions
-		            scene1.obj
-		            ..
-		            sceneX.obj
-*	            syntax.txt
-*	            setup.ini
-            */
-
+            
             {
                 List<string[]> coreFiles = new List<string[]>()
                 {
-                    new string[]{"", "AScript.lib" },
-                    new string[]{"pack", "gamecontrollerdb.txt" },
-                    new string[]{"pack", "TitilliumWeb-Light.ttf" },
-                    new string[]{"pack", "bloom.frag" },
-                    new string[]{"pack", "color.frag" },
-                    new string[]{"pack", "common.vert" },
+                    new string[]{ "pack", "gamecontrollerdb.txt" },
+                    new string[]{ "pack", "TitilliumWeb-Light.ttf" },
+                    new string[]{ "shaders", "bloom.frag" },
+                    new string[]{ "shaders", "color.frag" },
+                    new string[]{ "shaders", "common.vert" },
                 };
                 int c = 1;
                 foreach (var item in coreFiles)
@@ -323,9 +320,34 @@ namespace ArtCore_Editor
                     {
                         if (archive.GetEntry("scene_definitions\\" + scene.Key + ".asd") == null)
                         {
-                            ZipArchiveEntry readmeEntry = archive.CreateEntry("scene_definitions\\" + scene.Key + ".asd");
+                            ZipArchiveEntry readmeEntry = archive.CreateEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
+                                writer.WriteLine("[setup]");
+                                writer.WriteLine("GuiFile="+scene.Value.GuiFile);
+                                writer.WriteLine("Width=" + scene.Value.Width);
+                                writer.WriteLine("Height=" + scene.Value.Height);
+                                writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
+                                writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
+                                writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
+                                writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
+                                writer.WriteLine("BackGroundColor=" + scene.Value.BackGroundColor);
+                                writer.WriteLine("[end]");
+
+                                writer.WriteLine("[regions]");
+                                foreach (var regions in scene.Value.regions)
+                                {
+                                    writer.WriteLine(regions.ToString());
+                                }
+                                writer.WriteLine("[end]");
+                                
+                                writer.WriteLine("[triggers]");
+                                foreach (var triggers in scene.Value.SceneTriggers)
+                                {
+                                    writer.WriteLine(triggers);
+                                }
+                                writer.WriteLine("[end]");
+
                                 writer.WriteLine("[instance]");
                                 foreach (var sIns in scene.Value.SceneInstances)
                                 {

@@ -41,6 +41,9 @@ namespace ArtCore_Editor
             can_play = true;
         }
 
+        string FileName;
+        string ProjectPath = "assets\\music\\";
+
         public MusicManager(string AssetId = null)
         {
             soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
@@ -50,7 +53,9 @@ namespace ArtCore_Editor
             if (AssetId != null)
             {
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Music[AssetId].Name;
-                textBox2.Text = MainWindow.GetInstance().Game_Project.Music[AssetId].FileName;
+                FileName = MainWindow.GetInstance().Game_Project.Music[AssetId].FileName;
+
+                textBox2.Text = ProjectPath + "\\" + FileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -107,7 +112,8 @@ namespace ArtCore_Editor
                     MainWindow.GetInstance().Game_Project.Music.Add(textBox1.Text, new Asset());
                 }
                 MainWindow.GetInstance().Game_Project.Music[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Music[aid].FileName = textBox2.Text;
+                MainWindow.GetInstance().Game_Project.Music[aid].FileName = FileName;
+                MainWindow.GetInstance().Game_Project.Music[aid].ProjectPath = ProjectPath;
 
                 if (aid != MainWindow.GetInstance().Game_Project.Music[aid].Name)
                 {
@@ -139,9 +145,10 @@ namespace ArtCore_Editor
                 if (textBox1.TextLength == 0)
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
+                    FileName = textBox1.Text + ".wav";
                 }
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + textBox1.Text + ".wav", true);
-                textBox2.Text = "assets\\music\\" + textBox1.Text + ".wav";
+                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + FileName, true);
+                textBox2.Text = ProjectPath + "\\" + FileName;
 
                 SetInfoBox();
             }

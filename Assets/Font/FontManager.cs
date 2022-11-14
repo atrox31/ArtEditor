@@ -12,6 +12,11 @@ namespace ArtCore_Editor
     {
         string aid;
         Font font;
+
+
+        string FileName;
+        string ProjectPath = "assets\\font\\";
+
         public FontManager(string AssetId = null)
         {
             InitializeComponent();Program.ApplyTheme(this);
@@ -19,7 +24,9 @@ namespace ArtCore_Editor
             if (AssetId != null)
             {
                 textBox1.Text = MainWindow.GetInstance().Game_Project.Fonts[AssetId].Name;
-                textBox2.Text = MainWindow.GetInstance().Game_Project.Fonts[AssetId].FileName;
+                FileName = MainWindow.GetInstance().Game_Project.Fonts[AssetId].FileName;
+
+                textBox2.Text = ProjectPath + "\\" + FileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -79,7 +86,8 @@ namespace ArtCore_Editor
                     MainWindow.GetInstance().Game_Project.Fonts.Add(textBox1.Text, new Asset());
                 }
                 MainWindow.GetInstance().Game_Project.Fonts[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Fonts[aid].FileName = textBox2.Text;
+                MainWindow.GetInstance().Game_Project.Fonts[aid].FileName = FileName;
+                MainWindow.GetInstance().Game_Project.Fonts[aid].ProjectPath = ProjectPath;
 
                 if (aid != MainWindow.GetInstance().Game_Project.Fonts[aid].Name)
                 {

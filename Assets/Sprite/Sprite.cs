@@ -33,7 +33,6 @@ namespace ArtCore_Editor
         public Sprite()
         {
             sprite_animationSquence = new Dictionary<string, animationSequence>();
-            this.name = "";
             this.type = Sprite.Type.asset;
             this.collision_mask = Sprite.CollisionMask.none;
             this.collision_mask_value = 0;
@@ -52,7 +51,6 @@ namespace ArtCore_Editor
             textures = new List<Image>();
         }
 
-        public string name;
         public List<Image> textures;
         public enum Type
         {
@@ -167,7 +165,7 @@ namespace ArtCore_Editor
             }
             buffer += "[sprite]\n";
 
-            buffer += "name=" + name + "\n";
+            buffer += "name=" + Name + "\n";
             switch (type)
             {
                 case Type.asset: buffer += "type=asset\n"; break;
@@ -203,7 +201,7 @@ namespace ArtCore_Editor
 
             buffer += "count=" + (textures == null ? "0" : textures.Count.ToString()) + "\n";
 
-            string FilePath = GameProject.ProjectPath + "\\assets\\sprite\\" + name;
+            string FilePath = GameProject.ProjectPath + "\\assets\\sprite\\" + Name;
             Directory.CreateDirectory(FilePath + "\\img\\");
 
             if (textures != null && textures.Count > 0)
@@ -217,16 +215,14 @@ namespace ArtCore_Editor
                         img.Save(pth, System.Drawing.Imaging.ImageFormat.Png);
 
                     }
-                    buffer += "\\assets\\sprite\\" + name + "\\img\\" + i.ToString() + ".png\n";
                     i++;
                 }
             }
             buffer += "[/image_list]\n";
-            File.WriteAllText(FilePath + "\\" + name + ".spr", buffer);
+            File.WriteAllText(FilePath + "\\" + Name + ".spr", buffer);
 
-            FileName = "\\assets\\sprite\\" + name + "\\" + name + ".spr";
-            Name = name;
-            ProjectPath = "\\assets\\sprite\\" + name + "\\";
+            FileName = Name + ".spr";
+            ProjectPath = "\\assets\\sprite\\" + Name + "\\";
         }
 
         public bool Load(string file)
@@ -272,7 +268,7 @@ namespace ArtCore_Editor
                         {
                             if (line == "[/sprite]") { phase = 0; break; }
                             string[] tmp = line.Split('=');
-                            if (tmp[0] == "name") { name = tmp[1]; Name = name; break; }
+                            if (tmp[0] == "name") { Name = tmp[1]; break; }
 
                             if (tmp[0] == "type")
                             {
@@ -313,21 +309,16 @@ namespace ArtCore_Editor
                     case 3:
                         {
                             if (line == "[/image_list]") { phase = 0; break; }
-                            if (imgc == -1)
+                            string[] tmp = line.Split('=');
+                            if (tmp[0] == "count")
                             {
-                                string[] tmp = line.Split('=');
-                                if (tmp[0] == "count")
+                                imgc = Convert.ToInt32(tmp[1]);
+                                textures = new List<Image>(imgc);
+                                for (int i = 0; i< imgc; i++)
                                 {
-                                    imgc = Convert.ToInt32(tmp[1]);
-                                    textures = new List<Image>(imgc);
+                                    AddImage(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + Name + "\\img\\" + i.ToString() + ".png");
                                 }
-
                             }
-                            else
-                            {
-                                AddImage(GameProject.ProjectPath + line);
-                            }
-
                         }
                         break;
                     case 4:
@@ -340,8 +331,8 @@ namespace ArtCore_Editor
                 }
             }
 
-            FileName = "\\assets\\" + file.Split("assets")[1];
-            ProjectPath = "\\assets\\sprite\\" + name;
+            FileName = Name + ".spr";
+            ProjectPath = "\\assets\\sprite\\" + Name + "\\";
 
             SetImgId(true);
             return true;

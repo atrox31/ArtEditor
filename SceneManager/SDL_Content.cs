@@ -1,6 +1,7 @@
 ﻿using SDL2;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ArtCore_Editor
 {
@@ -9,11 +10,13 @@ namespace ArtCore_Editor
         IntPtr window;
         IntPtr renderer;
         static SDL_Content _instance;
-        BackgroundWorker sender;
-        DoWorkEventArgs e;
+        static BackgroundWorker sender;
+        static DoWorkEventArgs e;
         public static SDL_Content Init(BackgroundWorker sender, DoWorkEventArgs e)
         {
             _instance = new SDL_Content();
+            SDL_Content.sender = sender;
+            SDL_Content.e = e;
             // Initilizes SDL.
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
             {

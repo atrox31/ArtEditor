@@ -44,7 +44,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(405, 492);
+            this.button1.Location = new System.Drawing.Point(791, 489);
             this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 27);
@@ -60,7 +60,7 @@
             this.OutputLog.Location = new System.Drawing.Point(14, 14);
             this.OutputLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.OutputLog.Name = "OutputLog";
-            this.OutputLog.Size = new System.Drawing.Size(478, 469);
+            this.OutputLog.Size = new System.Drawing.Size(865, 469);
             this.OutputLog.TabIndex = 3;
             this.OutputLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OutputLog_MouseDoubleClick);
             // 
@@ -78,7 +78,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(506, 532);
+            this.ClientSize = new System.Drawing.Size(892, 532);
             this.ControlBox = false;
             this.Controls.Add(this.OutputLog);
             this.Controls.Add(this.button1);

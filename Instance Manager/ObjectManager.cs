@@ -278,7 +278,7 @@ namespace ArtCore_Editor
             {
                 instance.Sprite = null;
             }
-            LocalVaribles.Single(n => n.Name == "self_sprite").Default = instance.Sprite?.Name;
+            LocalVaribles.Single(n => n.Name == "self_sprite").Default = (instance.Sprite == null?"null":$"get_sprite(\"{instance.Sprite.Name}\")");
             if (aid == null)
             {
                 GameProject.GetInstance().Instances.Add(instance.Name, instance);

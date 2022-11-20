@@ -506,7 +506,7 @@ namespace ArtCore_Editor
             // TODO
             // online update
             Process update = new Process();
-            update.StartInfo.FileName = @"..\..\CoreCopy.bat";
+            update.StartInfo.FileName = @"CoreCopy.bat";
             update.Start();
             update.WaitForExit();
         }

@@ -141,20 +141,22 @@ namespace ArtCore_Editor
             return false;
         }
 
-        public static void CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
+        public static bool CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
         {
             string inputs = "";
             foreach (var obj in GameProject.GetInstance().Instances)
             {
                 inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + "\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + "..\\Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
             compiler.StartInfo.FileName = "..\\Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
+            compiler.StartInfo.CreateNoWindow = true;
+            //compiler.StartInfo.WorkingDirectory = GameProject.ProjectPath;
             compiler.Start();
 
             string standard_output;
@@ -164,37 +166,42 @@ namespace ArtCore_Editor
             }
 
             compiler.WaitForExit();
-            if (File.Exists(GameProject.ProjectPath + "\\object_compile.acp"))
+            if (compiler.ExitCode == 0)
             {
-
-                using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+                if (File.Exists(GameProject.ProjectPath + "\\object_compile.acp"))
                 {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+
+                    using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
                     {
+                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                        {
 
-                        if (CancelRequest(sender, e)) return;
-                        ZipArchiveEntry readmeEntry = archive.GetEntry("object_compile.acp");
-                        if (readmeEntry == null)
-                        {
-                            readmeEntry = archive.CreateEntry("object_compile.acp");
-                        }
-                        using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                        {
-                            using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\object_compile.acp"))
+                            if (CancelRequest(sender, e)) return false;
+                            ZipArchiveEntry readmeEntry = archive.GetEntry("object_compile.acp");
+                            if (readmeEntry == null)
                             {
-                                file.BaseStream.CopyTo(writer.BaseStream);
+                                readmeEntry = archive.CreateEntry("object_compile.acp");
                             }
+                            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                            {
+                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\object_compile.acp"))
+                                {
+                                    file.BaseStream.CopyTo(writer.BaseStream);
+                                }
 
 
+                            }
                         }
                     }
+                    return true;
+                }
+                else
+                {
+                    //TODO: error file not found
+                    return false;
                 }
             }
-            else
-            {
-                //TODO: error
-            }
-
+            return false;
         }
 
         void UpdateCoreFiles(string folder, string File, int c, int max)
@@ -302,7 +309,10 @@ namespace ArtCore_Editor
             // object definitions
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Objects", 70, false));
-            CreateObjectDefinitions(Bgw, e);
+            if(!CreateObjectDefinitions(Bgw, e))
+            {
+                return;
+            }
             Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
 
 

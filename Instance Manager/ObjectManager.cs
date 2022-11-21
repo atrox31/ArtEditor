@@ -27,19 +27,7 @@ namespace ArtCore_Editor
 
             aid = AssetId;
             events_data = new Dictionary<Event.EventType, string>();
-            LocalVaribles = new List<Varible>()
-            {
-                new Varible(Varible.type.FLOAT, "x", "0.0f"),
-                new Varible(Varible.type.FLOAT, "y", "0.0f"),
-                new Varible(Varible.type.FLOAT, "prev_x", "0.0f", true),
-                new Varible(Varible.type.FLOAT, "prev_y", "0.0f", true),
-                new Varible(Varible.type.FLOAT, "direction", "0.0f"),
-                new Varible(Varible.type.FLOAT, "sprite_x_scale", "1.0f"),
-                new Varible(Varible.type.FLOAT, "sprite_y_scale", "1.0f"),
-                new Varible(Varible.type.FLOAT, "image_angle", "0.0f"),
-                new Varible(Varible.type.SPRITE, "self_sprite", "null"),
-                new Varible(Varible.type.RECTANGLE, "mask", "null"),
-            };
+            LocalVaribles = new List<Varible>();
 
             if (AssetId != null)
             {
@@ -270,6 +258,7 @@ namespace ArtCore_Editor
             if (Functions.ErrorCheck(textBox1.TextLength < 24, "Object name too long")) return;
 
             instance.Name = textBox1.Text;
+            /*
             if (GameProject.GetInstance().Sprites.ContainsKey(comboBox1.Text))
             {
                 instance.Sprite = GameProject.GetInstance().Sprites[comboBox1.Text];
@@ -278,7 +267,8 @@ namespace ArtCore_Editor
             {
                 instance.Sprite = null;
             }
-            LocalVaribles.Single(n => n.Name == "self_sprite").Default = (instance.Sprite == null?"null":$"get_sprite(\"{instance.Sprite.Name}\")");
+            */
+            //LocalVaribles.Single(n => n.Name == "self_sprite").Default = (instance.Sprite == null?"null":$"get_sprite(\"{instance.Sprite.Name}\")");
             if (aid == null)
             {
                 GameProject.GetInstance().Instances.Add(instance.Name, instance);
@@ -328,10 +318,12 @@ namespace ArtCore_Editor
                 string instance_main = "";
                 // main
                 instance_main += "object " + instance.Name + "\n";
+                /*
                 foreach (var item in LocalVaribles)
                 {
                     instance_main += "local " + (item.ReadOnly ? "READ_ONLY " : "") + item.Type.ToString().ToLower() + " " + item.Name + "\n";
                 }
+                */
                 foreach (var item in instance.Varible)
                 {
                     instance_main += "local " + item.Type.ToString().ToLower() + " " + item.Name + "\n";
@@ -343,6 +335,10 @@ namespace ArtCore_Editor
                 instance_main += "@end\n";
                 // default
                 instance_main += "function " + instance.Name + ":" + "DEF_VALUES" + "\n";
+                if (instance.Sprite != null)
+                {
+                    instance_main +=  $"set_self_sprite(get_sprite(\"{instance.Sprite.Name}\"))" + "\n";
+                }
                 foreach (var item in LocalVaribles)
                 {
                     instance_main += item.Name + " = " + (item.Default == null ? "null" : item.Default) + "\n";
@@ -389,8 +385,14 @@ namespace ArtCore_Editor
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-            LocalVaribles.Single(n => n.Name == "self_sprite").Default = instance.Sprite?.Name;
+            if (GameProject.GetInstance().Sprites.ContainsKey(comboBox1.Text))
+            {
+                instance.Sprite = GameProject.GetInstance().Sprites[comboBox1.Text];
+            }
+            else
+            {
+                instance.Sprite = null;
+            }
         }
     }
 }

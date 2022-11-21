@@ -333,44 +333,46 @@ namespace ArtCore_Editor
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        //if (archive.GetEntry("scene_definitions\\" + scene.Key + ".asd") == null)
+                        ZipArchiveEntry readmeEntry = archive.GetEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
+                        if (readmeEntry == null)
                         {
-                            ZipArchiveEntry readmeEntry = archive.CreateEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
-                            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                            {
-                                writer.WriteLine("[setup]");
-                                writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
-                                writer.WriteLine("Width=" + scene.Value.Width);
-                                writer.WriteLine("Height=" + scene.Value.Height);
-                                writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
-                                writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
-                                writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
-                                writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
-                                writer.WriteLine("BackGroundColor=" + scene.Value.BackGroundColor);
-                                writer.WriteLine("[end]");
-
-                                writer.WriteLine("[regions]");
-                                foreach (var regions in scene.Value.regions)
-                                {
-                                    writer.WriteLine(regions.ToString());
-                                }
-                                writer.WriteLine("[end]");
-
-                                writer.WriteLine("[triggers]");
-                                foreach (var triggers in scene.Value.SceneTriggers)
-                                {
-                                    writer.WriteLine(triggers);
-                                }
-                                writer.WriteLine("[end]");
-
-                                writer.WriteLine("[instance]");
-                                foreach (var sIns in scene.Value.SceneInstances)
-                                {
-                                    writer.WriteLine(sIns.instance.Name + "|" + sIns.x + "|" + sIns.y);
-                                }
-                                writer.WriteLine("[end]");
-                            }
+                            readmeEntry = archive.CreateEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
                         }
+                        using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                        {
+                            writer.WriteLine("[setup]");
+                            writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
+                            writer.WriteLine("Width=" + scene.Value.Width);
+                            writer.WriteLine("Height=" + scene.Value.Height);
+                            writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
+                            writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
+                            writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
+                            writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
+                            writer.WriteLine("BackGroundColor=" + scene.Value.BackGroundColor);
+                            writer.WriteLine("[end]");
+
+                            writer.WriteLine("[regions]");
+                            foreach (var regions in scene.Value.regions)
+                            {
+                                writer.WriteLine(regions.ToString());
+                            }
+                            writer.WriteLine("[end]");
+
+                            writer.WriteLine("[triggers]");
+                            foreach (var triggers in scene.Value.SceneTriggers)
+                            {
+                                writer.WriteLine(triggers);
+                            }
+                            writer.WriteLine("[end]");
+
+                            writer.WriteLine("[instance]");
+                            foreach (var sIns in scene.Value.SceneInstances)
+                            {
+                                writer.WriteLine(sIns.instance.Name + "|" + sIns.x + "|" + sIns.y);
+                            }
+                            writer.WriteLine("[end]");
+                        }
+
 
                     }
                 }

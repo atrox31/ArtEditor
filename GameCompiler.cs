@@ -333,7 +333,7 @@ namespace ArtCore_Editor
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        if (archive.GetEntry("scene_definitions\\" + scene.Key + ".asd") == null)
+                        //if (archive.GetEntry("scene_definitions\\" + scene.Key + ".asd") == null)
                         {
                             ZipArchiveEntry readmeEntry = archive.CreateEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))

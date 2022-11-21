@@ -45,14 +45,14 @@ namespace ArtCore_Editor
             _instance = this;
             isdebug = debug;
         }
-        public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, int progress_min, int progress_max)
+        public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset,string AssetName, int progress_min, int progress_max)
         {
             string output = GameProject.ProjectPath + "\\" + "assets.pak";
 
             int max_count = asset.Count();
             int current_item = 0;
             int skipped = 0;
-            sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + current_item.ToString() + "/" + max_count.ToString() + ")", progress_min, false));
+            sender.ReportProgress(1, new Message(AssetName + " (" + current_item.ToString() + "/" + max_count.ToString() + ")", progress_min, false));
             foreach (var item in asset)
             {
                 int current_progress = Functions.Scale(current_item, 0, max_count, progress_min, progress_max);
@@ -65,7 +65,7 @@ namespace ArtCore_Editor
 
                 //Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
 
-                sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
+                sender.ReportProgress(1, new Message(AssetName + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
 
                 if (!File.Exists(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
                 {
@@ -100,20 +100,28 @@ namespace ArtCore_Editor
                         }
                         if (MD5 == null || MD5 != File_MD5)
                         {
-                            ZipArchiveEntry FileEntry = archive.CreateEntry(FileName);
+                            ZipArchiveEntry FileEntry = archive.CreateEntry(AssetName + "\\" + FileName);
                             using (StreamWriter writer = new StreamWriter(FileEntry.Open()))
                             {
                                 using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
                                 {
                                     file.BaseStream.CopyTo(writer.BaseStream);
                                 }
+                                //var t = typeof(T);
                                 if (typeof(T) == typeof(Sprite))
                                 {
+                                    int i = 0;
                                     foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
                                     {
-                                        using (StreamReader file = new StreamReader(_f))
+                                        //foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
+                                        ZipArchiveEntry FileEntry_img = archive.CreateEntry(AssetName + "\\" + Name + "\\" + i.ToString() + ".png");
+                                        i++;
+                                        using (StreamWriter writer_img = new StreamWriter(FileEntry_img.Open()))
                                         {
-                                            file.BaseStream.CopyTo(writer.BaseStream);
+                                            using (StreamReader file = new StreamReader(_f))
+                                            {
+                                                file.BaseStream.CopyTo(writer_img.BaseStream);
+                                            }
                                         }
                                     }
                                 }
@@ -125,9 +133,9 @@ namespace ArtCore_Editor
                         }
                     }
                 }
-                sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (++current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
+                sender.ReportProgress(1, new Message(AssetName + " (" + (++current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
             }
-            sender.ReportProgress(1, new Message((typeof(T)).Name + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") ", progress_max, true));
+            sender.ReportProgress(1, new Message(AssetName + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") ", progress_max, true));
             sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progress_max, false));
         }
 
@@ -242,19 +250,19 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
 
             // preparing
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, 10, 20);
+            PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sprites, 20, 30);
+            PrepareAssets(Bgw, e, GameProject.GetInstance().Sprites, "Sprites", 20, 30);
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Music, 30, 40);
+            PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 30, 40);
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, 40, 50);
+            PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 40, 50);
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, 50, 55);
+            PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
             if (CancelRequest(Bgw, e)) return;
 
             Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));

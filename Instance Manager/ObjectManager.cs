@@ -90,7 +90,8 @@ namespace ArtCore_Editor
                 instance = new GameProject.Instance();
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        bool AddEvent()
         {
             // add event - bellow Event_listbox
             object_event_picker object_Event_Picker = new object_event_picker();
@@ -98,18 +99,6 @@ namespace ArtCore_Editor
             {
 
                 Event.EventType type = object_Event_Picker.Type;
-                /*
-                if (type == Event.EventType.EV_TRIGGER)
-                {
-                    string trigger_name = "untilted";
-
-                    instance.Events.Add(type, trigger_name);
-
-                    events_data.Add(type, "--EV_TRIGGER : " + trigger_name + "function "+instance.Name + "_" + trigger_name + "\n\n\nend");
-                    Event_listobx.Items.Add("EV_TRIGGER:" + trigger_name);
-                }
-                else
-                */
                 {
                     if (Event_listobx.SelectedItem != null)
                     {
@@ -122,7 +111,7 @@ namespace ArtCore_Editor
                                 ), "Event exists!"))
                         {
                             Event_listobx.SelectedItem = type.ToString();
-                            return;
+                            return false;
                         }
                     }
                     instance.Events.Add(type, type.ToString());
@@ -134,7 +123,14 @@ namespace ArtCore_Editor
                 Event_listobx.SelectedIndex = Event_listobx.Items.Count - 1;
                 button5.Enabled = true;
                 button8.Enabled = true;
+                return true;
             }
+            return false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AddEvent(); 
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -176,10 +172,43 @@ namespace ArtCore_Editor
 
         private void button5_Click(object sender, EventArgs e)
         {
+            if (Event_listobx.SelectedItem == null)
+            {
+                if (!AddEvent()) return;
+            }
+
             ScriptEditor scriptEditor = new ScriptEditor(ScriptEditor.Function.type._null, instance);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {
                 // populate
+
+                // error with function without args
+                if (!scriptEditor.ReturnValue.EndsWith(')'))
+                {
+                    scriptEditor.ReturnValue += "()";
+                }
+
+                int SelectedNode = -1;
+                if(Event_treeview.SelectedNode != null)
+                {
+                    SelectedNode = Event_treeview.SelectedNode.Index;
+                }
+                if (SelectedNode == -1)
+                {
+                    Event_treeview.Nodes.Clear();
+                    events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] +=  "\n" + scriptEditor.ReturnValue;
+                    foreach (string item in events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split("\n"))
+                    {
+                        Event_treeview.Nodes.Add(item);
+                    }
+                }
+                else
+                {
+                    var code = events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split('\n').ToList();
+                    code.Insert(SelectedNode + 1, scriptEditor.ReturnValue);
+                    events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join('\n', code);
+                    Event_treeview.Nodes.Insert(SelectedNode + 1, scriptEditor.ReturnValue);
+                }
             }
         }
 
@@ -393,6 +422,11 @@ namespace ArtCore_Editor
             {
                 instance.Sprite = null;
             }
+        }
+
+        private void Event_treeview_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

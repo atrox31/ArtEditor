@@ -212,7 +212,7 @@
             // 
             this.Event_listobx.FormattingEnabled = true;
             this.Event_listobx.ItemHeight = 15;
-            this.Event_listobx.Location = new System.Drawing.Point(274, 14);
+            this.Event_listobx.Location = new System.Drawing.Point(276, 12);
             this.Event_listobx.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Event_listobx.Name = "Event_listobx";
             this.Event_listobx.Size = new System.Drawing.Size(237, 499);
@@ -245,7 +245,7 @@
             // button5
             // 
             this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(519, 14);
+            this.button5.Location = new System.Drawing.Point(519, 12);
             this.button5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(88, 27);
@@ -257,7 +257,7 @@
             // button8
             // 
             this.button8.Enabled = false;
-            this.button8.Location = new System.Drawing.Point(614, 14);
+            this.button8.Location = new System.Drawing.Point(1055, 12);
             this.button8.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(88, 27);
@@ -268,11 +268,12 @@
             // 
             // Event_treeview
             // 
-            this.Event_treeview.Location = new System.Drawing.Point(519, 47);
+            this.Event_treeview.Location = new System.Drawing.Point(519, 45);
             this.Event_treeview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Event_treeview.Name = "Event_treeview";
             this.Event_treeview.Size = new System.Drawing.Size(622, 466);
             this.Event_treeview.TabIndex = 11;
+            this.Event_treeview.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Event_treeview_MouseDoubleClick);
             // 
             // button9
             // 

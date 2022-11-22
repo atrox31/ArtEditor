@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
@@ -18,7 +19,7 @@ namespace ArtCore_Editor
             };
             type ReturnType { get; }
             string AditionalText { get; }
-            string Name { get; }
+            public string Name { get; }
             string MainText;
             public List<type> Arguments;
             public bool IsType(string ThisType)
@@ -135,32 +136,14 @@ namespace ArtCore_Editor
         Function.type RequiredType;
         Instance instance;
         static List<Function> FunctionsList = null;
+        public string ReturnValue = "";
 
-        public class DeliverArgs
-        {
-            public enum DType
-            {
-                _value, _varible, _function
-            }
-            public DType Type { get; set; }
-            public string Data { get; set; }
-            public DeliverArgs Tree = new DeliverArgs();
-        }
-
-        DeliverArgs deliverArgs;
-        public ScriptEditor(Function.type RequiredType, Instance instance, DeliverArgs deliverArgs = null)
+        public ScriptEditor(Function.type RequiredType, Instance instance)
         {
             InitializeComponent(); Program.ApplyTheme(this);
             this.RequiredType = RequiredType;
             this.instance = instance;
-            if (deliverArgs == null)
-            {
-                deliverArgs = new DeliverArgs();
-            }
-            else
-            {
-                this.deliverArgs = deliverArgs.Tree;
-            }
+            
 
             if (FunctionsList == null)
             {
@@ -232,6 +215,16 @@ namespace ArtCore_Editor
                     linkLabel1.Text = varibleEditor._Default;
                     linkLabel1.Links.Clear();
                     button1.Enabled = true;
+
+                    if(RequiredType == Function.type._string)
+                    {
+                        ReturnValue = "\"" + varibleEditor._Default + "\"";
+                    }
+                    else
+                    {
+                        ReturnValue = varibleEditor._Default;
+                    }
+
                 }
                 return;
             }
@@ -248,11 +241,13 @@ namespace ArtCore_Editor
                     linkLabel1.Text = answer;
                     linkLabel1.Links.Clear();
                     button1.Enabled = true;
+                    ReturnValue = answer;
                 }
 
 
                 return;
             }
+
             foreach (var function in functions)
             {
                 if (function.GetNormalname() == comboBox2.SelectedItem.ToString())
@@ -260,6 +255,12 @@ namespace ArtCore_Editor
                     function.MakeLinkText(ref linkLabel1);
                     function.MakeAditionalText(ref label1);
                     button1.Enabled = false;
+
+                    if(function.Arguments.Count == 0) {
+                        ReturnValue = function.Name;
+                        button1.Enabled = true;
+                    }
+
                     return;
                 }
             }
@@ -275,28 +276,28 @@ namespace ArtCore_Editor
         {
             string[] target = (e.Link.LinkData as string).Split(':');
 
-            ScriptEditor scriptEditor = new ScriptEditor((Function.type)Enum.Parse(typeof(Function.type), target[1]), instance, deliverArgs);
+            ScriptEditor scriptEditor = new ScriptEditor((Function.type)Enum.Parse(typeof(Function.type), target[1]), instance);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {
                 // populate
                 int linkNo = Convert.ToInt32(target[0]);
-                deliverArgs.Tree = scriptEditor.deliverArgs;
-                /*
-                if (CurrentFunction.ReturnedArguments.ContainsKey(linkNo))
-                {
-                    CurrentFunction.ReturnedArguments[linkNo] = scriptEditor.ReturnedValue;
-                }
-                else
-                {
-                    CurrentFunction.ReturnedArguments.Add(linkNo, scriptEditor.ReturnedValue);
-                }
-                CurrentFunction.MakeLinkText(ref linkLabel1);
-                if(CurrentFunction.ReturnedArguments.Count == CurrentFunction.Arguments.Count)
-                {
+                Function answer = FunctionsList.Find(x => x.GetNormalname() == comboBox2.Text);
+                answer.ReturnedArguments[linkNo] = scriptEditor.ReturnValue;
 
+                answer.MakeLinkText(ref linkLabel1);
+
+                if(answer.ReturnedArguments.Count == answer.Arguments.Count)
+                {
                     button1.Enabled = true;
+
+                    ReturnValue = answer.Name + "(";
+                    for(int i=0; i< answer.ReturnedArguments.Count; i++)
+                    {
+                        ReturnValue += answer.ReturnedArguments[i] + ", ";
+                    }
+                    ReturnValue = ReturnValue.Substring(0, ReturnValue.Length - 2);
+                    ReturnValue += ")";
                 }
-                */
             }
 
         }

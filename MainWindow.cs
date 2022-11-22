@@ -7,6 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using File = System.IO.File;
+using System.Web;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting.Internal;
+using System.Security.Policy;
+using static ArtCore_Editor.Program;
 
 namespace ArtCore_Editor
 {
@@ -503,12 +510,18 @@ namespace ArtCore_Editor
 
         private void updateCoreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO
-            // online update
-            Process update = new Process();
-            update.StartInfo.FileName = @"CoreCopy.bat";
-            update.Start();
-            update.WaitForExit();
+            if (UpdateProgram())
+            {
+
+            }
+        }
+
+        bool UpdateProgram()
+        {
+            Directory.CreateDirectory("temp");
+            HttpHelper.DownloadFileAsync("https://github.com/atrox31/ArtCompiler/releases/download/Fresh/ACompiler.exe", "temp\\ACompiler.exe");
+
+            return true;
         }
 
         private void Form1_Shown(object sender, EventArgs e)

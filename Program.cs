@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -21,7 +23,23 @@ namespace ArtCore_Editor
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
         }
+        public static class HttpHelper
+        {
+            private static readonly HttpClient _httpClient = new HttpClient();
 
+            public static async void DownloadFileAsync(string uri
+                 , string outputPath)
+            {
+                Uri uriResult;
+
+                if (!Uri.TryCreate(uri, UriKind.Absolute, out uriResult))
+                    throw new InvalidOperationException("URI is invalid.");
+
+                
+                byte[] fileBytes = await _httpClient.GetByteArrayAsync(uri);
+                File.WriteAllBytes(outputPath, fileBytes);
+            }
+        }
         public static void ApplyTheme(Control type)
         {
             foreach (var c in Functions.GetAllControls(type))

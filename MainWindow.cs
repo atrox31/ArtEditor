@@ -699,6 +699,22 @@ namespace ArtCore_Editor
             if (gameCompiler.ShowDialog() == DialogResult.OK)
             {
                 // run game in debug mode
+                Process compiler = new Process();
+                compiler.StartInfo.FileName = "..\\Core\\bin\\ArtCore.exe";
+                compiler.StartInfo.Arguments = "-debug -assets \""+ GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
+                compiler.StartInfo.RedirectStandardOutput = true;
+                compiler.StartInfo.UseShellExecute = false;
+                compiler.StartInfo.CreateNoWindow = true;
+                //compiler.StartInfo.WorkingDirectory = GameProject.ProjectPath;
+                compiler.Start();
+
+                string standard_output;
+                while ((standard_output = compiler.StandardOutput.ReadLine()) != null)
+                {
+                    Console.WriteLine(standard_output);
+                }
+
+                compiler.WaitForExit();
             }
         }
 

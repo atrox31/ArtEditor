@@ -331,7 +331,7 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
 
             if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Starting game", 100, false));
+            Bgw.ReportProgress(1, new Message("Game ready", 100, false));
         }
 
         private void CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e)
@@ -397,6 +397,10 @@ namespace ArtCore_Editor
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (progressBar1.Value == 100)
+            {
+                button2.Enabled = true;
+            }
 
         }
 
@@ -423,6 +427,12 @@ namespace ArtCore_Editor
                 LineViewer lv = new LineViewer(OutputLog.SelectedItem.ToString());
                 lv.ShowDialog();
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DialogResult= DialogResult.OK;
+            Close();
         }
     }
 }

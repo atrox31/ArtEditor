@@ -239,6 +239,30 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
 
+        void WriteListToArchive(string archive, string entry, List<string> content)
+        {
+            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + archive, FileMode.OpenOrCreate))
+            {
+                using (ZipArchive arch = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                {
+                    ZipArchiveEntry readmeEntry = arch.GetEntry(entry);
+                    if (readmeEntry == null)
+                    {
+                        readmeEntry = arch.CreateEntry(entry);
+                    }
+                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                    {
+                        foreach (string property in content)
+                        {
+                            writer.WriteLine(property);
+                        }
+                    }
+
+
+                }
+            }
+        }
+
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.VERSION.ToString(), 1, false));
@@ -289,28 +313,17 @@ namespace ArtCore_Editor
 
             // setup.ini
             Bgw.ReportProgress(1, new Message("Game settings", 60, false));
-            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
             {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                List<string> content = new List<string>();
+                foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
                 {
-                    ZipArchiveEntry readmeEntry = archive.GetEntry("setup.ini");
-                    if (readmeEntry == null)
-                    {
-                        readmeEntry = archive.CreateEntry("setup.ini");
-                    }
-                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                    {
-                        foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
-                        {
-                            var f_name = property.Name;
-                            int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
-                            writer.WriteLine(f_name + "=" + value);
-                        }
-                    }
-
-
+                    var f_name = property.Name;
+                    int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
+                    content.Add(f_name + "=" + value);
                 }
+                WriteListToArchive("game.dat", "setup.ini", content);
             }
+            
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
 
@@ -328,6 +341,7 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Scenes ", 91, false));
             CreateSceneDefinitions(Bgw, e);
+
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
 
             if (CancelRequest(Bgw, e)) return;

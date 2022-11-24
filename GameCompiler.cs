@@ -132,6 +132,8 @@ namespace ArtCore_Editor
                         {
                             skipped++;
                         }
+                        fileList.Add(AssetName + "\\" + FileName);
+
                     }
                 }
                 sender.ReportProgress(1, new Message(AssetName + " (" + (++current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
@@ -263,7 +265,7 @@ namespace ArtCore_Editor
                 }
             }
         }
-
+        static List<string> fileList= new List<string>();
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.VERSION.ToString(), 1, false));
@@ -275,6 +277,7 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
 
             // preparing
+            fileList.Clear();
             PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
             if (CancelRequest(Bgw, e)) return;
 
@@ -289,6 +292,8 @@ namespace ArtCore_Editor
 
             PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
             if (CancelRequest(Bgw, e)) return;
+
+            WriteListToArchive("assets.pak", "filelist.txt", fileList);
 
             Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
 

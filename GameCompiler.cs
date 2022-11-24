@@ -380,28 +380,24 @@ namespace ArtCore_Editor
                             writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
                             writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
                             writer.WriteLine("BackGroundColor=" + (scene.Value.BackGroundColor.R.ToString() + "," + scene.Value.BackGroundColor.G.ToString() + "," + scene.Value.BackGroundColor.B.ToString()));
-                            writer.WriteLine("[end]");
 
                             writer.WriteLine("[regions]");
                             foreach (var regions in scene.Value.regions)
                             {
                                 writer.WriteLine(regions.ToString());
                             }
-                            writer.WriteLine("[end]");
 
                             writer.WriteLine("[triggers]");
                             foreach (var triggers in scene.Value.SceneTriggers)
                             {
                                 writer.WriteLine(triggers);
                             }
-                            writer.WriteLine("[end]");
 
                             writer.WriteLine("[instance]");
                             foreach (var sIns in scene.Value.SceneInstances)
                             {
                                 writer.WriteLine(sIns.instance.Name + "|" + sIns.x + "|" + sIns.y);
                             }
-                            writer.WriteLine("[end]");
                         }
 
 

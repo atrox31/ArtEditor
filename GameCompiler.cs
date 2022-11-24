@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor
@@ -341,6 +342,9 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Scenes ", 91, false));
             CreateSceneDefinitions(Bgw, e);
+            WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
+            WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene.Name });
+            
 
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
 

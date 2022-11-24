@@ -374,7 +374,7 @@ namespace ArtCore_Editor
                             writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
                             writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
                             writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
-                            writer.WriteLine("BackGroundColor=" + scene.Value.BackGroundColor);
+                            writer.WriteLine("BackGroundColor=" + (scene.Value.BackGroundColor.R.ToString() + "," + scene.Value.BackGroundColor.G.ToString() + "," + scene.Value.BackGroundColor.B.ToString()));
                             writer.WriteLine("[end]");
 
                             writer.WriteLine("[regions]");

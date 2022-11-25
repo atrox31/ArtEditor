@@ -307,6 +307,7 @@ namespace ArtCore_Editor
                     new string[]{ "shaders", "bloom.frag" },
                     new string[]{ "shaders", "color.frag" },
                     new string[]{ "shaders", "common.vert" },
+                    new string[]{ "", "AScript.lib" },
                 };
                 int c = 1;
                 foreach (var item in coreFiles)

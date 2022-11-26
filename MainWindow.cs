@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Policy;
 using static ArtCore_Editor.Program;
+using System.Text;
 
 namespace ArtCore_Editor
 {
@@ -695,25 +696,35 @@ namespace ArtCore_Editor
         {
             // run debug
             GameCompiler gameCompiler = new GameCompiler(true);
-            if (gameCompiler.ShowDialog() == DialogResult.OK)
+            if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+
+            // run game in debug mode
+            Process compiler = new Process();
+            compiler.StartInfo.FileName = "..\\Core\\bin\\ArtCore.exe";
+            compiler.StartInfo.Arguments = "-debug -assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
+            compiler.StartInfo.RedirectStandardOutput = true;
+            compiler.StartInfo.UseShellExecute = false;
+            compiler.StartInfo.CreateNoWindow = true;
+            compiler.StartInfo.RedirectStandardOutput = true;
+            compiler.StartInfo.RedirectStandardError = true;
+
+            listBox1.Items.Clear();
+            listBox1.Items.Add(compiler.StartInfo.Arguments);
+
+            var sb = new StringBuilder();
+            compiler.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
+            compiler.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
+
+            compiler.Start();
+
+            compiler.BeginOutputReadLine();
+            compiler.BeginErrorReadLine();
+            
+            compiler.WaitForExit(60000);
+            sb.AppendLine("Process exit with code: "+compiler.ExitCode.ToString());
+            foreach(var item in sb.ToString().Split('\n'))
             {
-                // run game in debug mode
-                Process compiler = new Process();
-                compiler.StartInfo.FileName = "..\\Core\\bin\\ArtCore.exe";
-                compiler.StartInfo.Arguments = "-debug -assets \""+ GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
-                compiler.StartInfo.RedirectStandardOutput = true;
-                compiler.StartInfo.UseShellExecute = false;
-                compiler.StartInfo.CreateNoWindow = true;
-                //compiler.StartInfo.WorkingDirectory = GameProject.ProjectPath;
-                compiler.Start();
-
-                string standard_output;
-                while ((standard_output = compiler.StandardOutput.ReadLine()) != null)
-                {
-                    Console.WriteLine(standard_output);
-                }
-
-                compiler.WaitForExit();
+                listBox1.Items.Add(item);
             }
         }
 

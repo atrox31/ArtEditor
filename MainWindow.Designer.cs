@@ -50,6 +50,7 @@
             this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setStartSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,7 +76,7 @@
             this.ProjectAsserList = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.setStartSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -203,24 +204,24 @@
             // testInDebugToolStripMenuItem
             // 
             this.testInDebugToolStripMenuItem.Name = "testInDebugToolStripMenuItem";
-            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.testInDebugToolStripMenuItem.Text = "Test in Debug";
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(146, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -231,7 +232,7 @@
             this.scriptsToolStripMenuItem,
             this.assetsToolStripMenuItem});
             this.compileToolStripMenuItem.Name = "compileToolStripMenuItem";
-            this.compileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compileToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.compileToolStripMenuItem.Text = "Compile";
             // 
             // allToolStripMenuItem
@@ -251,6 +252,13 @@
             this.assetsToolStripMenuItem.Name = "assetsToolStripMenuItem";
             this.assetsToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.assetsToolStripMenuItem.Text = "Assets";
+            // 
+            // setStartSceneToolStripMenuItem
+            // 
+            this.setStartSceneToolStripMenuItem.Name = "setStartSceneToolStripMenuItem";
+            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.setStartSceneToolStripMenuItem.Text = "Set start scene";
+            this.setStartSceneToolStripMenuItem.Click += new System.EventHandler(this.setStartSceneToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -435,6 +443,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.93395F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85.06606F));
             this.tableLayoutPanel1.Controls.Add(this.ProjectAsserList, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.listBox1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -465,12 +474,14 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // setStartSceneToolStripMenuItem
+            // listBox1
             // 
-            this.setStartSceneToolStripMenuItem.Name = "setStartSceneToolStripMenuItem";
-            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.setStartSceneToolStripMenuItem.Text = "Set start scene";
-            this.setStartSceneToolStripMenuItem.Click += new System.EventHandler(this.setStartSceneToolStripMenuItem_Click);
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 15;
+            this.listBox1.Location = new System.Drawing.Point(306, 3);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(1722, 454);
+            this.listBox1.TabIndex = 1;
             // 
             // MainWindow
             // 
@@ -541,6 +552,7 @@
         private System.Windows.Forms.ToolStripMenuItem showConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cleanupFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setStartSceneToolStripMenuItem;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }
 

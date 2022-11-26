@@ -242,6 +242,31 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
 
+        void WriteFileToGameDat(string FileDest, string FileSource)
+        {
+            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                {
+                    ZipArchiveEntry readmeEntry = archive.GetEntry(FileSource);
+                    if (readmeEntry == null)
+                    {
+                        readmeEntry = archive.CreateEntry(FileSource);
+                    }
+                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                    {
+                        using (StreamReader file = new StreamReader(FileDest))
+                        {
+                            file.BaseStream.CopyTo(writer.BaseStream);
+                        }
+                    }
+
+
+
+                }
+            }
+        }
+
         void WriteListToArchive(string archive, string entry, List<string> content)
         {
             using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + archive, FileMode.OpenOrCreate))
@@ -314,6 +339,10 @@ namespace ArtCore_Editor
                 {
                     UpdateCoreFiles(item[0], item[1], c++, coreFiles.Count());
                     if (CancelRequest(Bgw, e)) return;
+                }
+                if(File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
+                {
+                    WriteFileToGameDat(GameProject.ProjectPath + "\\bg_img.png", "bg_img.png");
                 }
             }
             Bgw.ReportProgress(1, new Message("Prepare game file ..done", 60, true));

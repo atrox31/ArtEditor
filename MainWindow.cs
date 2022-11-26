@@ -695,8 +695,11 @@ namespace ArtCore_Editor
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             // run debug
-            GameCompiler gameCompiler = new GameCompiler(true);
-            if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+            if (!saved)
+            {
+                GameCompiler gameCompiler = new GameCompiler(true);
+                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+            }
 
             // run game in debug mode
             Process compiler = new Process();

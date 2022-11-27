@@ -74,12 +74,7 @@ namespace ArtCore_Editor
                     sender.ReportProgress(1, new Message("Asset type: '" + Name + "' file not exists", current_progress, false));
                     return;
                 }
-                if (File_MD5?.Length == 0)
-                {
-                    File_MD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName);
-                    typeof(T).GetProperty("File_MD5").SetValue(item.Value, File_MD5);
-                }
-
+                
                 // check MD5 cheksum
                 using (FileStream zipToOpen = new FileStream(output, FileMode.OpenOrCreate))
                 {

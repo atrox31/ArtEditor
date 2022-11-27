@@ -88,11 +88,10 @@ namespace ArtCore_Editor
         {
             using (var md5 = System.Security.Cryptography.MD5.Create())
             {
-                using (var stream = File.OpenRead(filename))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
-                }
+                var stream = File.ReadAllBytes(filename);
+                //var hash = md5.ComputeHash(stream);
+                return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
+
             }
         }
         /// <summary>

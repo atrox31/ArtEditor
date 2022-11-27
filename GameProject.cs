@@ -112,6 +112,21 @@ namespace ArtCore_Editor
             }
             //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
             GameProject gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
+            foreach(var cScene in gameProject.Scenes.Values.ToList())
+            {
+                foreach (var ins in cScene.SceneInstancesList)
+                {
+                    var data = ins.Split('|');
+                    if (gameProject.Instances.ContainsKey(data[0]))
+                    {
+                        cScene.SceneInstances.Add(new Scene.SceneInstance(Convert.ToInt32(data[1]), Convert.ToInt32(data[2]), gameProject.Instances[data[0]]));
+                    }
+                    else
+                    {
+                        // TODO: maby show error
+                    }
+                }
+            }
 
             if (gameProject == null)
             {

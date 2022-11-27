@@ -11,14 +11,15 @@ namespace ArtCore_Editor
         [JsonObject(MemberSerialization.OptIn)]
         public class Scene : Asset
         {
+            [JsonIgnore]
             static Dictionary<string, Image> InstanceSprites = new Dictionary<string, Image>();
+            
             public class SceneInstance
             {
                 public int x { get; set; }
                 public int y { get; set; }
                 public float editorMask { get; set; }
                 public Instance instance { get; set; }
-                [JsonIgnore]
                 public Image img;
                 public SceneInstance(int x, int y, GameProject.Instance instance)
                 {
@@ -50,8 +51,10 @@ namespace ArtCore_Editor
                     editorMask = (img.Width + img.Height) / 4;
                 }
             }
-            [JsonProperty]
+            [JsonIgnore]
             public List<SceneInstance> SceneInstances = new List<SceneInstance>();
+            [JsonProperty]
+            public List<string> SceneInstancesList = new List<string>();
 
             [JsonProperty]
             public string GuiFile;

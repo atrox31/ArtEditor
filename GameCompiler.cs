@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Windows.Forms;
+using static ArtCore_Editor.GameProject;
 
 namespace ArtCore_Editor
 {
@@ -101,7 +102,14 @@ namespace ArtCore_Editor
                         }
                         if (MD5 == null || MD5 != File_MD5)
                         {
-                            ZipArchiveEntry FileEntry = archive.CreateEntry(AssetName + "\\" + FileName);
+                            string EntryName = AssetName + "\\" + FileName;
+                            ZipArchiveEntry FileEntry = archive.GetEntry(EntryName);
+                            if (FileEntry != null)
+                            {
+                                FileEntry.Delete();
+                            }
+                            FileEntry = archive.CreateEntry(EntryName);
+
                             using (StreamWriter writer = new StreamWriter(FileEntry.Open()))
                             {
                                 using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
@@ -186,13 +194,16 @@ namespace ArtCore_Editor
                     {
                         using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                         {
-
                             if (CancelRequest(sender, e)) return false;
-                            ZipArchiveEntry readmeEntry = archive.GetEntry("object_compile.acp");
-                            if (readmeEntry == null)
+
+                            string EntryName = "object_compile.acp";
+                            ZipArchiveEntry readmeEntry = archive.GetEntry(EntryName);
+                            if (readmeEntry != null)
                             {
-                                readmeEntry = archive.CreateEntry("object_compile.acp");
+                                readmeEntry.Delete();
                             }
+                            readmeEntry = archive.CreateEntry(EntryName);
+
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
                                 using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\object_compile.acp"))
@@ -394,11 +405,13 @@ namespace ArtCore_Editor
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        ZipArchiveEntry readmeEntry = archive.GetEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
-                        if (readmeEntry == null)
+                        string EntryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
+                        ZipArchiveEntry readmeEntry = archive.GetEntry(EntryName);
+                        if (readmeEntry != null)
                         {
-                            readmeEntry = archive.CreateEntry("scene\\" + scene.Key + "\\" + scene.Key + ".asd");
+                            readmeEntry.Delete();
                         }
+                        readmeEntry = archive.CreateEntry(EntryName);
                         using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                         {
                             writer.WriteLine("[setup]");

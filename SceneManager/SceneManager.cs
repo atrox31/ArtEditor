@@ -50,6 +50,7 @@ namespace ArtCore_Editor
             }
             if (assetId != null)
             {
+                /*
                 string openingFileName = GameProject.ProjectPath + "\\" + GameProject.GetInstance().Scenes[assetId].FileName;
                 if (!File.Exists(openingFileName))
                 {
@@ -63,6 +64,22 @@ namespace ArtCore_Editor
                     fileContents = reader.ReadToEnd();
                 }
                 cScene = JsonConvert.DeserializeObject<Scene>(fileContents);
+
+                foreach(var ins in cScene.SceneInstancesList)
+                {
+                    var data = ins.Split('|');
+                    if (GameProject.GetInstance().Instances.ContainsKey(data[0]))
+                    {
+                        cScene.SceneInstances.Add(new Scene.SceneInstance(Convert.ToInt32(data[1]), Convert.ToInt32(data[2]), GameProject.GetInstance().Instances[data[0]]));
+                    }
+                    else
+                    {
+                        // TODO: maby show error
+                    }
+                }
+                */
+
+                cScene = GameProject.GetInstance().Scenes[assetId];
 
                 Name = cScene.Name;
                 textBox2.Text = cScene.Name;
@@ -227,6 +244,12 @@ namespace ArtCore_Editor
             Directory.CreateDirectory(path_to_object_data);
             cScene.FileName = "\\scene\\" + cScene.Name + "\\" + cScene.Name + ".scd";
             cScene.ProjectPath = "\\scene\\" + cScene.Name;
+
+            cScene.SceneInstancesList.Clear();
+            foreach(var ins in cScene.SceneInstances)
+            {
+                cScene.SceneInstancesList.Add($"{ins.instance.Name}|{ins.x}|{ins.y}");
+            }
 
             using (FileStream createStream = File.Create(GameProject.ProjectPath + cScene.FileName))
             {

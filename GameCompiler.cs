@@ -47,7 +47,7 @@ namespace ArtCore_Editor
             _instance = this;
             isdebug = debug;
         }
-        public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset,string AssetName, int progress_min, int progress_max)
+        public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
         {
             string output = GameProject.ProjectPath + "\\" + "assets.pak";
 
@@ -74,7 +74,7 @@ namespace ArtCore_Editor
                     sender.ReportProgress(1, new Message("Asset type: '" + Name + "' file not exists", current_progress, false));
                     return;
                 }
-                
+
                 // check MD5 cheksum
                 using (FileStream zipToOpen = new FileStream(output, FileMode.OpenOrCreate))
                 {
@@ -296,7 +296,7 @@ namespace ArtCore_Editor
                 }
             }
         }
-        static List<string> fileList= new List<string>();
+        static List<string> fileList = new List<string>();
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.VERSION.ToString(), 1, false));
@@ -346,7 +346,7 @@ namespace ArtCore_Editor
                     UpdateCoreFiles(item[0], item[1], c++, coreFiles.Count());
                     if (CancelRequest(Bgw, e)) return;
                 }
-                if(File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
+                if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
                 {
                     WriteFileToGameDat(GameProject.ProjectPath + "\\bg_img.png", "bg_img.png");
                 }
@@ -365,14 +365,14 @@ namespace ArtCore_Editor
                 }
                 WriteListToArchive("game.dat", "setup.ini", content);
             }
-            
+
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
 
             // object definitions
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Objects", 70, false));
-            if(!CreateObjectDefinitions(Bgw, e))
+            if (!CreateObjectDefinitions(Bgw, e))
             {
                 return;
             }
@@ -385,7 +385,7 @@ namespace ArtCore_Editor
             CreateSceneDefinitions(Bgw, e);
             WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
             WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene.Name });
-            
+
 
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
 
@@ -395,10 +395,11 @@ namespace ArtCore_Editor
 
         private void CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e)
         {
-            foreach (var scene in GameProject.GetInstance().Scenes)
-                using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                    foreach (var scene in GameProject.GetInstance().Scenes)
                     {
                         string EntryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
                         ZipArchiveEntry readmeEntry = archive.GetEntry(EntryName);
@@ -441,6 +442,7 @@ namespace ArtCore_Editor
 
                     }
                 }
+            }
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)

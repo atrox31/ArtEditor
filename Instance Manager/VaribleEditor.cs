@@ -125,7 +125,7 @@ namespace ArtCore_Editor
                         {
                             if (!FieldDefault.Text.StartsWith('"'))
                             {
-                                FieldDefault.Text.Insert(0, "\"");
+                                FieldDefault.Text = FieldDefault.Text.Insert(0, "\"");
                             }
                             if (!FieldDefault.Text.EndsWith('"'))
                             {

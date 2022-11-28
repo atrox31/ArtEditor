@@ -148,7 +148,7 @@ namespace ArtCore_Editor
             if (FunctionsList == null)
             {
                 FunctionsList = new List<Function>();
-                foreach (var line in System.IO.File.ReadAllLines("..\\Core\\AScript.lib"))
+                foreach (var line in System.IO.File.ReadAllLines("Core\\AScript.lib"))
                 {
                     if (line.StartsWith("//")) continue;
                     FunctionsList.Add(new Function(line));
@@ -216,15 +216,7 @@ namespace ArtCore_Editor
                     linkLabel1.Links.Clear();
                     button1.Enabled = true;
 
-                    if(RequiredType == Function.type._string)
-                    {
-                        ReturnValue = "\"" + varibleEditor._Default + "\"";
-                    }
-                    else
-                    {
-                        ReturnValue = varibleEditor._Default;
-                    }
-
+                    ReturnValue = varibleEditor._Default;
                 }
                 return;
             }
@@ -257,7 +249,7 @@ namespace ArtCore_Editor
                     button1.Enabled = false;
 
                     if(function.Arguments.Count == 0) {
-                        ReturnValue = function.Name;
+                        ReturnValue = function.Name + "()";
                         button1.Enabled = true;
                     }
 

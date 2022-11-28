@@ -246,7 +246,7 @@ namespace ArtCore_Editor
             cScene.ProjectPath = "\\scene\\" + cScene.Name;
 
             cScene.SceneInstancesList.Clear();
-            foreach(var ins in cScene.SceneInstances)
+            foreach (var ins in cScene.SceneInstances)
             {
                 cScene.SceneInstancesList.Add($"{ins.instance.Name}|{ins.x}|{ins.y}");
             }

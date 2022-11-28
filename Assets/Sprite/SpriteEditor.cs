@@ -29,7 +29,7 @@ namespace ArtCore_Editor
                 p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
 
                 p_currentFrame = p_firstFrame;
-                
+
             }
             else
             {

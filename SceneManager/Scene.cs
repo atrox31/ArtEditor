@@ -13,7 +13,7 @@ namespace ArtCore_Editor
         {
             [JsonIgnore]
             static Dictionary<string, Image> InstanceSprites = new Dictionary<string, Image>();
-            
+
             public class SceneInstance
             {
                 public int x { get; set; }

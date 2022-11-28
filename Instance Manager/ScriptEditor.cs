@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using static ArtCore_Editor.GameProject;
@@ -143,7 +142,7 @@ namespace ArtCore_Editor
             InitializeComponent(); Program.ApplyTheme(this);
             this.RequiredType = RequiredType;
             this.instance = instance;
-            
+
 
             if (FunctionsList == null)
             {
@@ -248,7 +247,8 @@ namespace ArtCore_Editor
                     function.MakeAditionalText(ref label1);
                     button1.Enabled = false;
 
-                    if(function.Arguments.Count == 0) {
+                    if (function.Arguments.Count == 0)
+                    {
                         ReturnValue = function.Name + "()";
                         button1.Enabled = true;
                     }
@@ -278,12 +278,12 @@ namespace ArtCore_Editor
 
                 answer.MakeLinkText(ref linkLabel1);
 
-                if(answer.ReturnedArguments.Count == answer.Arguments.Count)
+                if (answer.ReturnedArguments.Count == answer.Arguments.Count)
                 {
                     button1.Enabled = true;
 
                     ReturnValue = answer.Name + "(";
-                    for(int i=0; i< answer.ReturnedArguments.Count; i++)
+                    for (int i = 0; i < answer.ReturnedArguments.Count; i++)
                     {
                         ReturnValue += answer.ReturnedArguments[i] + ", ";
                     }

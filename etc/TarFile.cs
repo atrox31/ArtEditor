@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ArtCore_Editor
 {

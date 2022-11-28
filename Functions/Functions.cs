@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 using Color = System.Drawing.Color;
 
 namespace ArtCore_Editor
@@ -169,7 +168,7 @@ namespace ArtCore_Editor
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Image ResizeImage(Image image, int width, int height)
+        public static System.Drawing.Image ResizeImage(System.Drawing.Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
@@ -191,7 +190,7 @@ namespace ArtCore_Editor
                 }
             }
 
-            return Image.FromHbitmap(destImage.GetHbitmap());
+            return System.Drawing.Image.FromHbitmap(destImage.GetHbitmap());
         }
         /// <summary>
         /// if(ErrorCheck( condition, message )) return;

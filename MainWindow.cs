@@ -1,23 +1,15 @@
 ﻿using ArtCore_Editor.Assets;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using File = System.IO.File;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting.Internal;
-using System.Security.Policy;
-using static ArtCore_Editor.Program;
-using System.Text;
-using System.Threading;
-using System.ComponentModel;
 //using System.Web.Services.Description;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace ArtCore_Editor
@@ -521,7 +513,7 @@ namespace ArtCore_Editor
 
         List<string> StripFileList(List<string> content)
         {
-            List<string> output= new List<string>();
+            List<string> output = new List<string>();
 
             string folder = "";
             bool readFolderName = true;
@@ -530,7 +522,7 @@ namespace ArtCore_Editor
             foreach (var line in content)
             {
                 //folder separator
-                if(line.Length == 0)
+                if (line.Length == 0)
                 {
                     readFolderName = true;
                     folder = "";
@@ -573,10 +565,10 @@ namespace ArtCore_Editor
                 var list = StripFileList(File.ReadAllLines("Core\\FileList.txt").ToList());
                 foreach (var line in list)
                 {
-                    if(!File.Exists(line))
+                    if (!File.Exists(line))
                     {
-                        if(showMsg)
-                            MessageBox.Show("Cannot find '"+line+"', download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Missing file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (showMsg)
+                            MessageBox.Show("Cannot find '" + line + "', download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Missing file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
                 }
@@ -871,7 +863,8 @@ namespace ArtCore_Editor
             {
                 listBox1.Items.Add("wait for console output...");
                 var bw = new BackgroundWorker();
-                bw.DoWork += (object sender, DoWorkEventArgs e) => {
+                bw.DoWork += (object sender, DoWorkEventArgs e) =>
+                {
                     foreach (string line in ((StringBuilder)e.Argument).ToString().Split('\n'))
                     {
                         listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
@@ -1055,14 +1048,14 @@ namespace ArtCore_Editor
                 List<string> files = new List<string>();
                 files.Add(GameProject.ProjectPath + "\\game.dat");
                 files.Add(GameProject.ProjectPath + "\\assets.pak");
-                foreach(var cfile in Directory.GetFiles("Core\\bin_Release\\"))
+                foreach (var cfile in Directory.GetFiles("Core\\bin_Release\\"))
                 {
                     files.Add(cfile);
                 }
-                
-                foreach( string file in files)
+
+                foreach (string file in files)
                 {
-                    if(File.Exists(file))
+                    if (File.Exists(file))
                     {
                         File.Copy(file, output + "\\" + Path.GetFileName(file), true);
                     }

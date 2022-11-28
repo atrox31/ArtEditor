@@ -318,7 +318,7 @@ namespace ArtCore_Editor
                                 textures = new List<Image>(imgc);
                                 for (int i = 0; i < imgc; i++)
                                 {
-                                    AddImage(GameProject.ProjectPath + "\\" + ProjectPath  + "\\img\\" + i.ToString() + ".png");
+                                    AddImage(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\" + i.ToString() + ".png");
                                 }
                             }
                         }

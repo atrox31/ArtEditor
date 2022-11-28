@@ -130,7 +130,7 @@ namespace ArtCore_Editor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            AddEvent(); 
+            AddEvent();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -189,14 +189,14 @@ namespace ArtCore_Editor
                 }
 
                 int SelectedNode = -1;
-                if(Event_treeview.SelectedNode != null)
+                if (Event_treeview.SelectedNode != null)
                 {
                     SelectedNode = Event_treeview.SelectedNode.Index;
                 }
                 if (SelectedNode == -1)
                 {
                     Event_treeview.Nodes.Clear();
-                    events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] +=  "\n" + scriptEditor.ReturnValue;
+                    events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] += "\n" + scriptEditor.ReturnValue;
                     foreach (string item in events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split("\n"))
                     {
                         Event_treeview.Nodes.Add(item);
@@ -267,7 +267,7 @@ namespace ArtCore_Editor
         {
             if (Varible_listbox.SelectedItem != null)
             {
-                if (MessageBox.Show("Are You sure to delete varible '" + Varible_listbox.SelectedItem.ToString() + "'","Delete varible",  MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are You sure to delete varible '" + Varible_listbox.SelectedItem.ToString() + "'", "Delete varible", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     foreach (Varible var in instance.Varible)
                     {
@@ -366,7 +366,7 @@ namespace ArtCore_Editor
                 instance_main += "function " + instance.Name + ":" + "DEF_VALUES" + "\n";
                 if (instance.Sprite != null)
                 {
-                    instance_main +=  $"set_self_sprite(get_sprite(\"{instance.Sprite.Name}\"))" + "\n";
+                    instance_main += $"set_self_sprite(get_sprite(\"{instance.Sprite.Name}\"))" + "\n";
                 }
                 foreach (var item in LocalVaribles)
                 {

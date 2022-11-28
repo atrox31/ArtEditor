@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text.Json;
 using System.Windows;
 
@@ -102,19 +101,19 @@ namespace ArtCore_Editor
                 createStream.Write(buffer);
             }
             // hashcode md5 for assets to skip in compilation
-            foreach(var item in this.Music)
+            foreach (var item in this.Music)
             {
                 item.Value.File_MD5 = Functions.CalculateMD5(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
             }
-            foreach(var item in this.Fonts)
+            foreach (var item in this.Fonts)
             {
                 item.Value.File_MD5 = Functions.CalculateMD5(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
             }
-            foreach(var item in this.Sounds)
+            foreach (var item in this.Sounds)
             {
                 item.Value.File_MD5 = Functions.CalculateMD5(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
             }
-            foreach(var item in this.Textures)
+            foreach (var item in this.Textures)
             {
                 item.Value.File_MD5 = Functions.CalculateMD5(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
             }
@@ -130,7 +129,7 @@ namespace ArtCore_Editor
             }
             //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
             GameProject gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
-            foreach(var cScene in gameProject.Scenes.Values.ToList())
+            foreach (var cScene in gameProject.Scenes.Values.ToList())
             {
                 foreach (var ins in cScene.SceneInstancesList)
                 {

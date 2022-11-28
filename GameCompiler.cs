@@ -6,9 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Windows.Forms;
-using static ArtCore_Editor.GameProject;
 
 namespace ArtCore_Editor
 {
@@ -48,7 +46,7 @@ namespace ArtCore_Editor
             isdebug = debug;
             if (!isdebug)
             {
-                button2.Visible= false;
+                button2.Visible = false;
             }
         }
         public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
@@ -407,7 +405,7 @@ namespace ArtCore_Editor
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
                     var garbage = archive.Entries.Where(item => item.FullName.StartsWith("scene")).ToArray();
-                    foreach(var garbageItem in garbage)
+                    foreach (var garbageItem in garbage)
                     {
                         garbageItem.Delete();
                     }
@@ -469,7 +467,7 @@ namespace ArtCore_Editor
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            
+
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
                 if (isdebug)
@@ -511,7 +509,7 @@ namespace ArtCore_Editor
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DialogResult= DialogResult.OK;
+            DialogResult = DialogResult.OK;
             Close();
         }
     }

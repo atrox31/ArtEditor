@@ -35,7 +35,7 @@ namespace ArtCore_Editor
                 if (!Uri.TryCreate(uri, UriKind.Absolute, out uriResult))
                     throw new InvalidOperationException("URI is invalid.");
 
-                
+
                 byte[] fileBytes = await _httpClient.GetByteArrayAsync(uri);
                 File.WriteAllBytes(outputPath, fileBytes);
             }
@@ -58,7 +58,7 @@ namespace ArtCore_Editor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public const string LAST_FILENAME = "last.txt";
         public const string PROJECT_FILENAME = "Project.acg";
-        public const float VERSION = 0.28f;
+        public const float VERSION = 0.30f;
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 

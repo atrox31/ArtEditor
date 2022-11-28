@@ -639,6 +639,10 @@ namespace ArtCore_Editor
                     File.Copy("temp\\" + content, content, true);
 
                 }
+                if (Directory.Exists("temp"))
+                {
+                    Directory.Delete("temp", true);
+                }
                 MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return true;
             }
@@ -882,23 +886,29 @@ namespace ArtCore_Editor
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             // run
-            if (!saved)
+            if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(true);
-                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                if (!saved)
+                {
+                    GameCompiler gameCompiler = new GameCompiler(true);
+                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                }
+                RunGame(false);
             }
-            RunGame(false);
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             // run debug
-            if (!saved)
+            if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(true);
-                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                if (!saved)
+                {
+                    GameCompiler gameCompiler = new GameCompiler(true);
+                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                }
+                RunGame(true);
             }
-            RunGame(true);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -994,6 +1004,74 @@ namespace ArtCore_Editor
             string scene = PicFromList.Get(Game_Project.Scenes.Keys.ToList());
             if (scene == null) return;
             Game_Project.StartingScene = Game_Project.Scenes[scene];
+        }
+
+        private void testInDebugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // run debug
+            if (CheckCoreFiles())
+            {
+                if (!saved)
+                {
+                    GameCompiler gameCompiler = new GameCompiler(true);
+                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                }
+                RunGame(true);
+            }
+        }
+
+        private void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // run
+            if (CheckCoreFiles())
+            {
+                if (!saved)
+                {
+                    GameCompiler gameCompiler = new GameCompiler(true);
+                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                }
+                RunGame(false);
+            }
+        }
+
+        private void releaseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // run
+            if (CheckCoreFiles())
+            {
+                if (!saved)
+                {
+                    GameCompiler gameCompiler = new GameCompiler(false);
+                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                }
+
+                var output = GameProject.ProjectPath + "\\output\\" + Game_Project.ProjectName;
+                if (Directory.Exists(output))
+                {
+                    Directory.Delete(output, true);
+                }
+                Directory.CreateDirectory(output);
+
+                List<string> files = new List<string>();
+                files.Add(GameProject.ProjectPath + "\\game.dat");
+                files.Add(GameProject.ProjectPath + "\\assets.pak");
+                foreach(var cfile in Directory.GetFiles("Core\\bin_Release\\"))
+                {
+                    files.Add(cfile);
+                }
+                
+                foreach( string file in files)
+                {
+                    if(File.Exists(file))
+                    {
+                        File.Copy(file, output + "\\" + Path.GetFileName(file), true);
+                    }
+                }
+
+                MessageBox.Show("Game files are prepared for release", "Operation complite");
+                Process.Start("explorer.exe", output);
+
+            }
         }
     }
 }

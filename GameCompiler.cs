@@ -46,6 +46,10 @@ namespace ArtCore_Editor
             InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
             isdebug = debug;
+            if (!isdebug)
+            {
+                button2.Visible= false;
+            }
         }
         public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
         {
@@ -165,10 +169,10 @@ namespace ArtCore_Editor
             {
                 inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + "..\\Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + "\\Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
-            compiler.StartInfo.FileName = "..\\Core\\ACompiler.exe";
+            compiler.StartInfo.FileName = "\\Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
@@ -465,11 +469,19 @@ namespace ArtCore_Editor
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (progressBar1.Value == 100)
+            
+            if (progressBar1.Value == 100 && e.Cancelled == false)
             {
-                button2.Enabled = true;
+                if (isdebug)
+                {
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    button2.Enabled = true;
+                }
             }
-
         }
 
         private void button1_Click(object sender, EventArgs e)

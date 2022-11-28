@@ -46,10 +46,6 @@
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setStartSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -77,6 +73,8 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.releaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -193,8 +191,9 @@
             this.testToolStripMenuItem,
             this.toolStripSeparator4,
             this.settingsToolStripMenuItem,
-            this.compileToolStripMenuItem,
-            this.setStartSceneToolStripMenuItem});
+            this.setStartSceneToolStripMenuItem,
+            this.toolStripSeparator6,
+            this.releaseToolStripMenuItem});
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -204,59 +203,33 @@
             // testInDebugToolStripMenuItem
             // 
             this.testInDebugToolStripMenuItem.Name = "testInDebugToolStripMenuItem";
-            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testInDebugToolStripMenuItem.Text = "Test in Debug";
+            this.testInDebugToolStripMenuItem.Click += new System.EventHandler(this.testInDebugToolStripMenuItem_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testToolStripMenuItem.Text = "Test";
+            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(146, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
-            // 
-            // compileToolStripMenuItem
-            // 
-            this.compileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.allToolStripMenuItem,
-            this.scriptsToolStripMenuItem,
-            this.assetsToolStripMenuItem});
-            this.compileToolStripMenuItem.Name = "compileToolStripMenuItem";
-            this.compileToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.compileToolStripMenuItem.Text = "Compile";
-            // 
-            // allToolStripMenuItem
-            // 
-            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
-            this.allToolStripMenuItem.Text = "All";
-            // 
-            // scriptsToolStripMenuItem
-            // 
-            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
-            this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
-            this.scriptsToolStripMenuItem.Text = "Scripts";
-            // 
-            // assetsToolStripMenuItem
-            // 
-            this.assetsToolStripMenuItem.Name = "assetsToolStripMenuItem";
-            this.assetsToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
-            this.assetsToolStripMenuItem.Text = "Assets";
             // 
             // setStartSceneToolStripMenuItem
             // 
             this.setStartSceneToolStripMenuItem.Name = "setStartSceneToolStripMenuItem";
-            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setStartSceneToolStripMenuItem.Text = "Set start scene";
             this.setStartSceneToolStripMenuItem.Click += new System.EventHandler(this.setStartSceneToolStripMenuItem_Click);
             // 
@@ -279,7 +252,7 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -483,6 +456,18 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            // 
+            // releaseToolStripMenuItem
+            // 
+            this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
+            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.releaseToolStripMenuItem.Text = "Release";
+            this.releaseToolStripMenuItem.Click += new System.EventHandler(this.releaseToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -538,10 +523,6 @@
         private System.Windows.Forms.ToolStripMenuItem testInDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem compileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem scriptsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem assetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem updateCoreToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
@@ -553,6 +534,8 @@
         private System.Windows.Forms.ToolStripMenuItem cleanupFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setStartSceneToolStripMenuItem;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem releaseToolStripMenuItem;
     }
 }
 

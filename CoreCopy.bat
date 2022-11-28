@@ -1,43 +1,37 @@
-del /Q "D:\projekt\ArtCore Editor\bin\Release\Core\*.*"
-del /Q "D:\projekt\ArtCore Editor\bin\Debug\Core\*.*"
 
-mkdir "D:\projekt\ArtCore Editor\bin\Debug\Core\"
-mkdir "D:\projekt\ArtCore Editor\bin\Release\Core\"
+@echo prepare output dir
+set outputDir="D:\projekt\ArtCore Editor\bin\Core
+rmdir /Q "D:\projekt\ArtCore Editor\bin\Core\"
 
-	copy D:\projekt\ACompiler\x64\Release\ACompiler.exe  "D:\projekt\ArtCore Editor\bin\Debug\Core\ACompiler.exe"
-	copy D:\projekt\ACompiler\x64\Release\ACompiler.exe  "D:\projekt\ArtCore Editor\bin\Release\Core\ACompiler.exe"
+@echo prepare core
+mkdir %outputDir%"
+copy D:\projekt\ACompiler\x64\Release\ACompiler.exe  %outputDir%\ACompiler.exe"
+copy D:\projekt\AScript.lib  %outputDir%\AScript.lib"
 
-	copy D:\projekt\AScript.lib  "D:\projekt\ArtCore Editor\bin\Debug\Core\AScript.lib"
-	copy D:\projekt\AScript.lib  "D:\projekt\ArtCore Editor\bin\Release\Core\AScript.lib"
-
-mkdir "D:\projekt\ArtCore Editor\bin\Debug\Core\bin\"
-mkdir "D:\projekt\ArtCore Editor\bin\Release\Core\bin\"
-
-	copy D:\projekt\ArtCore\x64\Release\*.dll  "D:\projekt\ArtCore Editor\bin\Release\Core\bin"
-	copy D:\projekt\ArtCore\x64\Debug\*.dll  "D:\projekt\ArtCore Editor\bin\Debug\Core\bin"
-
-	copy "D:\projekt\ArtCore\x64\Release\ArtCore.exe"  "D:\projekt\ArtCore Editor\bin\Release\Core\bin\ArtCore.exe"
-	copy "D:\projekt\ArtCore\x64\Debug\ArtCore.exe"  "D:\projekt\ArtCore Editor\bin\Debug\Core\bin\ArtCore.exe"
-
-mkdir "D:\projekt\ArtCore Editor\bin\Debug\Core\shaders\"
-mkdir "D:\projekt\ArtCore Editor\bin\Release\Core\shaders\"
-
-	copy D:\projekt\ArtCore\*.vert  "D:\projekt\ArtCore Editor\bin\Debug\Core\shaders\"
-	copy D:\projekt\ArtCore\*.frag  "D:\projekt\ArtCore Editor\bin\Debug\Core\shaders\"
-	copy D:\projekt\ArtCore\*.vert  "D:\projekt\ArtCore Editor\bin\Release\Core\shaders\"
-	copy D:\projekt\ArtCore\*.frag  "D:\projekt\ArtCore Editor\bin\Release\Core\shaders\"
-
-mkdir "D:\projekt\ArtCore Editor\bin\Debug\Core\pack\"
-mkdir "D:\projekt\ArtCore Editor\bin\Release\Core\pack\"
-
-	copy D:\projekt\ArtCore\gamecontrollerdb.txt  "D:\projekt\ArtCore Editor\bin\Debug\Core\pack\gamecontrollerdb.txt"
-	copy D:\projekt\ArtCore\gamecontrollerdb.txt  "D:\projekt\ArtCore Editor\bin\Release\Core\pack\gamecontrollerdb.txt"
-
-	copy D:\projekt\ArtCore\TitilliumWeb-Light.ttf  "D:\projekt\ArtCore Editor\bin\Debug\Core\pack\TitilliumWeb-Light.ttf"
-	copy D:\projekt\ArtCore\TitilliumWeb-Light.ttf  "D:\projekt\ArtCore Editor\bin\Release\Core\pack\TitilliumWeb-Light.ttf"
+@echo prepare game exe
+mkdir %outputDir%\bin_Release"
+mkdir %outputDir%\bin_Debug"
+	copy "D:\projekt\ArtCore\x64\Release\ArtCore.exe"  %outputDir%\bin_Release\ArtCore.exe"
+	copy "D:\projekt\ArtCore\x64\Release\*.dll"  %outputDir%\bin_Release"
 	
-mkdir "D:\projekt\ArtCore Editor\bin\Debug\Core\gui-bulider\"
-mkdir "D:\projekt\ArtCore Editor\bin\Release\Core\gui-bulider\"
+	copy "D:\projekt\ArtCore\x64\DebugEditor\ArtCore.exe"  %outputDir%\bin_Debug\ArtCore.exe"
+	copy "D:\projekt\ArtCore\x64\DebugEditor\*.dll"  %outputDir%\bin_Debug"
+		
+@echo prepare shaders
+mkdir %outputDir%\shaders"
+	copy "D:\projekt\ArtCore\pack\shaders\*.*"  %outputDir%\shaders"
 
-	xcopy /E /Y "C:\Users\atrox\Desktop\TGUI-0.10\out\gui-builder\Release" "D:\projekt\ArtCore Editor\bin\Debug\Core\gui-bulider"
-	xcopy /E /Y "C:\Users\atrox\Desktop\TGUI-0.10\out\gui-builder\Release" "D:\projekt\ArtCore Editor\bin\Release\Core\gui-bulider"
+@echo prepare files
+mkdir %outputDir%\pack"
+	copy "D:\projekt\ArtCore\pack\files\*.*"  %outputDir%\pack"
+	
+@echo prepare gui-bulider
+mkdir %outputDir%\gui-bulider"
+		xcopy /E /Y "C:\Users\atrox\Desktop\TGUI-0.10\out\gui-builder\Release" %outputDir%\gui-bulider"
+	
+@echo prepare FileList	
+cd %outputDir%"
+ls -R > FileList.txt		
+
+cd ..
+tar -cf "Core.tar" "Core"

@@ -14,6 +14,11 @@ using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Policy;
 using static ArtCore_Editor.Program;
 using System.Text;
+using System.Threading;
+using System.ComponentModel;
+//using System.Web.Services.Description;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace ArtCore_Editor
 {
@@ -184,6 +189,7 @@ namespace ArtCore_Editor
                 {
                     RefreshListView(false);
                     MakeSaved();
+
                 }
                 else
                 {
@@ -199,8 +205,13 @@ namespace ArtCore_Editor
             {
                 lines = File.ReadAllLines(Program.LAST_FILENAME).ToList();
             }
-            lines.Insert(0, pathname);
+            if (lines.Contains(System.IO.Path.GetDirectoryName(pathname)))
+            {
+                lines.Remove(System.IO.Path.GetDirectoryName(pathname));
+            }
+            lines.Insert(0, System.IO.Path.GetDirectoryName(pathname));
             File.WriteAllLines(Program.LAST_FILENAME, lines);
+
         }
 
         private void loadProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -508,20 +519,130 @@ namespace ArtCore_Editor
 
         }
 
-        private void updateCoreToolStripMenuItem_Click(object sender, EventArgs e)
+        List<string> StripFileList(List<string> content)
         {
-            if (UpdateProgram())
+            List<string> output= new List<string>();
+
+            string folder = "";
+            bool readFolderName = true;
+            bool readFileNames = false;
+
+            foreach (var line in content)
             {
+                //folder separator
+                if(line.Length == 0)
+                {
+                    readFolderName = true;
+                    folder = "";
+                    continue;
+                }
+
+                // new folder name
+                if (readFolderName)
+                {
+                    if (line[1] == ':')
+                    {
+                        folder = "Core";
+                    }
+                    else
+                    {
+                        folder = "Core" + line.Substring(1, line.Length - 2).Replace('/', '\\');
+                    }
+                    readFolderName = false;
+                    readFileNames = true;
+                    continue;
+                }
+
+                // files in list
+                if (readFileNames)
+                {
+                    if (line.Contains("."))
+                    {
+                        output.Add(folder + "\\" + line);
+                    }
+                }
 
             }
+            return output;
+        }
+
+        bool CheckCoreFiles(bool showMsg = true)
+        {
+            if (File.Exists("Core\\FileList.txt"))
+            {
+                var list = StripFileList(File.ReadAllLines("Core\\FileList.txt").ToList());
+                foreach (var line in list)
+                {
+                    if(!File.Exists(line))
+                    {
+                        if(showMsg)
+                            MessageBox.Show("Cannot find '"+line+"', download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Missing file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+                return true;
+            }
+            if (showMsg)
+                MessageBox.Show("Cannot find core list file, download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        private void updateCoreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateProgram();
         }
 
         bool UpdateProgram()
         {
-            Directory.CreateDirectory("temp");
-            HttpHelper.DownloadFileAsync("https://github.com/atrox31/ArtCompiler/releases/download/Fresh/ACompiler.exe", "temp\\ACompiler.exe");
+            //Directory.CreateDirectory("temp");
+            //HttpHelper.DownloadFileAsync("https://github.com/atrox31/ArtCompiler/releases/download/Fresh/ACompiler.exe", "temp\\ACompiler.exe");
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Core.tar|Core.tar";
+            openFileDialog.Multiselect = false;
+            openFileDialog.AddExtension = true;
+            openFileDialog.CheckFileExists = true;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (Directory.Exists("temp"))
+                {
+                    Directory.Delete("temp", true);
+                }
+                //Directory.CreateDirectory("temp");
+                try
+                {
+                    Tar.ExtractTar(openFileDialog.FileName, "temp");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while opening '" + openFileDialog.FileName + "'\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
 
-            return true;
+                if (!File.Exists("temp\\Core\\FileList.txt"))
+                {
+                    MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                if (Directory.Exists("Core"))
+                {
+                    Directory.Delete("Core", true);
+                }
+                foreach (var content in StripFileList(File.ReadAllLines("temp\\Core\\FileList.txt").ToList()))
+                {
+                    string path = Path.GetDirectoryName(content);
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    File.Copy("temp\\" + content, content, true);
+
+                }
+                MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return true;
+            }
+            return false;
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -552,6 +673,13 @@ namespace ArtCore_Editor
 
             RefreshListView();
             MakeSaved();
+            if (!CheckCoreFiles())
+            {
+                if (!UpdateProgram())
+                {
+                    MessageBox.Show("Cannot find core files, You can create game but not enable to test or release it. Try  'Project->Update Core' to update or download latest 'Core.tar' from 'https://github.com/atrox31/ArtCore'", "Cannot find 'Core'", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
         }
 
 
@@ -682,14 +810,84 @@ namespace ArtCore_Editor
             GC.Collect();
         }
 
+        void RunGame(bool debugMode)
+        {
+
+            // run game in debug mode
+            Process compiler = new Process();
+            if (debugMode)
+            {
+                if (File.Exists("Core\\bin_Debug\\ArtCore.exe"))
+                {
+                    compiler.StartInfo.FileName = "Core\\bin_Debug\\ArtCore.exe";
+                }
+                else
+                {
+                    MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            else
+            {
+                if (File.Exists("Core\\bin_Release\\ArtCore.exe"))
+                {
+                    compiler.StartInfo.FileName = "Core\\bin_Release\\ArtCore.exe";
+                }
+                else
+                {
+                    MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            compiler.StartInfo.Arguments = (debugMode ? "-debug " : "") + "-assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
+            compiler.StartInfo.UseShellExecute = false;
+            compiler.StartInfo.CreateNoWindow = true;
+            compiler.StartInfo.RedirectStandardOutput = debugMode;
+            compiler.StartInfo.RedirectStandardError = debugMode;
+
+            var sb = new StringBuilder();
+            listBox1.Items.Clear();
+            listBox1.Items.Add(compiler.StartInfo.Arguments);
+            if (debugMode)
+            {
+                compiler.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
+                compiler.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
+            }
+
+            compiler.Start();
+            if (debugMode)
+            {
+                compiler.BeginOutputReadLine();
+                compiler.BeginErrorReadLine();
+            }
+            compiler.WaitForExit();
+            listBox1.Items.Add("Process exit with code: " + compiler.ExitCode.ToString());
+
+            if (debugMode)
+            {
+                listBox1.Items.Add("wait for console output...");
+                var bw = new BackgroundWorker();
+                bw.DoWork += (object sender, DoWorkEventArgs e) => {
+                    foreach (string line in ((StringBuilder)e.Argument).ToString().Split('\n'))
+                    {
+                        listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
+                    }
+                };
+                bw.RunWorkerAsync(sb);
+
+            }
+
+        }
+
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             // run
-            GameCompiler gameCompiler = new GameCompiler(false);
-            if (gameCompiler.ShowDialog() == DialogResult.OK)
+            if (!saved)
             {
-                // run game
+                GameCompiler gameCompiler = new GameCompiler(true);
+                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
             }
+            RunGame(false);
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -700,35 +898,7 @@ namespace ArtCore_Editor
                 GameCompiler gameCompiler = new GameCompiler(true);
                 if (gameCompiler.ShowDialog() != DialogResult.OK) return;
             }
-
-            // run game in debug mode
-            Process compiler = new Process();
-            compiler.StartInfo.FileName = "..\\Core\\bin\\ArtCore.exe";
-            compiler.StartInfo.Arguments = "-debug -assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
-            compiler.StartInfo.RedirectStandardOutput = true;
-            compiler.StartInfo.UseShellExecute = false;
-            compiler.StartInfo.CreateNoWindow = true;
-            compiler.StartInfo.RedirectStandardOutput = true;
-            compiler.StartInfo.RedirectStandardError = true;
-
-            listBox1.Items.Clear();
-            listBox1.Items.Add(compiler.StartInfo.Arguments);
-
-            var sb = new StringBuilder();
-            compiler.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
-            compiler.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
-
-            compiler.Start();
-
-            compiler.BeginOutputReadLine();
-            compiler.BeginErrorReadLine();
-            
-            compiler.WaitForExit(60000);
-            sb.AppendLine("Process exit with code: "+compiler.ExitCode.ToString());
-            foreach(var item in sb.ToString().Split('\n'))
-            {
-                listBox1.Items.Add(item);
-            }
+            RunGame(true);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

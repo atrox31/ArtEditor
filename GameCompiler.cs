@@ -81,19 +81,22 @@ namespace ArtCore_Editor
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
                         string MD5 = null;
-                        string MD5_File = $"DEBUG\\{(typeof(T)).FullName}.{FileName}.MD5";
-                        if (archive.GetEntry(MD5_File) != null)
+                        if (isdebug)
                         {
-                            MD5 = new StreamReader(archive.GetEntry(MD5_File).Open()).ReadToEnd();
-                        }
-                        else
-                        {
-                            ZipArchiveEntry readmeEntry = archive.CreateEntry(MD5_File);
-                            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                            string MD5_File = $"DEBUG\\{(typeof(T)).FullName}.{FileName}.MD5";
+                            if (archive.GetEntry(MD5_File) != null)
                             {
-                                writer.Write(File_MD5);
+                                MD5 = new StreamReader(archive.GetEntry(MD5_File).Open()).ReadToEnd();
                             }
+                            else
+                            {
+                                ZipArchiveEntry readmeEntry = archive.CreateEntry(MD5_File);
+                                using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
+                                {
+                                    writer.Write(File_MD5);
+                                }
 
+                            }
                         }
                         if (MD5 == null || MD5 != File_MD5)
                         {
@@ -399,6 +402,11 @@ namespace ArtCore_Editor
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
+                    var garbage = archive.Entries.Where(item => item.FullName.StartsWith("scene")).ToArray();
+                    foreach(var garbageItem in garbage)
+                    {
+                        garbageItem.Delete();
+                    }
                     foreach (var scene in GameProject.GetInstance().Scenes)
                     {
                         string EntryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
@@ -410,6 +418,7 @@ namespace ArtCore_Editor
                         readmeEntry = archive.CreateEntry(EntryName);
                         using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                         {
+
                             writer.WriteLine("[setup]");
                             writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
                             writer.WriteLine("Width=" + scene.Value.Width);

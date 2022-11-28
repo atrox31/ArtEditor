@@ -68,17 +68,17 @@ namespace ArtCore_Editor
                 {
                     case Varible.type.INT:
                         {
-                            if (Functions.ErrorCheck(int.TryParse(FieldDefault.Text, out int value), "Wrong default value.")) return;
+                            if (Functions.ErrorCheck(int.TryParse(FieldDefault.Text, out int _), "Wrong default value.")) return;
                         }
                         break;
                     case Varible.type.FLOAT:
                         {
-                            if (Functions.ErrorCheck(float.TryParse(FieldDefault.Text, out float value), "Wrong default value.")) return;
+                            if (Functions.ErrorCheck(float.TryParse(FieldDefault.Text, out float _), "Wrong default value.")) return;
                         }
                         break;
                     case Varible.type.BOOL:
                         {
-                            if (Functions.ErrorCheck(bool.TryParse(FieldDefault.Text, out bool value), "Wrong default value.")) return;
+                            if (Functions.ErrorCheck(bool.TryParse(FieldDefault.Text, out bool _), "Wrong default value.")) return;
                         }
                         break;
                     case Varible.type.INSTANCE:
@@ -119,6 +119,14 @@ namespace ArtCore_Editor
                     case Varible.type.SCENE:
                         {
                             if (Functions.ErrorCheck(GameProject.GetInstance().Scenes.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                        }
+                        break;
+                    case Varible.type.POINT:
+                        {
+                            var point = FieldDefault.Text.Split(':');
+                            if (Functions.ErrorCheck(point.Length == 2, "Wrong default value. must be: x:y")) return;
+                            if (Functions.ErrorCheck(float.TryParse(point[0], out float _), "Wrong default value. must be: x:y")) return;
+                            if (Functions.ErrorCheck(float.TryParse(point[1], out float _), "Wrong default value. must be: x:y")) return;
                         }
                         break;
                     case Varible.type.COLOR:

@@ -234,6 +234,11 @@ namespace ArtCore_Editor
                         FieldDefault.Text = PicFromList.Get(GameProject.GetInstance().Fonts.Keys.ToList());
                     }
                     break;
+                case Varible.type.SCENE:
+                    {
+                        FieldDefault.Text = PicFromList.Get(GameProject.GetInstance().Scenes.Keys.ToList());
+                    }
+                    break;
 
             }
         }

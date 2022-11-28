@@ -15,9 +15,9 @@ namespace ArtCore_Editor
 
         public static bool IsHex(string text)
         {
-            if (text.Length != 7) return false;
+            if ( !(text.Length == 7 || text.Length == 9)) return false;
             if (text[0] != '#') return false;
-            return System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{6}");
+            return (System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{6}") || System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{8}"));
         }
 
         public static string ColorToHex(Color color)

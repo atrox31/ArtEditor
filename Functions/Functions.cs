@@ -6,12 +6,21 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 using Color = System.Drawing.Color;
 
 namespace ArtCore_Editor
 {
     public static class Functions
     {
+
+        public static bool IsHex(string text)
+        {
+            if (text.Length != 7) return false;
+            if (text[0] != '#') return false;
+            return System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{6}");
+        }
+
         public static string ColorToHex(Color color)
         {
             return "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");

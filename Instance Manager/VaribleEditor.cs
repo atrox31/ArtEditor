@@ -121,6 +121,15 @@ namespace ArtCore_Editor
                             if (Functions.ErrorCheck(GameProject.GetInstance().Scenes.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                         }
                         break;
+                    case Varible.type.COLOR:
+                        {
+                            if (!FieldDefault.Text.StartsWith('#'))
+                            {
+                                FieldDefault.Text = FieldDefault.Text.Insert(0, "#");
+                            }
+                            if (Functions.ErrorCheck(Functions.IsHex(FieldDefault.Text), "Wrong default value.")) return;
+                        }
+                        break;
                     case Varible.type.STRING:
                         {
                             if (!FieldDefault.Text.StartsWith('"'))

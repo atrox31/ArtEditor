@@ -190,6 +190,7 @@ namespace ArtCore_Editor
                 case Varible.type.SOUND:
                 case Varible.type.MUSIC:
                 case Varible.type.FONT:
+                case Varible.type.SCENE:
                     button3.Enabled = true;
                     return;
 

@@ -48,15 +48,26 @@
             this.button8 = new System.Windows.Forms.Button();
             this.Event_treeview = new System.Windows.Forms.TreeView();
             this.button9 = new System.Windows.Forms.Button();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.bodyType_mask = new System.Windows.Forms.RadioButton();
+            this.bodyType_rect = new System.Windows.Forms.RadioButton();
+            this.bodyType_circle = new System.Windows.Forms.RadioButton();
+            this.bodyType_value = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.bodyType_IsSolid = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox6);
             this.groupBox1.Controls.Add(this.groupBox5);
             this.groupBox1.Controls.Add(this.groupBox4);
             this.groupBox1.Controls.Add(this.groupBox3);
@@ -65,7 +76,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(253, 533);
+            this.groupBox1.Size = new System.Drawing.Size(253, 538);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Properties";
@@ -75,11 +86,11 @@
             this.groupBox5.Controls.Add(this.button7);
             this.groupBox5.Controls.Add(this.button6);
             this.groupBox5.Controls.Add(this.Varible_listbox);
-            this.groupBox5.Location = new System.Drawing.Point(7, 285);
+            this.groupBox5.Location = new System.Drawing.Point(7, 291);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox5.Size = new System.Drawing.Size(239, 243);
+            this.groupBox5.Size = new System.Drawing.Size(239, 241);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Vars";
@@ -188,7 +199,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(425, 520);
+            this.button1.Location = new System.Drawing.Point(425, 525);
             this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 27);
@@ -199,7 +210,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(274, 520);
+            this.button2.Location = new System.Drawing.Point(275, 525);
             this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(88, 27);
@@ -221,7 +232,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(1055, 520);
+            this.button3.Location = new System.Drawing.Point(1055, 525);
             this.button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(88, 27);
@@ -233,7 +244,7 @@
             // button4
             // 
             this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Location = new System.Drawing.Point(960, 520);
+            this.button4.Location = new System.Drawing.Point(959, 525);
             this.button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(88, 27);
@@ -277,7 +288,7 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(519, 520);
+            this.button9.Location = new System.Drawing.Point(863, 525);
             this.button9.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(88, 27);
@@ -286,14 +297,99 @@
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.bodyType_IsSolid);
+            this.groupBox6.Controls.Add(this.label1);
+            this.groupBox6.Controls.Add(this.bodyType_value);
+            this.groupBox6.Controls.Add(this.bodyType_circle);
+            this.groupBox6.Controls.Add(this.bodyType_rect);
+            this.groupBox6.Controls.Add(this.bodyType_mask);
+            this.groupBox6.Location = new System.Drawing.Point(7, 194);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(239, 95);
+            this.groupBox6.TabIndex = 4;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Body type";
+            // 
+            // bodyType_mask
+            // 
+            this.bodyType_mask.AutoSize = true;
+            this.bodyType_mask.Location = new System.Drawing.Point(6, 19);
+            this.bodyType_mask.Name = "bodyType_mask";
+            this.bodyType_mask.Size = new System.Drawing.Size(86, 19);
+            this.bodyType_mask.TabIndex = 0;
+            this.bodyType_mask.TabStop = true;
+            this.bodyType_mask.Text = "Sprite mask";
+            this.bodyType_mask.UseVisualStyleBackColor = true;
+            // 
+            // bodyType_rect
+            // 
+            this.bodyType_rect.AutoSize = true;
+            this.bodyType_rect.Location = new System.Drawing.Point(7, 44);
+            this.bodyType_rect.Name = "bodyType_rect";
+            this.bodyType_rect.Size = new System.Drawing.Size(48, 19);
+            this.bodyType_rect.TabIndex = 1;
+            this.bodyType_rect.TabStop = true;
+            this.bodyType_rect.Text = "Rect";
+            this.bodyType_rect.UseVisualStyleBackColor = true;
+            // 
+            // bodyType_circle
+            // 
+            this.bodyType_circle.AutoSize = true;
+            this.bodyType_circle.Location = new System.Drawing.Point(6, 69);
+            this.bodyType_circle.Name = "bodyType_circle";
+            this.bodyType_circle.Size = new System.Drawing.Size(55, 19);
+            this.bodyType_circle.TabIndex = 2;
+            this.bodyType_circle.TabStop = true;
+            this.bodyType_circle.Text = "Circle";
+            this.bodyType_circle.UseVisualStyleBackColor = true;
+            // 
+            // bodyType_value
+            // 
+            this.bodyType_value.Location = new System.Drawing.Point(107, 37);
+            this.bodyType_value.Name = "bodyType_value";
+            this.bodyType_value.Size = new System.Drawing.Size(120, 23);
+            this.bodyType_value.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(107, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(59, 15);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Value (px)";
+            // 
+            // bodyType_IsSolid
+            // 
+            this.bodyType_IsSolid.AutoSize = true;
+            this.bodyType_IsSolid.Location = new System.Drawing.Point(171, 70);
+            this.bodyType_IsSolid.Name = "bodyType_IsSolid";
+            this.bodyType_IsSolid.Size = new System.Drawing.Size(62, 19);
+            this.bodyType_IsSolid.TabIndex = 5;
+            this.bodyType_IsSolid.Text = "Is solid";
+            this.bodyType_IsSolid.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.label2.Location = new System.Drawing.Point(696, 531);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(165, 15);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "*Only save, not close window.";
+            // 
             // ObjectManager
             // 
             this.AcceptButton = this.button3;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button4;
-            this.ClientSize = new System.Drawing.Size(1156, 556);
+            this.ClientSize = new System.Drawing.Size(1156, 564);
             this.ControlBox = false;
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.Event_treeview);
             this.Controls.Add(this.button8);
@@ -317,7 +413,11 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -343,5 +443,13 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.TreeView Event_treeview;
         private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.CheckBox bodyType_IsSolid;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown bodyType_value;
+        private System.Windows.Forms.RadioButton bodyType_circle;
+        private System.Windows.Forms.RadioButton bodyType_rect;
+        private System.Windows.Forms.RadioButton bodyType_mask;
+        private System.Windows.Forms.Label label2;
     }
 }

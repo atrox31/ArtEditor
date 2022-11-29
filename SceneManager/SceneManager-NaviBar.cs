@@ -33,7 +33,7 @@ namespace ArtCore_Editor
         {
             string guiFile = GameProject.ProjectPath + cScene.ProjectPath + "\\gui\\" + cScene.Name + "_" + "gui.txt";
             Process process = new Process();
-            process.StartInfo.FileName = "..\\Core\\gui-bulider\\gui-builder.exe";
+            process.StartInfo.FileName = "Core\\gui-bulider\\gui-builder.exe";
             bool fex = File.Exists(guiFile);
             process.StartInfo.Arguments = (fex ? "" : "-new ") + guiFile;
             process.StartInfo.UseShellExecute = false;

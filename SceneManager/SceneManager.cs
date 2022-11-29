@@ -311,9 +311,5 @@ namespace ArtCore_Editor
             }
         }
 
-
-
-
-
     }
 }

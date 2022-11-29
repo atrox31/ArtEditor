@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
+using Point = System.Drawing.Point;
 
 namespace ArtCore_Editor
 {

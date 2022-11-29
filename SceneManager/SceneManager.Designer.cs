@@ -605,7 +605,9 @@
             this.Content.DragDrop += new System.Windows.Forms.DragEventHandler(this.Content_DragDrop);
             this.Content.DragEnter += new System.Windows.Forms.DragEventHandler(this.Content_DragEnter);
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
+            this.Content.MouseLeave += new System.EventHandler(this.Content_MouseLeave);
             this.Content.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Content_MouseMove);
+            this.Content.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Content_MouseUp);
             // 
             // SceneManager
             // 

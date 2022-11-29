@@ -1,46 +1,113 @@
 ﻿using System;
-using System.Drawing;
+using System.Windows;
 using System.Windows.Forms;
-using ListViewItem = System.Windows.Forms.ListViewItem;
+using DragDropEffects = System.Windows.Forms.DragDropEffects;
+using DragEventArgs = System.Windows.Forms.DragEventArgs;
+using Point = System.Drawing.Point;
 
 namespace ArtCore_Editor
 {
     public partial class SceneManager
     {
+        bool mouseDrag = false;
+        ArtCore_Editor.GameProject.Scene.SceneInstance GetInstance(Point point, bool first)
+        {
+            ArtCore_Editor.GameProject.Scene.SceneInstance selected = null;
+            foreach (var item in cScene.SceneInstances)
+            {
+                if (Functions.GetDistance(point, new (item.x, item.y)) < item.editorMask)
+                {
+                    selected = item;
+                    if (first)
+                    {
+                        return selected;
+                    }
+                }
+            }
+            return selected;
+        }
         private void Content_MouseMove(object sender, MouseEventArgs e)
         {
-            if (selected_sceneInstance != null)
+            if (mouseDrag)
             {
-                if (e.Button == MouseButtons.Left)
+                if (selected_sceneInstance != null)
                 {
-                    Point point = new Point(e.X, e.Y);
-                    if (SnapGrid)
+                    if (e.Button == MouseButtons.Left)
                     {
-                        point.X = (int)(Math.Round((decimal)point.X / Grid.X) * Grid.X);
-                        point.Y = (int)(Math.Round((decimal)point.Y / Grid.Y) * Grid.Y);
+                        Point point = new Point(e.X, e.Y);
+                        if (selected_sceneInstance != GetInstance(point, false))
+                        {
+                            selected_sceneInstance = null;
+                            mouseDrag = false;
+                            return;
+                        }
+                        if (SnapGrid)
+                        {
+                            point.X = (int)(Math.Round((decimal)point.X / Grid.X) * Grid.X);
+                            point.Y = (int)(Math.Round((decimal)point.Y / Grid.Y) * Grid.Y);
+                        }
+
+                        point.X = (point.X < 0 ? 0 : (point.X > cScene.Width ? cScene.Width : point.X));
+                        point.Y = (point.Y < 0 ? 0 : (point.Y > cScene.Height ? cScene.Height : point.Y));
+
+                        selected_sceneInstance.x = point.X;
+                        selected_sceneInstance.y = point.Y;
+                        RedrawScene();
                     }
-                    selected_sceneInstance.x = point.X;
-                    selected_sceneInstance.y = point.Y;
-                    RedrawScene();
                 }
             }
         }
+
+
+        private void Content_MouseLeave(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Content_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
         private void Content_MouseClick(object sender, MouseEventArgs e)
         {
             Point point = new Point(e.X, e.Y);
-            selected_sceneInstance = null;
-            foreach (var item in cScene.SceneInstances)
+            if(e.Button== MouseButtons.Left)
             {
-                if (Functions.GetDistance(point, new Point(item.x, item.y)) < item.editorMask)
+                if(selected_sceneInstance != GetInstance(point, false))
                 {
-                    selected_sceneInstance = item;
-                    //RedrawScene();
-                    //return;
+                    selected_sceneInstance = null;
+                }
+                selected_sceneInstance = GetInstance(point, false);
+                if(selected_sceneInstance != null)
+                {
+                    mouseDrag = true;
+                }
+                else
+                {
+                    mouseDrag = false;
+                }
+                UpdateProperties(selected_sceneInstance);
+                RedrawScene();
+            }
+            if(e.Button== MouseButtons.Right)
+            {
+                if (selected_sceneInstance != null)
+                {
+                    ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+                    contextMenuStrip.Items.Add("Delete");
+                    contextMenuStrip.ItemClicked += (object sender, ToolStripItemClickedEventArgs e) =>
+                    {
+                        if (System.Windows.Forms.MessageBox.Show("Delete instance '" + selected_sceneInstance.instance.Name + "'?", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            cScene.SceneInstances.Remove(selected_sceneInstance);
+                            UpdateProperties(selected_sceneInstance);
+                            RedrawScene();
+                        }
+                    };
+                    contextMenuStrip.Show(Cursor.Position);
                 }
             }
-            UpdateProperties(selected_sceneInstance);
-            RedrawScene();
-
         }
         private void instanceListView_ItemDrag(object sender, ItemDragEventArgs e)
         {

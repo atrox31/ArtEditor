@@ -368,6 +368,7 @@ namespace ArtCore_Editor
                 {
                     instance_main += $"set_self_sprite(get_sprite(\"{instance.Sprite.Name}\"))" + "\n";
                 }
+                instance_main += $"set_body_type(\"{instance.BodyType.Type.ToString()}\", {instance.BodyType.Value.ToString()})" + "\n";
                 foreach (var item in LocalVaribles)
                 {
                     instance_main += item.Name + " = " + (item.Default == null ? "null" : item.Default) + "\n";
@@ -424,9 +425,28 @@ namespace ArtCore_Editor
             }
         }
 
+
+        private void bodyType_IsSolid_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!bodyType_IsSolid.Checked)
+            {
+                instance.BodyType.Type = Instance.Body.type.NONE;
+            }
+            bodyType_circle.Enabled = bodyType_IsSolid.Checked;
+            bodyType_mask.Enabled = bodyType_IsSolid.Checked;
+            bodyType_rect.Enabled = bodyType_IsSolid.Checked;
+            bodyType_value.Enabled = bodyType_IsSolid.Checked;
+
+        }
+
+        private void Event_listobx_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            listBox1_SelectedIndexChanged(sender, null);
+            button8_Click(sender, e);
+        }
         private void Event_treeview_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-
+            button8_Click(sender, e);
         }
     }
 }

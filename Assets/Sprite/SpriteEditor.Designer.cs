@@ -32,6 +32,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -120,6 +121,7 @@
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.label6);
             this.groupBox9.Controls.Add(this.button5);
             this.groupBox9.Controls.Add(this.button6);
             this.groupBox9.Controls.Add(this.button4);
@@ -130,6 +132,19 @@
             this.groupBox9.TabIndex = 4;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Animation sequence";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label6.Location = new System.Drawing.Point(2, 134);
+            this.label6.MinimumSize = new System.Drawing.Size(180, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(180, 17);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "not implemented yet!";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // button5
             // 
@@ -568,6 +583,7 @@
             // s_col_mask_value
             // 
             this.s_col_mask_value.Enabled = false;
+            this.s_col_mask_value.LargeChange = 1;
             this.s_col_mask_value.Location = new System.Drawing.Point(86, 37);
             this.s_col_mask_value.Maximum = 100;
             this.s_col_mask_value.Name = "s_col_mask_value";
@@ -672,6 +688,7 @@
             this.Load += new System.EventHandler(this.SpriteAddForm_Load_1);
             this.groupBox1.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -750,5 +767,6 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.GroupBox groupBox10;
         private System.Windows.Forms.ComboBox s_animationSequencePreview;
+        private System.Windows.Forms.Label label6;
     }
 }

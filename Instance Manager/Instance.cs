@@ -9,6 +9,22 @@ namespace ArtCore_Editor
         [JsonObject(MemberSerialization.OptIn)]
         public class Instance : Asset
         {
+            public class Body
+            {
+                public enum type
+                {
+                    NONE,SPRITE,RECT,CIRCLE
+                };
+                public type Type;
+                public int Value;
+                public Body()
+                {
+                    Type = type.NONE;
+                    Value = 0;
+                }
+            }
+            [JsonProperty]
+            public Body BodyType { get; set; }
             [JsonProperty]
             public Sprite Sprite { get; set; }
             // TODO
@@ -22,6 +38,7 @@ namespace ArtCore_Editor
                 Varible = new List<Varible>();
                 Events = new Dictionary<Event.EventType, string>();
                 Name = "new_instance";
+                BodyType = new Body();
             }
 
         }

@@ -53,7 +53,15 @@ namespace ArtCore_Editor
                 var segment = line.Split(';');
 
                 var tmp_1 = segment[0].Split(' ');
-                ReturnType = (type)Enum.Parse(typeof(type), '_' + tmp_1[0]);
+                //ReturnType = (type)Enum.Parse(typeof(type), '_' + tmp_1[0]);
+                if(Enum.TryParse(typeof(type), '_' + tmp_1[0], true,out _))
+                {
+                    ReturnType = (type)Enum.Parse(typeof(type), '_' + tmp_1[0]);
+                }
+                else
+                {
+                    AditionalText += "[ERROR] Function return value type is invalid, do not use this script until update! ";
+                }
 
                 string[] tmp_2 = tmp_1[1].Split('(');
                 Name = tmp_2[0];
@@ -71,14 +79,21 @@ namespace ArtCore_Editor
                         {
                             tmp = tmp.Substring(1);
                         }
-                        Arguments.Add((type)Enum.Parse(typeof(type), "_" + tmp.Split(' ')[0]));
+                        if(Enum.TryParse(typeof(type), '_' + "_" + tmp.Split(' ')[0], true, out _))
+                        {
+                            Arguments.Add((type)Enum.Parse(typeof(type), "_" + tmp.Split(' ')[0]));
+                        }
+                        else
+                        {
+                            Arguments.Add(type._null);
+                        }
                     }
                 }
 
                 MainText = segment[1];
 
                 if (segment.Length > 2)
-                    AditionalText = segment[2];
+                    AditionalText += segment[2];
 
                 //point new_point(float x, float y);Make point <float>, <float>.; New point from value or other.
 
@@ -149,7 +164,11 @@ namespace ArtCore_Editor
                 FunctionsList = new List<Function>();
                 foreach (var line in System.IO.File.ReadAllLines("Core\\AScript.lib"))
                 {
+                    if (line.Length == 0) continue;
                     if (line.StartsWith("//")) continue;
+                    if (line == null) continue;
+                    string copy = line;
+                    if (String.Concat(copy.Where(c => !Char.IsWhiteSpace(c))).Length == 0) continue;
                     FunctionsList.Add(new Function(line));
                 }
             }

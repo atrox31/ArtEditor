@@ -470,15 +470,9 @@ namespace ArtCore_Editor
 
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
-                if (isdebug)
-                {
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
+
                     button2.Enabled = true;
-                }
+                
             }
         }
 

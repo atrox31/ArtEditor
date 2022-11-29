@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using File = System.IO.File;
 //using System.Web.Services.Description;
 using Path = System.IO.Path;
@@ -41,6 +42,12 @@ namespace ArtCore_Editor
 
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
             InitializeComponent(); Program.ApplyTheme(this);
+
+            if(File.Exists("D:\\projekt\\ArtCore Editor\\bin\\Core.tar"))
+            {
+                UpdateProgram("D:\\projekt\\ArtCore Editor\\bin\\Core.tar");
+                File.Delete("D:\\projekt\\ArtCore Editor\\bin\\Core.tar");
+            }
 
             _instance = this;
         }
@@ -584,61 +591,72 @@ namespace ArtCore_Editor
             UpdateProgram();
         }
 
-        bool UpdateProgram()
+        bool UpdateProgram(string file = null)
         {
             //Directory.CreateDirectory("temp");
             //HttpHelper.DownloadFileAsync("https://github.com/atrox31/ArtCompiler/releases/download/Fresh/ACompiler.exe", "temp\\ACompiler.exe");
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Core.tar|Core.tar";
-            openFileDialog.Multiselect = false;
-            openFileDialog.AddExtension = true;
-            openFileDialog.CheckFileExists = true;
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            string FileName;
+            if (file == null)
             {
-                if (Directory.Exists("temp"))
-                {
-                    Directory.Delete("temp", true);
-                }
-                //Directory.CreateDirectory("temp");
-                try
-                {
-                    Tar.ExtractTar(openFileDialog.FileName, "temp");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error while opening '" + openFileDialog.FileName + "'\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                if (!File.Exists("temp\\Core\\FileList.txt"))
-                {
-                    MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                if (Directory.Exists("Core"))
-                {
-                    Directory.Delete("Core", true);
-                }
-                foreach (var content in StripFileList(File.ReadAllLines("temp\\Core\\FileList.txt").ToList()))
-                {
-                    string path = Path.GetDirectoryName(content);
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-                    File.Copy("temp\\" + content, content, true);
-
-                }
-                if (Directory.Exists("temp"))
-                {
-                    Directory.Delete("temp", true);
-                }
-                MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return true;
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Core.tar|Core.tar";
+                openFileDialog.Multiselect = false;
+                openFileDialog.AddExtension = true;
+                openFileDialog.CheckFileExists = true;
+                if (openFileDialog.ShowDialog() != DialogResult.OK) return false;
+                FileName = openFileDialog.FileName;
             }
-            return false;
+            else
+            {
+                FileName = file;
+            }
+
+
+            if (Directory.Exists("temp"))
+            {
+                Directory.Delete("temp", true);
+            }
+            //Directory.CreateDirectory("temp");
+            try
+            {
+                Tar.ExtractTar(FileName, "temp");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while opening '" + FileName + "'\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!File.Exists("temp\\Core\\FileList.txt"))
+            {
+                MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (Directory.Exists("Core"))
+            {
+                Directory.Delete("Core", true);
+            }
+            foreach (var content in StripFileList(File.ReadAllLines("temp\\Core\\FileList.txt").ToList()))
+            {
+                string path = Path.GetDirectoryName(content);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                File.Copy("temp\\" + content, content, true);
+
+            }
+            if (Directory.Exists("temp"))
+            {
+                Directory.Delete("temp", true);
+            }
+            if (file == null) // silent
+            {
+                MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            return true;
         }
 
         private void Form1_Shown(object sender, EventArgs e)

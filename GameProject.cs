@@ -129,6 +129,159 @@ namespace ArtCore_Editor
             }
             //GameProject? gameProject = JsonSerializer.Deserialize<GameProject>(s);
             GameProject gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
+
+            if (gameProject == null)
+            {
+                //deserialization failed, try to recover
+                MessageBox.Show("Load data error, try to recover");
+                gameProject = new GameProject();
+                gameProject.Prepare_new();
+                gameProject.ProjectName = Path.GetFileName(Project);
+
+                string ProjectPath = Path.GetDirectoryName(Project);
+                if (Directory.Exists(ProjectPath + "\\assets"))
+                {
+                    if (Directory.Exists(ProjectPath + "\\assets\\texture"))
+                    {
+                        foreach(var file in Directory.GetFiles(ProjectPath + "\\assets\\texture"))
+                        {
+                            gameProject.Textures.Add(Path.GetFileName(file).Split('.')[0], new Asset()
+                            {
+                                Name = Path.GetFileName(file).Split('.')[0],
+                                File_MD5 = "",
+                                ProjectPath = "\\assets\\texture",
+                                FileName = Path.GetFileName(file),
+                                EditorImage = null
+                        });
+                        }
+                    }
+                    if (Directory.Exists(ProjectPath + "\\assets\\sprite"))
+                    {
+                        foreach (var file in Directory.GetDirectories(ProjectPath + "\\assets\\sprite", "*", SearchOption.TopDirectoryOnly))
+                        {
+                            string FileName = file.Split("\\").Last();
+                            if (File.Exists(ProjectPath + "\\assets\\sprite\\" + FileName + "\\" + FileName + ".spr"))
+                            {
+                                Sprite tmp = new Sprite()
+                                {
+                                    Name = FileName,
+                                    File_MD5 = "",
+                                    ProjectPath = "\\assets\\sprite\\" + FileName,
+                                    FileName = FileName + ".spr",
+                                    EditorImage = null
+                                };
+                                if (tmp.Load(ProjectPath + "\\assets\\sprite\\" + FileName + "\\" + tmp.FileName))
+                                {
+                                    gameProject.Sprites.Add(tmp.Name, tmp);
+                                }
+                            }
+                        }
+                    }
+                    if (Directory.Exists(ProjectPath + "\\assets\\music"))
+                    {
+
+                        foreach (var file in Directory.GetFiles(ProjectPath + "\\assets\\music"))
+                        {
+                            gameProject.Music.Add(Path.GetFileName(file).Split('.')[0], new Asset()
+                            {
+                                Name = Path.GetFileName(file).Split('.')[0],
+                                File_MD5 = "",
+                                ProjectPath = "\\assets\\music",
+                                FileName = Path.GetFileName(file),
+                                EditorImage = null
+                            });
+                        }
+                    }
+                    if (Directory.Exists(ProjectPath + "\\assets\\sound"))
+                    {
+
+                        foreach (var file in Directory.GetFiles(ProjectPath + "\\assets\\sound"))
+                        {
+                            gameProject.Sounds.Add(Path.GetFileName(file).Split('.')[0], new Asset()
+                            {
+                                Name = Path.GetFileName(file).Split('.')[0],
+                                File_MD5 = "",
+                                ProjectPath = "\\assets\\sound",
+                                FileName = Path.GetFileName(file),
+                                EditorImage = null
+                            });
+                        }
+                    }
+                    if (Directory.Exists(ProjectPath + "\\assets\\font"))
+                    {
+
+                        foreach (var file in Directory.GetFiles(ProjectPath + "\\assets\\font"))
+                        {
+                            gameProject.Fonts.Add(Path.GetFileName(file).Split('.')[0], new Asset()
+                            {
+                                Name = Path.GetFileName(file).Split('.')[0],
+                                File_MD5 = "",
+                                ProjectPath = "\\assets\\font",
+                                FileName = Path.GetFileName(file),
+                                EditorImage = null
+                            });
+                        }
+                    }
+                }
+                if (Directory.Exists(ProjectPath + "\\database"))
+                {
+
+                }
+                if (Directory.Exists(ProjectPath + "\\object"))
+                {
+                    foreach (var file in Directory.GetDirectories(ProjectPath + "\\object", "*", SearchOption.TopDirectoryOnly))
+                    {
+                        string FileName = file + "\\" + file.Split('\\').Last() + ".obj";
+                        using (StreamReader reader = new StreamReader(File.Open(FileName, FileMode.Open)))
+                        {
+                            fileContents = reader.ReadToEnd();
+                            Instance instance = JsonConvert.DeserializeObject<Instance>(fileContents);
+                            if(instance != null)
+                            {
+                                gameProject.Instances.Add(Path.GetFileName(file).Split('.')[0], instance);
+                            }
+                        }
+                    }
+                }
+                if (Directory.Exists(ProjectPath + "\\scene"))
+                {
+                    foreach (var file in Directory.GetDirectories(ProjectPath + "\\scene", "*", SearchOption.TopDirectoryOnly))
+                    {
+                        string FileName = file.Split("\\").Last();
+                        if (File.Exists(ProjectPath + "\\scene\\" + FileName + "\\" + FileName + ".scd"))
+                        {
+                            using (StreamReader reader = new StreamReader(File.Open(ProjectPath + "\\scene\\" + FileName + "\\" + FileName + ".scd", FileMode.Open)))
+                            {
+                                fileContents = reader.ReadToEnd();
+                                Scene instance = JsonConvert.DeserializeObject<Scene>(fileContents);
+                                if (instance != null)
+                                {
+                                    gameProject.Scenes.Add(FileName, instance);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (Directory.Exists(ProjectPath + "\\levels"))
+                {
+
+                }
+                if (Directory.Exists(ProjectPath + "\\gui"))
+                {
+
+                }
+
+
+
+            }
+
+            if (gameProject == null)
+            {
+                MessageBox.Show("Target project file is propably corrupted or has beed created in older verion of editor.", "Cannot open", MessageBoxButton.OK, MessageBoxImage.Stop);
+                MainWindow.GetInstance().Game_Project = null;
+                return null;
+            }
+
             foreach (var cScene in gameProject.Scenes.Values.ToList())
             {
                 foreach (var ins in cScene.SceneInstancesList)
@@ -143,13 +296,6 @@ namespace ArtCore_Editor
                         // TODO: maby show error
                     }
                 }
-            }
-
-            if (gameProject == null)
-            {
-                MessageBox.Show("Target project file is propably corrupted or has beed created in older verion of editor.", "Cannot open", MessageBoxButton.OK, MessageBoxImage.Stop);
-                MainWindow.GetInstance().Game_Project = null;
-                return null;
             }
 
             if (gameProject.Version < Program.VERSION)

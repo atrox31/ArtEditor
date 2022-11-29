@@ -79,7 +79,7 @@ namespace ArtCore_Editor
                         {
                             tmp = tmp.Substring(1);
                         }
-                        if(Enum.TryParse(typeof(type), '_' + "_" + tmp.Split(' ')[0], true, out _))
+                        if(Enum.TryParse(typeof(type), "_" + tmp.Split(' ')[0], true, out _))
                         {
                             Arguments.Add((type)Enum.Parse(typeof(type), "_" + tmp.Split(' ')[0]));
                         }
@@ -132,7 +132,15 @@ namespace ArtCore_Editor
                         }
 
                         // link no + varible + selected_value
-                        linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" + Arguments[fno].ToString() + (newValue != null ? ":" + newValue : ""));
+                        if (fno >= Arguments.Count)
+                        {
+                            linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" + "[ERR]" + (newValue != null ? ":" + newValue : ""));
+                        }
+                        else
+                        {
+                            linkLabel.Links.Add(lStart, oldValueLen, linkLabel.Links.Count.ToString() + ":" + Arguments[fno].ToString() + (newValue != null ? ":" + newValue : ""));
+                        }
+
                         fno++;
                     }
 
@@ -286,7 +294,7 @@ namespace ArtCore_Editor
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string[] target = (e.Link.LinkData as string).Split(':');
-
+            if (target.Length == 2 && target[1] == "[ERR]") return;
             ScriptEditor scriptEditor = new ScriptEditor((Function.type)Enum.Parse(typeof(Function.type), target[1]), instance);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {

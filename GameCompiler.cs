@@ -167,10 +167,10 @@ namespace ArtCore_Editor
             {
                 inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + "\\Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + "Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
-            compiler.StartInfo.FileName = "\\Core\\ACompiler.exe";
+            compiler.StartInfo.FileName = "Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
@@ -239,7 +239,7 @@ namespace ArtCore_Editor
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader("..\\Core\\" + folder + "\\" + File))
+                        using (StreamReader file = new StreamReader("Core\\" + folder + "\\" + File))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -389,7 +389,7 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Scenes ", 91, false));
             CreateSceneDefinitions(Bgw, e);
             WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
-            WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene.Name });
+            WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene?.Name });
 
 
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));

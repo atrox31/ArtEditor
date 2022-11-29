@@ -881,7 +881,7 @@ namespace ArtCore_Editor
             // run
             if (CheckCoreFiles())
             {
-                if (!saved)
+                //if (!saved)
                 {
                     GameCompiler gameCompiler = new GameCompiler(true);
                     if (gameCompiler.ShowDialog() != DialogResult.OK) return;
@@ -895,7 +895,7 @@ namespace ArtCore_Editor
             // run debug
             if (CheckCoreFiles())
             {
-                if (!saved)
+                //if (!saved)
                 {
                     GameCompiler gameCompiler = new GameCompiler(true);
                     if (gameCompiler.ShowDialog() != DialogResult.OK) return;

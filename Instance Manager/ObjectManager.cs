@@ -16,6 +16,7 @@ namespace ArtCore_Editor
         GameProject.Instance instance;
         Dictionary<Event.EventType, string> events_data;
         List<Varible> LocalVaribles;
+
         public ObjectManager(string AssetId = null)
         {
             InitializeComponent(); Program.ApplyTheme(this);
@@ -60,6 +61,19 @@ namespace ArtCore_Editor
                     comboBox2.Text = instance.DBEntry.Name;
                 }
                 */
+
+                if(instance.BodyType.Type != Instance.Body.type.NONE)
+                {
+                    bodyType_mask.Checked = (instance.BodyType.Type == Instance.Body.type.SPRITE);
+                    bodyType_rect.Checked = (instance.BodyType.Type == Instance.Body.type.RECT);
+                    bodyType_circle.Checked = (instance.BodyType.Type == Instance.Body.type.CIRCLE);
+                    bodyType_value.Value = instance.BodyType.Value;
+                    bodyType_IsSolid.Checked = true;
+                }
+                else
+                {
+                    bodyType_IsSolid.Checked = false;
+                }
 
                 foreach (var item in instance.Varible)
                 {
@@ -321,6 +335,19 @@ namespace ArtCore_Editor
             instance.FileName = instance.Name + ".obj";
             instance.ProjectPath = "\\object\\" + instance.Name + "\\";
 
+            if (bodyType_IsSolid.Checked)
+            {
+                if (bodyType_mask.Checked) { instance.BodyType.Type = Instance.Body.type.SPRITE; }
+                if (bodyType_rect.Checked) { instance.BodyType.Type = Instance.Body.type.RECT; }
+                if (bodyType_circle.Checked) { instance.BodyType.Type = Instance.Body.type.CIRCLE; }
+                instance.BodyType.Value = (int)bodyType_value.Value;
+            }
+            else
+            {
+                instance.BodyType.Value = 0;
+                instance.BodyType.Type = Instance.Body.type.NONE;
+            }
+
             GameProject.GetInstance().Instances[aid] = (GameProject.Instance)instance.Clone();
 
             using (FileStream createStream = File.Create(GameProject.ProjectPath + "\\" + instance.ProjectPath + "\\" + instance.FileName))
@@ -328,7 +355,6 @@ namespace ArtCore_Editor
                 byte[] buffer = JsonConvert.SerializeObject(instance).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
             }
-
 
             if (instance.Events.Keys.Count > 0)
             {
@@ -448,5 +474,6 @@ namespace ArtCore_Editor
         {
             button8_Click(sender, e);
         }
+
     }
 }

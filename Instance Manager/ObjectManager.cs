@@ -395,9 +395,12 @@ namespace ArtCore_Editor
                     instance_main += $"set_self_sprite(get_sprite(\"{instance.Sprite.Name}\"))" + "\n";
                 }
                 instance_main += $"set_body_type(\"{instance.BodyType.Type.ToString()}\", {instance.BodyType.Value.ToString()})" + "\n";
-                foreach (var item in LocalVaribles)
+                foreach (var item in instance.Varible)
                 {
-                    instance_main += item.Name + " = " + (item.Default == null ? "null" : item.Default) + "\n";
+                    if (item.Default != null)
+                    {
+                        instance_main += item.Name + " := " + item.Default + "\n";
+                    }
                 }
                 instance_main += "@end\n";
                 // events

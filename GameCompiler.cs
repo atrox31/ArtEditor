@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArtCore_Editor.Assets;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -162,6 +163,11 @@ namespace ArtCore_Editor
 
         public static bool CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
         {
+            foreach(var ins in GameProject.GetInstance().Instances)
+            {
+                ObjectManager obm = new ObjectManager(ins.Key);
+                obm.Save();
+            }
             string inputs = "";
             foreach (var obj in GameProject.GetInstance().Instances)
             {
@@ -429,8 +435,8 @@ namespace ArtCore_Editor
                             writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
                             writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
                             writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
-                            writer.WriteLine("BackGroundColor=" + (scene.Value.BackGroundColor.R.ToString() + "," + scene.Value.BackGroundColor.G.ToString() + "," + scene.Value.BackGroundColor.B.ToString()));
-
+                            writer.WriteLine("BackGroundColor=" + Functions.ColorToHex(scene.Value.BackGroundColor));
+                            
                             writer.WriteLine("[regions]");
                             foreach (var regions in scene.Value.regions)
                             {

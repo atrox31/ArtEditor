@@ -295,7 +295,7 @@ namespace ArtCore_Editor
                 }
             }
         }
-        void Save()
+        public void Save()
         {
             if (Functions.ErrorCheck(textBox1.TextLength > 3, "Object name too short")) return;
             if (Functions.ErrorCheck(textBox1.TextLength < 24, "Object name too long")) return;
@@ -397,9 +397,17 @@ namespace ArtCore_Editor
                 instance_main += $"set_body_type(\"{instance.BodyType.Type.ToString()}\", {instance.BodyType.Value.ToString()})" + "\n";
                 foreach (var item in instance.Varible)
                 {
-                    if (item.Default != null)
+                    if (item.Default != null && item.Default.Length > 0)
                     {
-                        instance_main += item.Name + " := " + item.Default + "\n";
+                        if (item.Type == Varible.type.POINT)
+                        {
+                            var pt = item.Default.Split(':');
+                            instance_main += $"{ item.Name}:= new_point( {pt[0]}, {pt[1]})\n";
+                        }
+                        else
+                        {
+                            instance_main += item.Name + " := " + item.Default + "\n";
+                        }
                     }
                 }
                 instance_main += "@end\n";

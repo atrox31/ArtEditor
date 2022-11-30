@@ -74,7 +74,7 @@ namespace ArtCore_Editor
                 }
                 public override string ToString()
                 {
-                    return x1.ToString() + "," + y1.ToString() + "," + x2.ToString() + "," + y2.ToString();
+                    return x1.ToString() + "|" + y1.ToString() + "|" + x2.ToString() + "|" + y2.ToString();
                 }
             }
             [JsonProperty]

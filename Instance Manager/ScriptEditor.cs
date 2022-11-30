@@ -109,23 +109,25 @@ namespace ArtCore_Editor
                 int lStart = 0;
                 int fno = 0;
 
-                for (int i = 0; i < MainText.Length; i++)
+                var MainText_copy = String.Copy(MainText);
+
+                for (int i = 0; i < MainText_copy.Length; i++)
                 {
-                    if (MainText[i] == '<')
+                    if (MainText_copy[i] == '<')
                     {
                         lStart = i + 1;
                         continue;
                     }
-                    if (MainText[i] == '>')
+                    if (MainText_copy[i] == '>')
                     {
                         int oldValueLen = i - lStart;
-                        string value = MainText.Substring(lStart, oldValueLen);
+                        string value = MainText_copy.Substring(lStart, oldValueLen);
                         string newValue = null;
                         if (ReturnedArguments.Keys.Contains(fno))
                         {
                             newValue = ReturnedArguments[fno];
-                            MainText = MainText.Remove(i - oldValueLen, oldValueLen);
-                            MainText = MainText.Insert(i - oldValueLen, newValue);
+                            MainText_copy = MainText_copy.Remove(i - oldValueLen, oldValueLen);
+                            MainText_copy = MainText_copy.Insert(i - oldValueLen, newValue);
                             int diffrence = newValue.Length - oldValueLen;
                             i += diffrence;
                             oldValueLen += diffrence;
@@ -145,7 +147,7 @@ namespace ArtCore_Editor
                     }
 
                 }
-                linkLabel.Text = MainText;
+                linkLabel.Text = MainText_copy;
 
             }
             public void MakeAditionalText(ref Label label)
@@ -157,7 +159,7 @@ namespace ArtCore_Editor
         List<Function> functions = new List<Function>();
         Function.type RequiredType;
         Instance instance;
-        static List<Function> FunctionsList = null;
+        List<Function> FunctionsList = null;
         public string ReturnValue = "";
 
         public ScriptEditor(Function.type RequiredType, Instance instance)

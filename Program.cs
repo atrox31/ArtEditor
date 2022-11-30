@@ -51,6 +51,13 @@ namespace ArtCore_Editor
                     c.Paint += Functions.ButtonAlter_Paint;
 
                 }
+                if (c.GetType() == typeof(LinkLabel))
+                {
+                    var linkLabel = (LinkLabel) c;
+                    linkLabel.VisitedLinkColor = Color.FromArgb(175, 211, 212);
+                    linkLabel.LinkColor = Color.FromArgb(185, 221, 222);
+
+                }
             }
 
         }

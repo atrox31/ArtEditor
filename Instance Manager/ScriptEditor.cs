@@ -162,6 +162,14 @@ namespace ArtCore_Editor
         public static List<Function> FunctionsList = null;
         public string ReturnValue = "";
 
+        public static void ClearFunctionList()
+        {
+            if (FunctionsList != null)
+            {
+                FunctionsList.Clear();
+            }
+        }
+
         public ScriptEditor(Function.type RequiredType, Instance instance)
         {
             InitializeComponent(); Program.ApplyTheme(this);

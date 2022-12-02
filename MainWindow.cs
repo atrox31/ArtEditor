@@ -661,7 +661,7 @@ namespace ArtCore_Editor
                 MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             // clear ArtLib content
-            ScriptEditor.FunctionsList.Clear();
+            ScriptEditor.ClearFunctionList();
             return true;
         }
 

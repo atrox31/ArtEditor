@@ -190,7 +190,7 @@ namespace ArtCore_Editor
             {
                 if (!AddEvent()) return;
             }
-
+            ScriptEditor.FunctionsList.Clear();
             ScriptEditor scriptEditor = new ScriptEditor(ScriptEditor.Function.type._null, instance);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {

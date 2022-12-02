@@ -159,7 +159,7 @@ namespace ArtCore_Editor
         List<Function> functions = new List<Function>();
         Function.type RequiredType;
         Instance instance;
-        List<Function> FunctionsList = null;
+        public static List<Function> FunctionsList = null;
         public string ReturnValue = "";
 
         public ScriptEditor(Function.type RequiredType, Instance instance)
@@ -172,7 +172,7 @@ namespace ArtCore_Editor
             if (FunctionsList == null)
             {
                 FunctionsList = new List<Function>();
-                foreach (var line in System.IO.File.ReadAllLines("Core\\AScript.lib"))
+                foreach (var line in System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
                 {
                     if (line.Length == 0) continue;
                     if (line.StartsWith("//")) continue;

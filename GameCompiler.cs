@@ -173,10 +173,10 @@ namespace ArtCore_Editor
             {
                 inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
             }
-            string args = "-lib \"" + "Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+            string args = "-lib \"" + AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
 
             Process compiler = new Process();
-            compiler.StartInfo.FileName = "Core\\ACompiler.exe";
+            compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
@@ -245,7 +245,7 @@ namespace ArtCore_Editor
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader("Core\\" + folder + "\\" + File))
+                        using (StreamReader file = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\" + folder + "\\" + File))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -319,25 +319,38 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
 
             // preparing
-            fileList.Clear();
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
-            if (CancelRequest(Bgw, e)) return;
+            string asset_md5 = "no data";////AssetsMD5
+            if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
+            {
+                asset_md5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
+            }
+            if (GameProject.GetInstance().AssetsMD5 != asset_md5)
+            {
+                fileList.Clear();
+                PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
+                if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sprites, "Sprites", 20, 30);
-            if (CancelRequest(Bgw, e)) return;
+                PrepareAssets(Bgw, e, GameProject.GetInstance().Sprites, "Sprites", 20, 30);
+                if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 30, 40);
-            if (CancelRequest(Bgw, e)) return;
+                PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 30, 40);
+                if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 40, 50);
-            if (CancelRequest(Bgw, e)) return;
+                PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 40, 50);
+                if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
-            if (CancelRequest(Bgw, e)) return;
+                PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
+                if (CancelRequest(Bgw, e)) return;
 
-            WriteListToArchive("assets.pak", "filelist.txt", fileList);
+                WriteListToArchive("assets.pak", "filelist.txt", fileList);
 
-            Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
+                Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
+                GameProject.GetInstance().AssetsMD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
+            }
+            else
+            {
+                Bgw.ReportProgress(1, new Message("Asset prepare complite all skip - archive is good", -1, false));
+            }
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
 

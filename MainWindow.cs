@@ -126,12 +126,12 @@ namespace ArtCore_Editor
 
                         loadScreen.SetProgress(80);
                         List<string> lines = new List<string>();
-                        if (File.Exists(Program.LAST_FILENAME))
+                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME))
                         {
-                            lines = File.ReadAllLines(Program.LAST_FILENAME).ToList();
+                            lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME).ToList();
                         }
                         lines.Insert(0, path);
-                        File.WriteAllLines(Program.LAST_FILENAME, lines);
+                        File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME, lines);
                         loadScreen.SetProgress(100);
                         loadScreen.Close();
                         return;
@@ -200,16 +200,16 @@ namespace ArtCore_Editor
 
 
             List<string> lines = new List<string>();
-            if (File.Exists(Program.LAST_FILENAME))
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME))
             {
-                lines = File.ReadAllLines(Program.LAST_FILENAME).ToList();
+                lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME).ToList();
             }
             if (lines.Contains(System.IO.Path.GetDirectoryName(pathname)))
             {
                 lines.Remove(System.IO.Path.GetDirectoryName(pathname));
             }
             lines.Insert(0, System.IO.Path.GetDirectoryName(pathname));
-            File.WriteAllLines(Program.LAST_FILENAME, lines);
+            File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME, lines);
 
         }
 
@@ -567,12 +567,12 @@ namespace ArtCore_Editor
 
         bool CheckCoreFiles(bool showMsg = true)
         {
-            if (File.Exists("Core\\FileList.txt"))
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\FileList.txt"))
             {
-                var list = StripFileList(File.ReadAllLines("Core\\FileList.txt").ToList());
+                var list = StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\FileList.txt").ToList());
                 foreach (var line in list)
                 {
-                    if (!File.Exists(line))
+                    if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + line))
                     {
                         if (showMsg)
                             MessageBox.Show("Cannot find '" + line + "', download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Missing file", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -612,14 +612,14 @@ namespace ArtCore_Editor
             }
 
 
-            if (Directory.Exists("temp"))
+            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp"))
             {
-                Directory.Delete("temp", true);
+                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp", true);
             }
             //Directory.CreateDirectory("temp");
             try
             {
-                Tar.ExtractTar(FileName, "temp");
+                Tar.ExtractTar(FileName, AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp");
             }
             catch (Exception ex)
             {
@@ -627,17 +627,17 @@ namespace ArtCore_Editor
                 return false;
             }
 
-            if (!File.Exists("temp\\Core\\FileList.txt"))
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\Core\\FileList.txt"))
             {
                 MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (Directory.Exists("Core"))
+            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core"))
             {
-                Directory.Delete("Core", true);
+                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core", true);
             }
-            foreach (var content in StripFileList(File.ReadAllLines("temp\\Core\\FileList.txt").ToList()))
+            foreach (var content in StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\Core\\FileList.txt").ToList()))
             {
                 string path = Path.GetDirectoryName(content);
                 if (!Directory.Exists(path))
@@ -645,12 +645,16 @@ namespace ArtCore_Editor
                     Directory.CreateDirectory(path);
                 }
 
-                File.Copy("temp\\" + content, content, true);
+                File.Copy(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\" + content, content, true);
 
             }
-            if (Directory.Exists("temp"))
+            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp"))
             {
-                Directory.Delete("temp", true);
+                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp", true);
+            }
+            if (File.Exists(FileName))
+            {
+                File.Delete(FileName);
             }
             if (file == null) // silent
             {
@@ -661,6 +665,16 @@ namespace ArtCore_Editor
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                OpenProject(args[1]);
+                if(Game_Project == null)
+                {
+                    MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening", MessageBoxButtons.OK, MessageBoxIcon.Stop); return;
+                }
+                
+            }
             while (Game_Project == null)
             {
                 Welcome welcome = new Welcome();
@@ -831,9 +845,9 @@ namespace ArtCore_Editor
             Process compiler = new Process();
             if (debugMode)
             {
-                if (File.Exists("Core\\bin_Debug\\ArtCore.exe"))
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Debug\\ArtCore.exe"))
                 {
-                    compiler.StartInfo.FileName = "Core\\bin_Debug\\ArtCore.exe";
+                    compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Debug\\ArtCore.exe";
                 }
                 else
                 {
@@ -843,9 +857,9 @@ namespace ArtCore_Editor
             }
             else
             {
-                if (File.Exists("Core\\bin_Release\\ArtCore.exe"))
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Release\\ArtCore.exe"))
                 {
-                    compiler.StartInfo.FileName = "Core\\bin_Release\\ArtCore.exe";
+                    compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Release\\ArtCore.exe";
                 }
                 else
                 {

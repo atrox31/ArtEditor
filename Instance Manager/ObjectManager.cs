@@ -399,14 +399,41 @@ namespace ArtCore_Editor
                 {
                     if (item.Default != null && item.Default.Length > 0)
                     {
-                        if (item.Type == Varible.type.POINT)
+                        switch (item.Type)
                         {
-                            var pt = item.Default.Split(':');
-                            instance_main += $"{ item.Name}:= new_point( {pt[0]}, {pt[1]})\n";
-                        }
-                        else
-                        {
-                            instance_main += item.Name + " := " + item.Default + "\n";
+                            case Varible.type.OBJECT:
+
+                                break;
+                            case Varible.type.COLOR:
+
+                                break;
+                            case Varible.type.SCENE:
+
+                                break;
+                            case Varible.type.SPRITE:
+                                instance_main += $"{item.Name} := get_sprite(\"{ item.Default }\")\n";
+                                break;
+                            case Varible.type.TEXTURE:
+                                instance_main += $"{item.Name} := get_texture(\"{item.Default}\")\n";
+                                break;
+                            case Varible.type.SOUND:
+                                instance_main += $"{item.Name} := get_sound(\"{item.Default}\")\n";
+                                break;
+                            case Varible.type.MUSIC:
+                                instance_main += $"{item.Name} := get_music(\"{item.Default}\")\n";
+                                break;
+                            case Varible.type.FONT:
+                                instance_main += $"{item.Name} := get_font(\"{item.Default}\")\n";
+                                break;
+                            case Varible.type.POINT:
+                                var pt = item.Default.Split(':');
+                                instance_main += $"{item.Name} := new_point( {pt[0]}, {pt[1]})\n";
+                                break;
+                            case Varible.type.RECTANGLE:
+                                break;
+                            default:
+                                instance_main += item.Name + " := " + item.Default + "\n";
+                                break;
                         }
                     }
                 }

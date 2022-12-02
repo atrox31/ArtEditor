@@ -54,6 +54,8 @@ namespace ArtCore_Editor
         }
 
         [JsonProperty]
+        public string AssetsMD5 = "";
+        [JsonProperty]
         public ArtCorePreset ArtCoreDefaultSettings;
         // project properties
         [JsonProperty]

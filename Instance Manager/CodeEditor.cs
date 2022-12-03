@@ -38,7 +38,8 @@ namespace ArtCore_Editor
                 Code = text.Split('\n').ToList();
                 richTextBox1.Text = text;
             }
-            if (this.instance_varibles.Count > 0)
+
+            if (this.instance_varibles != null && this.instance_varibles.Count > 0)
             {
                 instance_varibles.CopyTo(this.instance_varibles.ToArray());
             }

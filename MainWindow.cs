@@ -639,13 +639,13 @@ namespace ArtCore_Editor
             }
             foreach (var content in StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\Core\\FileList.txt").ToList()))
             {
-                string path = Path.GetDirectoryName(content);
+                string path = AppDomain.CurrentDomain.BaseDirectory + "\\" + Path.GetDirectoryName(content);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
 
-                File.Copy(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\" + content, content, true);
+                File.Copy(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\" + content, AppDomain.CurrentDomain.BaseDirectory + "\\" + content, true);
 
             }
             if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp"))

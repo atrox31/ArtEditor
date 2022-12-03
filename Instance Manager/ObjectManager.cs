@@ -190,7 +190,7 @@ namespace ArtCore_Editor
             {
                 if (!AddEvent()) return;
             }
-            ScriptEditor.FunctionsList.Clear();
+            
             ScriptEditor scriptEditor = new ScriptEditor(ScriptEditor.Function.type._null, instance);
             if (scriptEditor.ShowDialog() == DialogResult.OK)
             {
@@ -513,5 +513,84 @@ namespace ArtCore_Editor
             button8_Click(sender, e);
         }
 
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (Event_listobx.SelectedItem == null) return;
+
+            string sbPath = GameProject.ProjectPath + "\\object\\StandardBehaviour";
+            List<string> list = new List<string>(){ "<new>" };
+            if (Directory.Exists(sbPath))
+            {
+                foreach (var item in Directory.GetFiles(sbPath))
+                {
+                    list.Add(Path.GetFileName(item).Split('.').First());
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(sbPath);
+            }
+            PicFromList picFrom = new PicFromList(list);
+            if(picFrom.ShowDialog() == DialogResult.OK) { 
+                if(picFrom.Selected == "<new>")
+                {
+                    string beh_name = GetString.Get("Give name of new Standard Behaviour");
+                    if(beh_name == null)
+                    {
+                        MessageBox.Show("Wrong name, can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    CodeEditor codeEditor = new CodeEditor(null, "//Standard Behaviour " + beh_name);
+                    if(codeEditor.ShowDialog() == DialogResult.OK) {
+                        File.WriteAllLines(sbPath + "\\" + beh_name + ".sbh", codeEditor.Code);
+                        events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
+                        Event_treeview.Nodes.Clear();
+                        foreach (string line in codeEditor.Code)
+                        {
+                            Event_treeview.Nodes.Add(line);
+                        }
+                    }
+                    else
+                    {
+                        {
+                            MessageBox.Show("Can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    switch (MessageBox.Show("Do You like to insert or edit Standard Behaviour?\nYes to insert.\nNo to edit", "Standard Behaviour", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+                    {
+                        case DialogResult.Yes:
+                            if(File.Exists(sbPath + "\\" + picFrom.Selected + ".sbh"))
+                            {
+                                events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh");
+                                Event_treeview.Nodes.Clear();
+                                foreach (string line in events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split('\n'))
+                                {
+                                    Event_treeview.Nodes.Add(line);
+                                }
+                            }
+                            break;
+                        case DialogResult.No:
+                            CodeEditor codeEditor = new CodeEditor(null, File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh"));
+                            if (codeEditor.ShowDialog() == DialogResult.OK)
+                            {
+                                File.WriteAllLines(sbPath + "\\" + picFrom.Selected + ".sbh", codeEditor.Code);
+                                events_data[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
+                                Event_treeview.Nodes.Clear();
+                                foreach (string line in codeEditor.Code)
+                                {
+                                    Event_treeview.Nodes.Add(line);
+                                }
+                            }
+                            break;
+                        case DialogResult.Cancel:
+                            return;
+                    }
+                }
+            }
+        }
     }
 }

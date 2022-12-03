@@ -56,6 +56,7 @@
             this.Event_treeview = new System.Windows.Forms.TreeView();
             this.button9 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.button10 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bodyType_value)).BeginInit();
@@ -388,6 +389,16 @@
             this.label2.TabIndex = 13;
             this.label2.Text = "*Only save, not close window.";
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(710, 12);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(89, 27);
+            this.button10.TabIndex = 14;
+            this.button10.Text = "Behaviour";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
             // ObjectManager
             // 
             this.AcceptButton = this.button3;
@@ -396,6 +407,7 @@
             this.CancelButton = this.button4;
             this.ClientSize = new System.Drawing.Size(1156, 564);
             this.ControlBox = false;
+            this.Controls.Add(this.button10);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.Event_treeview);
@@ -458,5 +470,6 @@
         private System.Windows.Forms.RadioButton bodyType_rect;
         private System.Windows.Forms.RadioButton bodyType_mask;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button10;
     }
 }

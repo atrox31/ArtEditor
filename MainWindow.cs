@@ -1100,5 +1100,26 @@ namespace ArtCore_Editor
 
             }
         }
+
+        private void assetsOnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gamedataOnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void allToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Game_Project.SaveToFile();
+            MakeSaved();
+            if (CheckCoreFiles())
+            {
+                GameCompiler gameCompiler = new GameCompiler(false, false);
+                gameCompiler.ShowDialog();
+            }
+        }
     }
 }

@@ -39,15 +39,19 @@ namespace ArtCore_Editor
                 _instance.OutputLog.Items.Add(message);
             }
         }
-        bool isdebug;
-        bool rungame;
-        public GameCompiler(bool debug, bool rungame = false)
+        bool _is_debug;
+        bool _skip_assets;
+        bool _skip_Gamedata;
+        bool _run_game;
+        public GameCompiler(bool DebugMode, bool SkipAssets = false, bool SkipGamedata = false, bool RunGame = false)
         {
             InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
-            this.isdebug = debug;
-            this.rungame = rungame;
-            if (!isdebug)
+            this._is_debug = DebugMode;
+            this._skip_assets = SkipAssets;
+            this._skip_Gamedata = SkipGamedata;
+            this._run_game = RunGame;
+            if (!_is_debug)
             {
                 button2.Visible = false;
             }
@@ -86,7 +90,7 @@ namespace ArtCore_Editor
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
                         string MD5 = null;
-                        if (isdebug)
+                        if (_is_debug)
                         {
                             string MD5_File = $"DEBUG\\{(typeof(T)).FullName}.{FileName}.MD5";
                             if (archive.GetEntry(MD5_File) != null)
@@ -320,14 +324,8 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Saving project ..done", 3, true));
             if (CancelRequest(Bgw, e)) return;
 
-            // preparing
-            //string asset_md5 = "no data";////AssetsMD5
-            //if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
-            //{
-            //    asset_md5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
-            //}
-            //if (GameProject.GetInstance().AssetsMD5 != asset_md5)
-            //{
+            if (!_skip_assets)
+            {
                 fileList.Clear();
                 PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
                 if (CancelRequest(Bgw, e)) return;
@@ -345,19 +343,19 @@ namespace ArtCore_Editor
                 if (CancelRequest(Bgw, e)) return;
 
                 WriteListToArchive("assets.pak", "filelist.txt", fileList);
-
                 Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
                 GameProject.GetInstance().AssetsMD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
-            //}
-            //else
-            //{
-            //    Bgw.ReportProgress(1, new Message("Asset prepare complite all skip - archive is good", -1, false));
-            //}
+            }
+            else
+            {
+                Bgw.ReportProgress(1, new Message("Asset prepare skipped", -1, false));
+            }
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
-
+            if (!_skip_Gamedata)
             {
-                List<string[]> coreFiles = new List<string[]>()
+                {
+                    List<string[]> coreFiles = new List<string[]>()
                 {
                     new string[]{ "pack", "gamecontrollerdb.txt" },
                     new string[]{ "pack", "TitilliumWeb-Light.ttf" },
@@ -366,55 +364,77 @@ namespace ArtCore_Editor
                     new string[]{ "shaders", "common.vert" },
                     new string[]{ "", "AScript.lib" },
                 };
-                int c = 1;
-                foreach (var item in coreFiles)
-                {
-                    UpdateCoreFiles(item[0], item[1], c++, coreFiles.Count());
-                    if (CancelRequest(Bgw, e)) return;
+                    int c = 1;
+                    foreach (var item in coreFiles)
+                    {
+                        UpdateCoreFiles(item[0], item[1], c++, coreFiles.Count());
+                        if (CancelRequest(Bgw, e)) return;
+                    }
+                    if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
+                    {
+                        WriteFileToGameDat(GameProject.ProjectPath + "\\bg_img.png", "bg_img.png");
+                    }
                 }
-                if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
-                {
-                    WriteFileToGameDat(GameProject.ProjectPath + "\\bg_img.png", "bg_img.png");
-                }
+                Bgw.ReportProgress(1, new Message("Prepare game file ..done", 60, true));
             }
-            Bgw.ReportProgress(1, new Message("Prepare game file ..done", 60, true));
-
-            // setup.ini
-            Bgw.ReportProgress(1, new Message("Game settings", 60, false));
+            else
             {
-                List<string> content = new List<string>();
-                foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
-                {
-                    var f_name = property.Name;
-                    int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
-                    content.Add(f_name + "=" + value);
-                }
-                WriteListToArchive("game.dat", "setup.ini", content);
+                Bgw.ReportProgress(1, new Message("Prepare game file ..skipped", 60, true));
             }
+            // setup.ini
+            if (!_skip_Gamedata)
+            {
+                Bgw.ReportProgress(1, new Message("Game settings", 60, false));
+                {
+                    List<string> content = new List<string>();
+                    foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
+                    {
+                        var f_name = property.Name;
+                        int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
+                        content.Add(f_name + "=" + value);
+                    }
+                    WriteListToArchive("game.dat", "setup.ini", content);
+                }
 
-            if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
+                if (CancelRequest(Bgw, e)) return;
+                Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
+            }
+            else
+            {
+                Bgw.ReportProgress(1, new Message("Game settings ..skipped", 65, true));
+            }
 
             // object definitions
             if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Objects", 70, false));
-            if (!CreateObjectDefinitions(Bgw, e))
-            {
-                return;
+            Bgw.ReportProgress(1, new Message("Objects", 70, false)){
+                if (!_skip_Gamedata)
+                {
+                    if (!CreateObjectDefinitions(Bgw, e))
+                    {
+                        return;
+                    }
+                    Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
+                }
+                Bgw.ReportProgress(1, new Message("Objects ..skipped", 90, false));
             }
-            Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
-
 
             // scene definitions
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Scenes ", 91, false));
-            CreateSceneDefinitions(Bgw, e);
-            WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
-            WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene?.Name });
+            if (!_skip_Gamedata)
+            {
+                CreateSceneDefinitions(Bgw, e);
+                WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
+                WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene?.Name });
 
 
-            Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
+                Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
+            }
+            else
+            {
 
+                Bgw.ReportProgress(1, new Message("Scenes ..skipped", 99, true));
+            }
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game ready", 100, false));
             
@@ -492,7 +512,7 @@ namespace ArtCore_Editor
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
                 button2.Enabled = true;
-                if (rungame)
+                if (_run_game)
                 {
                     DialogResult = DialogResult.OK;
                     Close();

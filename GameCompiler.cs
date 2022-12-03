@@ -39,18 +39,20 @@ namespace ArtCore_Editor
                 _instance.OutputLog.Items.Add(message);
             }
         }
-        public static bool isdebug;
-        public GameCompiler(bool debug)
+        bool isdebug;
+        bool rungame;
+        public GameCompiler(bool debug, bool rungame = false)
         {
             InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
-            isdebug = debug;
+            this.isdebug = debug;
+            this.rungame = rungame;
             if (!isdebug)
             {
                 button2.Visible = false;
             }
         }
-        public static void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
+        public void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
         {
             string output = GameProject.ProjectPath + "\\" + "assets.pak";
 
@@ -415,6 +417,7 @@ namespace ArtCore_Editor
 
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game ready", 100, false));
+            
         }
 
         private void CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e)
@@ -486,12 +489,14 @@ namespace ArtCore_Editor
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
-
-                    button2.Enabled = true;
-                
+                button2.Enabled = true;
+                if (rungame)
+                {
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
             }
         }
 

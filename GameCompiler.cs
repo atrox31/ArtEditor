@@ -319,13 +319,13 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
 
             // preparing
-            string asset_md5 = "no data";////AssetsMD5
-            if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
-            {
-                asset_md5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
-            }
-            if (GameProject.GetInstance().AssetsMD5 != asset_md5)
-            {
+            //string asset_md5 = "no data";////AssetsMD5
+            //if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
+            //{
+            //    asset_md5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
+            //}
+            //if (GameProject.GetInstance().AssetsMD5 != asset_md5)
+            //{
                 fileList.Clear();
                 PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
                 if (CancelRequest(Bgw, e)) return;
@@ -346,11 +346,11 @@ namespace ArtCore_Editor
 
                 Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
                 GameProject.GetInstance().AssetsMD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
-            }
-            else
-            {
-                Bgw.ReportProgress(1, new Message("Asset prepare complite all skip - archive is good", -1, false));
-            }
+            //}
+            //else
+            //{
+            //    Bgw.ReportProgress(1, new Message("Asset prepare complite all skip - archive is good", -1, false));
+            //}
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
 

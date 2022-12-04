@@ -79,7 +79,6 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.recompileGameFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -198,8 +197,7 @@
             this.settingsToolStripMenuItem,
             this.setStartSceneToolStripMenuItem,
             this.toolStripSeparator6,
-            this.releaseToolStripMenuItem,
-            this.recompileGameFilesToolStripMenuItem});
+            this.releaseToolStripMenuItem});
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -212,20 +210,20 @@
             this.runToolStripMenuItem,
             this.compileRunToolStripMenuItem});
             this.testInDebugToolStripMenuItem.Name = "testInDebugToolStripMenuItem";
-            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.testInDebugToolStripMenuItem.Text = "Test in Debug mode";
             // 
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.runToolStripMenuItem.Text = "Run";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
             // compileRunToolStripMenuItem
             // 
             this.compileRunToolStripMenuItem.Name = "compileRunToolStripMenuItem";
-            this.compileRunToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.compileRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.compileRunToolStripMenuItem.Text = "Compile and Run";
             this.compileRunToolStripMenuItem.Click += new System.EventHandler(this.compileRunToolStripMenuItem_Click);
             // 
@@ -235,7 +233,7 @@
             this.runToolStripMenuItem1,
             this.compileAndRunToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.testToolStripMenuItem.Text = "Test in Release mode";
             // 
             // runToolStripMenuItem1
@@ -255,31 +253,31 @@
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(180, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // setStartSceneToolStripMenuItem
             // 
             this.setStartSceneToolStripMenuItem.Name = "setStartSceneToolStripMenuItem";
-            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.setStartSceneToolStripMenuItem.Text = "Set start scene";
             this.setStartSceneToolStripMenuItem.Click += new System.EventHandler(this.setStartSceneToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(180, 6);
             // 
             // releaseToolStripMenuItem
             // 
             this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
-            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.releaseToolStripMenuItem.Text = "Release";
             this.releaseToolStripMenuItem.Click += new System.EventHandler(this.releaseToolStripMenuItem_Click);
             // 
@@ -302,7 +300,7 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -506,13 +504,6 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // recompileGameFilesToolStripMenuItem
-            // 
-            this.recompileGameFilesToolStripMenuItem.Name = "recompileGameFilesToolStripMenuItem";
-            this.recompileGameFilesToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.recompileGameFilesToolStripMenuItem.Text = "Recompile game files";
-            this.recompileGameFilesToolStripMenuItem.Click += new System.EventHandler(this.recompileGameFilesToolStripMenuItem_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -585,7 +576,6 @@
         private System.Windows.Forms.ToolStripMenuItem compileRunToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem compileAndRunToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem recompileGameFilesToolStripMenuItem;
     }
 }
 

@@ -1146,13 +1146,5 @@ namespace ArtCore_Editor
             }
         }
 
-        private void recompileGameFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (CheckCoreFiles())
-            {
-                GameCompiler gameCompiler = new GameCompiler(false, false, true);
-                gameCompiler.ShowDialog();
-            }
-        }
     }
 }

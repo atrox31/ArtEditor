@@ -41,12 +41,14 @@ namespace ArtCore_Editor
         }
         bool _is_debug;
         bool _run_game;
-        public GameCompiler(bool DebugMode, bool RunGame = false)
+        bool _close_after_done;
+        public GameCompiler(bool DebugMode, bool RunGame = false, bool CloseAfterDone = false)
         {
             InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
             this._is_debug = DebugMode;
             this._run_game = RunGame;
+            this._close_after_done = CloseAfterDone;
             if (!_is_debug)
             {
                 button2.Visible = false;
@@ -485,6 +487,10 @@ namespace ArtCore_Editor
         {
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
+                if (_close_after_done)
+                {
+                    Close();
+                }
                 button2.Enabled = true;
                 if (_run_game)
                 {

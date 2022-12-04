@@ -917,7 +917,7 @@ namespace ArtCore_Editor
             {
                 //if (!saved)
                 {
-                    GameCompiler gameCompiler = new GameCompiler(true);
+                    GameCompiler gameCompiler = new GameCompiler(false);
                     if (gameCompiler.ShowDialog() != DialogResult.OK) return;
                 }
                 RunGame(false);
@@ -1093,30 +1093,55 @@ namespace ArtCore_Editor
 
         private void assetsOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MakeSaved();
-            if (CheckCoreFiles())
-            {
-                GameCompiler gameCompiler = new GameCompiler(false, false, true, false);
-                gameCompiler.ShowDialog();
-            }
+            
         }
 
         private void gamedataOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MakeSaved();
-            if (CheckCoreFiles())
-            {
-                GameCompiler gameCompiler = new GameCompiler(false, true, false, false);
-                gameCompiler.ShowDialog();
-            }
+            
         }
 
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
+        }
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //test in debug run
+            if (CheckCoreFiles())
+            {
+                RunGame(true);
+            }
+        }
+
+        private void compileRunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // test compile and run debug
             MakeSaved();
             if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(false, false, false, false);
+                GameCompiler gameCompiler = new GameCompiler(true, true);
+                gameCompiler.ShowDialog();
+            }
+        }
+
+        private void runToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            // test release
+            if (CheckCoreFiles())
+            {
+                RunGame(false);
+            }
+        }
+
+        private void compileAndRunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // test compile and run release
+            MakeSaved();
+            if (CheckCoreFiles())
+            {
+                GameCompiler gameCompiler = new GameCompiler(false, true);
                 gameCompiler.ShowDialog();
             }
         }

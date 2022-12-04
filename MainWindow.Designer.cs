@@ -43,7 +43,15 @@
             this.cleanupFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.testInDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compileRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.compileAndRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.repackAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetsOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gamedataOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setStartSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,10 +83,6 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.repackAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.assetsOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gamedataOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -207,46 +211,109 @@
             // 
             // testInDebugToolStripMenuItem
             // 
+            this.testInDebugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runToolStripMenuItem,
+            this.compileRunToolStripMenuItem});
             this.testInDebugToolStripMenuItem.Name = "testInDebugToolStripMenuItem";
-            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testInDebugToolStripMenuItem.Text = "Run in Debug mode";
-            this.testInDebugToolStripMenuItem.Click += new System.EventHandler(this.testInDebugToolStripMenuItem_Click);
+            this.testInDebugToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.testInDebugToolStripMenuItem.Text = "Test in Debug mode";
+            // 
+            // runToolStripMenuItem
+            // 
+            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runToolStripMenuItem.Text = "Run";
+            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            // 
+            // compileRunToolStripMenuItem
+            // 
+            this.compileRunToolStripMenuItem.Name = "compileRunToolStripMenuItem";
+            this.compileRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compileRunToolStripMenuItem.Text = "Compile and Run";
+            this.compileRunToolStripMenuItem.Click += new System.EventHandler(this.compileRunToolStripMenuItem_Click);
             // 
             // testToolStripMenuItem
             // 
+            this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runToolStripMenuItem1,
+            this.compileAndRunToolStripMenuItem});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testToolStripMenuItem.Text = "Run";
-            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.testToolStripMenuItem.Text = "Test in Release mode";
+            // 
+            // runToolStripMenuItem1
+            // 
+            this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.runToolStripMenuItem1.Text = "Run";
+            this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
+            // 
+            // compileAndRunToolStripMenuItem
+            // 
+            this.compileAndRunToolStripMenuItem.Name = "compileAndRunToolStripMenuItem";
+            this.compileAndRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compileAndRunToolStripMenuItem.Text = "Compile and Run";
+            this.compileAndRunToolStripMenuItem.Click += new System.EventHandler(this.compileAndRunToolStripMenuItem_Click);
+            // 
+            // repackAssetsToolStripMenuItem
+            // 
+            this.repackAssetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetsOnlyToolStripMenuItem,
+            this.gamedataOnlyToolStripMenuItem,
+            this.allToolStripMenuItem});
+            this.repackAssetsToolStripMenuItem.Name = "repackAssetsToolStripMenuItem";
+            this.repackAssetsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.repackAssetsToolStripMenuItem.Text = "Repack Assets";
+            // 
+            // assetsOnlyToolStripMenuItem
+            // 
+            this.assetsOnlyToolStripMenuItem.Name = "assetsOnlyToolStripMenuItem";
+            this.assetsOnlyToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.assetsOnlyToolStripMenuItem.Text = "Assets only";
+            this.assetsOnlyToolStripMenuItem.Click += new System.EventHandler(this.assetsOnlyToolStripMenuItem_Click);
+            // 
+            // gamedataOnlyToolStripMenuItem
+            // 
+            this.gamedataOnlyToolStripMenuItem.Name = "gamedataOnlyToolStripMenuItem";
+            this.gamedataOnlyToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.gamedataOnlyToolStripMenuItem.Text = "Gamedata only";
+            this.gamedataOnlyToolStripMenuItem.Click += new System.EventHandler(this.gamedataOnlyToolStripMenuItem_Click);
+            // 
+            // allToolStripMenuItem
+            // 
+            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.allToolStripMenuItem.Text = "All";
+            this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(180, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // setStartSceneToolStripMenuItem
             // 
             this.setStartSceneToolStripMenuItem.Name = "setStartSceneToolStripMenuItem";
-            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setStartSceneToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.setStartSceneToolStripMenuItem.Text = "Set start scene";
             this.setStartSceneToolStripMenuItem.Click += new System.EventHandler(this.setStartSceneToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(180, 6);
             // 
             // releaseToolStripMenuItem
             // 
             this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
-            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.releaseToolStripMenuItem.Text = "Release";
             this.releaseToolStripMenuItem.Click += new System.EventHandler(this.releaseToolStripMenuItem_Click);
             // 
@@ -473,37 +540,6 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // repackAssetsToolStripMenuItem
-            // 
-            this.repackAssetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.assetsOnlyToolStripMenuItem,
-            this.gamedataOnlyToolStripMenuItem,
-            this.allToolStripMenuItem});
-            this.repackAssetsToolStripMenuItem.Name = "repackAssetsToolStripMenuItem";
-            this.repackAssetsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.repackAssetsToolStripMenuItem.Text = "Repack Assets";
-            // 
-            // assetsOnlyToolStripMenuItem
-            // 
-            this.assetsOnlyToolStripMenuItem.Name = "assetsOnlyToolStripMenuItem";
-            this.assetsOnlyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.assetsOnlyToolStripMenuItem.Text = "Assets only";
-            this.assetsOnlyToolStripMenuItem.Click += new System.EventHandler(this.assetsOnlyToolStripMenuItem_Click);
-            // 
-            // gamedataOnlyToolStripMenuItem
-            // 
-            this.gamedataOnlyToolStripMenuItem.Name = "gamedataOnlyToolStripMenuItem";
-            this.gamedataOnlyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.gamedataOnlyToolStripMenuItem.Text = "Gamedata only";
-            this.gamedataOnlyToolStripMenuItem.Click += new System.EventHandler(this.gamedataOnlyToolStripMenuItem_Click);
-            // 
-            // allToolStripMenuItem
-            // 
-            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.allToolStripMenuItem.Text = "All";
-            this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -576,6 +612,10 @@
         private System.Windows.Forms.ToolStripMenuItem assetsOnlyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gamedataOnlyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem compileRunToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem compileAndRunToolStripMenuItem;
     }
 }
 

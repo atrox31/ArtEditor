@@ -49,6 +49,13 @@ namespace ArtCore_Editor
             this._is_debug = DebugMode;
             this._run_game = RunGame;
             this._close_after_done = CloseAfterDone;
+            if (_close_after_done)
+            {
+                if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
+                {
+                    File.Delete(GameProject.ProjectPath + "\\" + "assets.pak");
+                }
+            }
             if (!_is_debug)
             {
                 button2.Visible = false;

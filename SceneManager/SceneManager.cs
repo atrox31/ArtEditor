@@ -98,16 +98,17 @@ namespace ArtCore_Editor
                 }
                 else
                 {
+                    if (File.Exists(GameProject.ProjectPath + "\\" + cScene.BackGroundTexture))
+                    {
+                        BcTexture = Image.FromFile(GameProject.ProjectPath + "\\" + cScene.BackGroundTexture);
+                        r_bc_texture.Select();
+                        if (cScene.BackGroundWrapMode == WrapMode.Tile) rb_td_normal.Checked = true;
+                        if (cScene.BackGroundWrapMode == WrapMode.TileFlipX) rb_td_w.Checked = true;
+                        if (cScene.BackGroundWrapMode == WrapMode.TileFlipY) rb_td_h.Checked = true;
+                        if (cScene.BackGroundWrapMode == WrapMode.TileFlipXY) rb_td_w_h.Checked = true;
 
-                    BcTexture = Image.FromFile(GameProject.ProjectPath + "\\" + cScene.BackGroundTexture);
-                    r_bc_texture.Select();
-                    if (cScene.BackGroundWrapMode == WrapMode.Tile) rb_td_normal.Checked = true;
-                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipX) rb_td_w.Checked = true;
-                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipY) rb_td_h.Checked = true;
-                    if (cScene.BackGroundWrapMode == WrapMode.TileFlipXY) rb_td_w_h.Checked = true;
-
-                    bc_selected_preview.BackgroundImage = BcTexture.GetThumbnailImage(128, 128, null, IntPtr.Zero);
-
+                        bc_selected_preview.BackgroundImage = BcTexture.GetThumbnailImage(128, 128, null, IntPtr.Zero);
+                    }
                 }
 
                 MakeSaved();

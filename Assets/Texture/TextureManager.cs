@@ -93,6 +93,14 @@ namespace ArtCore_Editor
                     Functions.RenameKey(MainWindow.GetInstance().Game_Project.Textures, aid, textBox1.Text);
                 }
 
+                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png")
+                {
+                    pictureBox1.Image.Dispose();
+                    pictureBox1.Image = null;
+                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png");
+                    File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
+                    MainWindow.GetInstance().Game_Project.Textures[aid].FileName = "\\assets\\texture\\" + textBox1.Text + ".png";
+                }
                 DialogResult = DialogResult.OK;
                 Close();
 
@@ -113,7 +121,10 @@ namespace ArtCore_Editor
 
         private void button4_Click(object sender, EventArgs e)
         {
-            pictureBox1.Dispose();
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();
+            }
             DialogResult = DialogResult.Cancel;
             Close();
         }

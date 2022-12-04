@@ -1038,11 +1038,6 @@ namespace ArtCore_Editor
             // run debug
             if (CheckCoreFiles())
             {
-                if (!saved)
-                {
-                    GameCompiler gameCompiler = new GameCompiler(true);
-                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                }
                 RunGame(true);
             }
         }
@@ -1052,11 +1047,6 @@ namespace ArtCore_Editor
             // run
             if (CheckCoreFiles())
             {
-                if (!saved)
-                {
-                    GameCompiler gameCompiler = new GameCompiler(true);
-                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                }
                 RunGame(false);
             }
         }
@@ -1103,21 +1093,30 @@ namespace ArtCore_Editor
 
         private void assetsOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            MakeSaved();
+            if (CheckCoreFiles())
+            {
+                GameCompiler gameCompiler = new GameCompiler(false, false, true, false);
+                gameCompiler.ShowDialog();
+            }
         }
 
         private void gamedataOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            MakeSaved();
+            if (CheckCoreFiles())
+            {
+                GameCompiler gameCompiler = new GameCompiler(false, true, false, false);
+                gameCompiler.ShowDialog();
+            }
         }
 
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Game_Project.SaveToFile();
             MakeSaved();
             if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(false, false);
+                GameCompiler gameCompiler = new GameCompiler(false, false, false, false);
                 gameCompiler.ShowDialog();
             }
         }

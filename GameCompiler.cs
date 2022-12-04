@@ -406,15 +406,17 @@ namespace ArtCore_Editor
 
             // object definitions
             if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Objects", 70, false)){
-                if (!_skip_Gamedata)
+            Bgw.ReportProgress(1, new Message("Objects", 70, false));
+            if (!_skip_Gamedata)
+            {
+                if (!CreateObjectDefinitions(Bgw, e))
                 {
-                    if (!CreateObjectDefinitions(Bgw, e))
-                    {
-                        return;
-                    }
-                    Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
+                    return;
                 }
+                Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
+            }
+            else
+            {
                 Bgw.ReportProgress(1, new Message("Objects ..skipped", 90, false));
             }
 

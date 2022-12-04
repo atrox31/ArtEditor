@@ -917,7 +917,7 @@ namespace ArtCore_Editor
             {
                 //if (!saved)
                 {
-                    GameCompiler gameCompiler = new GameCompiler(false);
+                    GameCompiler gameCompiler = new GameCompiler(false,true);
                     if (gameCompiler.ShowDialog() != DialogResult.OK) return;
                 }
                 RunGame(false);
@@ -1056,11 +1056,10 @@ namespace ArtCore_Editor
             // run
             if (CheckCoreFiles())
             {
-                if (!saved)
-                {
-                    GameCompiler gameCompiler = new GameCompiler(false);
+                
+                    GameCompiler gameCompiler = new GameCompiler(false,false,true);
                     if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                }
+                
 
                 var output = GameProject.ProjectPath + "\\output\\" + Game_Project.ProjectName;
                 if (Directory.Exists(output))

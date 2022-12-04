@@ -49,13 +49,12 @@ namespace ArtCore_Editor
             this._is_debug = DebugMode;
             this._run_game = RunGame;
             this._close_after_done = CloseAfterDone;
-            if (_close_after_done)
-            {
+
                 if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
                 {
                     File.Delete(GameProject.ProjectPath + "\\" + "assets.pak");
                 }
-            }
+            
             if (!_is_debug)
             {
                 button2.Visible = false;
@@ -494,21 +493,20 @@ namespace ArtCore_Editor
         {
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
-                
+
                 button2.Enabled = true;
                 if (_run_game)
                 {
                     DialogResult = DialogResult.OK;
                     Close();
                 }
-            }
-            else
-            {
                 if (_close_after_done)
                 {
+                    DialogResult = DialogResult.OK;
                     Close();
                 }
             }
+
         }
 
         private void button1_Click(object sender, EventArgs e)

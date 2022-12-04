@@ -487,14 +487,18 @@ namespace ArtCore_Editor
         {
             if (progressBar1.Value == 100 && e.Cancelled == false)
             {
-                if (_close_after_done)
-                {
-                    Close();
-                }
+                
                 button2.Enabled = true;
                 if (_run_game)
                 {
                     DialogResult = DialogResult.OK;
+                    Close();
+                }
+            }
+            else
+            {
+                if (_close_after_done)
+                {
                     Close();
                 }
             }

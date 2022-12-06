@@ -408,7 +408,7 @@ public partial class ObjectManager : Form
                             var pt = item.Default.Split(':');
                             instanceMain += $"{item.Name} := new_point( {pt[0]}, {pt[1]})\n";
                             break;
-                        case Variable.VariableType.VTypeRect:
+                        case Variable.VariableType.VTypeRectangle:
                             break;
                         default:
                             instanceMain += item.Name + " := " + item.Default + "\n";

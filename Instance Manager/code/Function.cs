@@ -24,9 +24,9 @@ public class Function
     }
     private Variable.VariableType TranslateStringToValidEnum(string input)
     {
-        if (Enum.TryParse(typeof(Variable.VariableType), "VType" + input, out _))
+        if (Enum.TryParse(typeof(Variable.VariableType), "VType" + input,true, out _))
         {
-            return (Variable.VariableType)Enum.Parse(typeof(Variable.VariableType), "VType" + input);
+            return (Variable.VariableType)Enum.Parse(typeof(Variable.VariableType), "VType" + input, true);
         }
         else
         {

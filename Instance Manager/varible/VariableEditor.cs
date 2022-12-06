@@ -149,7 +149,7 @@ public partial class VariableEditor : Form
 
                 case Variable.VariableType.VTypeNull:
                     break;
-                case Variable.VariableType.VTypeRect:
+                case Variable.VariableType.VTypeRectangle:
                     var rect = FieldDefault.Text.Split(':');
                     if (Functions.ErrorCheck(rect.Length == 4, "Wrong default value. must be: x:y")) return;
                     if (Functions.ErrorCheck(float.TryParse(rect[0], out float _), "Wrong default value. must be: x:y:w:h")) return;

@@ -38,7 +38,7 @@ namespace ArtCore_Editor
         [JsonProperty] public int Width;
         [JsonProperty] public int Height;
         [JsonProperty] public Color BackGroundColor;
-        [JsonProperty] public string BackGroundTexture;
+        [JsonProperty] public Asset BackGroundTexture;
         [JsonProperty] public string BackGroundTextureName;
 
         public enum BackGroundTypeEnum

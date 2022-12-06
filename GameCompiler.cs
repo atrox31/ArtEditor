@@ -449,8 +449,7 @@ namespace ArtCore_Editor
                             writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
                             writer.WriteLine("Width=" + scene.Value.Width);
                             writer.WriteLine("Height=" + scene.Value.Height);
-                            writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
-                            writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTextureName);
+                            writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture.Name);
                             writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
                             writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
                             writer.WriteLine("BackGroundColor=" + Functions.ColorToHex(scene.Value.BackGroundColor));

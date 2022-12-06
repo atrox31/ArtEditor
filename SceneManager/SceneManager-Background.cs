@@ -34,8 +34,8 @@ namespace ArtCore_Editor
 
             _cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawTexture;
 
-            _cScene.BackGroundTexture = GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].ProjectPath + GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].FileName;
-            _bcTexture = Image.FromFile(ProjectPath + "\\" + _cScene.BackGroundTexture);
+            _cScene.BackGroundTexture = GameProject.GetInstance().Textures[_cScene.BackGroundTextureName];
+            _bcTexture = Image.FromFile(ProjectPath + "\\" + GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].ProjectPath + "\\" + GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].FileName);
 
             if (rb_td_normal.Checked) _cScene.BackGroundWrapMode = WrapMode.Tile;
             if (rb_td_w.Checked) _cScene.BackGroundWrapMode = WrapMode.TileFlipX;

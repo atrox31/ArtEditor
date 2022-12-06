@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor { 
+﻿namespace ArtCore_Editor.Assets.Sprite { 
     partial class ImageListViewer
     {
         /// <summary>

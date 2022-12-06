@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Assets.Texture
 {
     partial class TextureManager
     {

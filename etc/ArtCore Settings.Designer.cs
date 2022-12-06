@@ -1,6 +1,6 @@
 ﻿namespace ArtCore_Editor
 {
-    partial class ArtCore_Settings
+    partial class ArtCoreSettings
     {
         /// <summary>
         /// Required designer variable.
@@ -81,10 +81,9 @@
             this.MaximumSize = new System.Drawing.Size(436, 1024);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(436, 70);
-            this.Name = "ArtCore_Settings";
+            this.Name = "ArtCoreSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ArtCore_Settings";
-            this.Load += new System.EventHandler(this.ArtCore_Settings_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

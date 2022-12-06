@@ -4,26 +4,27 @@
     {
         public enum EventType
         {
-            EV_ONCREATE,
+            EvOnCreate,
+            EvOnDestroy,
 
-            EV_ONKEY_DOWN,
-            EV_ONKEY_UP,
+            EvOnKeyDown,
+            EvOnKeyUp,
 
-            EV_ONMOUSE_MOTION,
-            EV_ONMOUSE_WHEEL,
-            EV_ONMOUSE_DOWN,
-            EV_ONMOUSE_UP,
+            EvOnMouseMotion,
+            EvOnMouseWheel,
+            EvOnMouseDown,
+            EvOnMouseUp,
 
-            EV_ONCOLLISION,
+            EvOnCollision,
 
-            EV_ONVIEW_ENTER,
-            EV_ONVIEW_LEAVE,
+            EvOnViewEnter,
+            EvOnViewLeave,
 
-            EV_CLICKED,
-            EV_TRIGGER,
+            EvClicked,
+            EvTrigger,
 
-            EV_STEP,
-            EV_DRAW,
+            EvStep,
+            EvDraw,
 
         }
     }

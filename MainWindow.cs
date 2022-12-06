@@ -7,48 +7,50 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
+using System.Windows.Forms.VisualStyles;
+using System.Windows.Media;
+using System.Xml.Linq;
+using ArtCore_Editor.Assets.Sound;
+using ArtCore_Editor.Assets.Sprite;
+using ArtCore_Editor.Assets.Texture;
+using ArtCore_Editor.Instance_Manager;
 using File = System.IO.File;
-//using System.Web.Services.Description;
 using Path = System.IO.Path;
 
 namespace ArtCore_Editor
 {
     public partial class MainWindow : Form
     {
-        public GameProject Game_Project = null;
-        static MainWindow _instance;
-        bool saved = true;
+        public GameProject GlobalProject;
+        private static MainWindow _instance;
+        private bool _projectSaved = true;
 
-        List<string> FilesToDeleteAtSave = new List<string>();
-        List<string> FoldersToDeleteAtSave = new List<string>();
+        private readonly List<string> _filesToDeleteAtSave = new List<string>();
+
+        private string GetTitleString() => $"ArtCore Editor - \"{GlobalProject.ProjectName}\"";
 
         public void MakeChange()
         {
-            if (saved == false) return;
-            saved = false;
-            this.Text = "ArtCore Editor - \"" + Game_Project.ProjectName + "\" *";
+            _projectSaved = false;
+            Text = GetTitleString()+" *";
         }
         public void MakeSaved()
         {
-            saved = true;
-            this.Text = "ArtCore Editor - \"" + Game_Project.ProjectName + "\"";
+            _projectSaved = true;
+            Text = GetTitleString();
         }
         public MainWindow()
         {
-            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            // change number separator to .
+            var customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
-
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
             InitializeComponent(); Program.ApplyTheme(this);
-
-            if(File.Exists("D:\\projekt\\ArtCore Editor\\bin\\Core.tar"))
-            {
-                UpdateProgram("D:\\projekt\\ArtCore Editor\\bin\\Core.tar");
-                File.Delete("D:\\projekt\\ArtCore Editor\\bin\\Core.tar");
-            }
-
+            
+            // static instance to this object
             _instance = this;
         }
 
@@ -59,29 +61,25 @@ namespace ArtCore_Editor
 
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Game_Project.SaveToFile();
-            foreach (var file in FilesToDeleteAtSave)
+            GlobalProject.SaveToFile();
+            foreach (var file in _filesToDeleteAtSave)
             {
                 if (File.Exists(file))
                 {
                     File.Delete(file);
                 }
-            }
-            foreach (var folder in FoldersToDeleteAtSave)
-            {
-                if (Directory.Exists(folder))
+                if (Directory.Exists(file))
                 {
-                    Directory.Delete(folder, true);
+                    Directory.Delete(file, true);
                 }
             }
-            FilesToDeleteAtSave.Clear();
-            FoldersToDeleteAtSave.Clear();
+            _filesToDeleteAtSave.Clear();
             MakeSaved();
         }
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!saved)
+            if (!_projectSaved)
             {
                 if (MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?", "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
@@ -97,13 +95,13 @@ namespace ArtCore_Editor
                     }
                     else
                     {
-                        LoadScreen loadScreen = new LoadScreen(false);
+                        var loadScreen = new LoadScreen(false);
                         loadScreen.Show();
 
-                        string path = folderBrowserDialog1.SelectedPath;
-                        Game_Project = new GameProject();
-                        Game_Project.Prepare_new();
-                        Game_Project.ProjectName = path.Split('\\').Last();
+                        var path = folderBrowserDialog1.SelectedPath;
+                        GlobalProject = new GameProject();
+                        GlobalProject.Prepare_new();
+                        GlobalProject.ProjectName = path.Split('\\').Last();
                         GameProject.ProjectPath = path;
 
                         loadScreen.SetProgress(20);
@@ -121,17 +119,17 @@ namespace ArtCore_Editor
                         Directory.CreateDirectory(path + "\\output");
                         Directory.CreateDirectory(path + "\\gui");
 
-                        Game_Project.SaveToFile();
+                        GlobalProject.SaveToFile();
                         MakeSaved();
 
                         loadScreen.SetProgress(80);
-                        List<string> lines = new List<string>();
-                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME))
+                        var lines = new List<string>();
+                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
                         {
-                            lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME).ToList();
+                            lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
                         }
                         lines.Insert(0, path);
-                        File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME, lines);
+                        File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, lines);
                         loadScreen.SetProgress(100);
                         loadScreen.Close();
                         return;
@@ -147,14 +145,14 @@ namespace ArtCore_Editor
 
         private void OpenProject(string pathname = null)
         {
-            if (!saved)
+            if (!_projectSaved)
             {
                 if (MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?", "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             if (pathname == null)
             {
-                OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "ArtCore Project|" + Program.PROJECT_FILENAME;
+                var dialog = new OpenFileDialog();
+                dialog.Filter = "ArtCore Project|" + Program.ProjectFilename;
                 dialog.AddExtension = true;
                 dialog.Multiselect = false;
                 dialog.Title = "Select Project";
@@ -171,24 +169,23 @@ namespace ArtCore_Editor
 
             if (File.Exists(pathname))
             {
-                LoadScreen ls = new LoadScreen(true);
+                var ls = new LoadScreen(true);
                 ls.Show();
 
-                if (Game_Project != null)
+                if (GlobalProject != null)
                 {
-                    Game_Project.Dispose();
+                    GlobalProject.Dispose();
                 }
                 GC.Collect();
 
-                GameProject.ProjectPath = System.IO.Path.GetDirectoryName(pathname);
-                Game_Project = GameProject.LoadFromFile(pathname);
+                GameProject.ProjectPath = Path.GetDirectoryName(pathname);
+                GlobalProject = GameProject.LoadFromFile(pathname);
 
                 ls.Close();
-                if (Game_Project != null)
+                if (GlobalProject != null)
                 {
                     RefreshListView(false);
                     MakeSaved();
-
                 }
                 else
                 {
@@ -196,86 +193,50 @@ namespace ArtCore_Editor
                 }
 
             }
-
-
-
-            List<string> lines = new List<string>();
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME))
+            
+            var lines = new List<string>();
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
             {
-                lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME).ToList();
+                lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
             }
-            if (lines.Contains(System.IO.Path.GetDirectoryName(pathname)))
+            if (lines.Contains(Path.GetDirectoryName(pathname)))
             {
-                lines.Remove(System.IO.Path.GetDirectoryName(pathname));
+                lines.Remove(Path.GetDirectoryName(pathname));
             }
-            lines.Insert(0, System.IO.Path.GetDirectoryName(pathname));
-            File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LAST_FILENAME, lines);
+            lines.Insert(0, Path.GetDirectoryName(pathname));
+            File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, lines);
 
         }
 
         private void loadProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenProject(null);
-
         }
 
-
-
-        private void AddToAssetList<T>(string category, Dictionary<string, T> objects, string category_icon, string default_icon = null)
+        private void AddToAssetList<T>(string category, Dictionary<string, T> objects, string categoryIcon)
         {
-            int lastnode = ProjectAsserList.Nodes.Count;
-            int category_index = ProjectAssetList_imagelist.Images.IndexOfKey(category_icon);
-            if (category_index < 0)
+            var lastNode = ProjectAsserList.Nodes.Count;
+            var categoryIndex = ProjectAssetList_imagelist.Images.IndexOfKey(categoryIcon);
+            if (categoryIndex < 0)
             {
-                ProjectAssetList_imagelist.Images.Add(Properties.Resources.ResourceManager.GetObject(category_icon) as Bitmap);
-                category_index = ProjectAssetList_imagelist.Images.Count - 1;
+                ProjectAssetList_imagelist.Images.Add(Properties.Resources.ResourceManager.GetObject(categoryIcon) as Bitmap);
+                categoryIndex = ProjectAssetList_imagelist.Images.Count - 1;
             }
-            ProjectAsserList.Nodes.Add(category, category, category_index, category_index);
-            ProjectAsserList.Nodes[lastnode].Tag = "root";
+            ProjectAsserList.Nodes.Add(category, category, categoryIndex, categoryIndex);
+            ProjectAsserList.Nodes[lastNode].Tag = "root";
 
-
-            if (objects.Count > 0)
+            if (objects.Count <= 0) return;
+            foreach (var asset in objects.Values.ToList())
             {
-
-                foreach (var _asset in objects.Values.ToList())
-                {
-
-                    var asset = Functions.ForceType<Asset>(_asset);
-
-                    int item_index = -1;
-                    if (asset.EditorImage == null)
-                    {
-                        item_index = ProjectAssetList_imagelist.Images.IndexOfKey(default_icon);
-                        if (item_index < 0)
-                        {
-                            if (default_icon == null)
-                            {
-                                item_index = category_index;
-                            }
-                            else
-                            {
-                                ProjectAssetList_imagelist.Images.Add(Properties.Resources.ResourceManager.GetObject(default_icon) as Bitmap);
-                                item_index = ProjectAssetList_imagelist.Images.Count - 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!ProjectAssetList_imagelist.Images.ContainsKey(asset.EditorImage.ToString()))
-                        {
-                            ProjectAssetList_imagelist.Images.Add(asset.EditorImage);
-                            item_index = ProjectAssetList_imagelist.Images.Count - 1;
-                        }
-                    }
-                    ProjectAsserList.Nodes[lastnode].Nodes.Add(asset.Name, asset.Name, item_index, item_index);
-                    ProjectAsserList.Nodes[lastnode].Nodes[ProjectAsserList.Nodes[lastnode].Nodes.Count - 1].Tag = "element";
-                }
+                var currentAsset = asset.ForceType<Asset>();
+                ProjectAsserList.Nodes[lastNode].Nodes.Add(currentAsset.Name, currentAsset.Name);
+                ProjectAsserList.Nodes[lastNode].Nodes[^1].Tag = "element";
             }
         }
 
         public void RefreshListView(bool rememberStates = true)
         {
-            List<string> savedExpansionState = new List<string>();
+            var savedExpansionState = new List<string>();
             if (rememberStates)
             {
                 savedExpansionState = ProjectAsserList.Nodes.GetExpansionState();
@@ -283,13 +244,13 @@ namespace ArtCore_Editor
             }
 
             ProjectAsserList.Nodes.Clear();
-            AddToAssetList("textures", Game_Project.Textures, "picture");
-            AddToAssetList("sprites", Game_Project.Sprites, "running");
-            AddToAssetList("sounds", Game_Project.Sounds, "volume");
-            AddToAssetList("music", Game_Project.Music, "music-alt");
-            AddToAssetList("font", Game_Project.Fonts, "text");
-            AddToAssetList("instances", Game_Project.Instances, "users-alt");
-            AddToAssetList("scenes", Game_Project.Scenes, "globe");
+            AddToAssetList("textures", GlobalProject.Textures, "picture");
+            AddToAssetList("sprites", GlobalProject.Sprites, "running");
+            AddToAssetList("sounds", GlobalProject.Sounds, "volume");
+            AddToAssetList("music", GlobalProject.Music, "music-alt");
+            AddToAssetList("font", GlobalProject.Fonts, "text");
+            AddToAssetList("instances", GlobalProject.Instances, "users-alt");
+            AddToAssetList("scenes", GlobalProject.Scenes, "globe");
 
             if (rememberStates)
             {
@@ -297,234 +258,453 @@ namespace ArtCore_Editor
                 ProjectAsserList.EndUpdate();
             }
         }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {//texture
-            TextureManager textureManager = new TextureManager();
-            if (textureManager.ShowDialog() == DialogResult.OK)
+        
+        private void OpenManager<T>(T obj) where T : Form
+        {
+            if (obj.ShowDialog() == DialogResult.OK)
             {
                 RefreshListView();
                 MakeChange();
             }
-            textureManager.Dispose();
+            obj.Dispose();
             GC.Collect();
+        }
+        
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {//open texture manager and create new asset
+            OpenManager(new TextureManager());
         }
 
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
-        {//sprite
-            SpriteEditor spriteManager = new SpriteEditor(null);
-            if (spriteManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            spriteManager.Dispose();
-            GC.Collect();
+        {//open sprite manager and create new asset
+            OpenManager(new SpriteEditor());  
         }
 
         private void newToolStripMenuItem2_Click(object sender, EventArgs e)
-        {//music
-            MusicManager musicManager = new MusicManager();
-            if (musicManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            musicManager.Dispose();
-            GC.Collect();
+        {//open music manager and create new asset
+            OpenManager(new MusicManager());
         }
 
         private void newToolStripMenuItem3_Click(object sender, EventArgs e)
-        {//sound
-            SoundManager soundManager = new SoundManager();
-            if (soundManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            soundManager.Dispose();
-            GC.Collect();
+        {//open sound manager and create new asset
+            OpenManager(new SoundManager());
         }
 
         private void newToolStripMenuItem4_Click(object sender, EventArgs e)
-        {//font
-            FontManager fontManager = new FontManager();
-            if (fontManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            fontManager.Dispose();
-            GC.Collect();
+        {//open font manager and create new asset
+            OpenManager(new FontManager());
         }
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ObjectManager objectManager = new ObjectManager();
-            if (objectManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            objectManager.Dispose();
-            GC.Collect();
+        {//open object manager and create new asset
+            OpenManager(new ObjectManager());
         }
 
-        void OpenAssetFromList(string category, string name)
+        private void createToolStripMenuItem_Click(object sender, EventArgs e)
+        {//open scene manager and create new asset
+            OpenManager(new SceneManager());
+        }
+
+        private void OpenAssetFromList(string category, string name)
         {
             switch (category)
             {
                 case "textures":
-                    TextureManager textureManager = new TextureManager(name);
-                    if (textureManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    textureManager.Dispose();
+                    OpenManager(new TextureManager(name));
                     break;
                 case "sprites":
-                    SpriteEditor spriteManager = new SpriteEditor(name);
-                    if (spriteManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    spriteManager.Dispose();
-
-                    break;
-                case "animations":
-
+                    OpenManager(new SpriteEditor(name));
                     break;
                 case "music":
-                    MusicManager musicManager = new MusicManager(name);
-                    if (musicManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    musicManager.Dispose();
+                    OpenManager(new MusicManager(name));
                     break;
                 case "sounds":
-                    SoundManager soundsManager = new SoundManager(name);
-                    if (soundsManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    soundsManager.Dispose();
+                    OpenManager(new SoundManager(name));
                     break;
                 case "font":
-                    FontManager fontManager = new FontManager(name);
-                    if (fontManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    fontManager.Dispose();
+                    OpenManager(new FontManager(name));
                     break;
                 case "instances":
-                    ObjectManager objectManager = new ObjectManager(name);
-                    if (objectManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    objectManager.Dispose();
+                    OpenManager(new ObjectManager(name));
                     break;
                 case "scenes":
-
-                    SceneManager sceneManager = new SceneManager(name);
-                    if (sceneManager.ShowDialog() == DialogResult.OK)
-                    {
-                        RefreshListView();
-                        MakeChange();
-                    }
-                    sceneManager.Dispose();
-                    break;
-                default:
+                    OpenManager(new SceneManager(name));
                     break;
             }
-            GC.Collect();
         }
-        void DeleteAssetFromList(string category, string name)
+
+        private void DeleteAssetFilesFromProject<T>(T list, string name) where T : Dictionary<string, Asset>
+        {
+            _filesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + list[name].FileName);
+            list.Remove(name);
+            RefreshListView();
+            MakeChange();
+        }
+        private void DeleteAssetFromList(string category, string name)
         {
             if (MessageBox.Show("Do You really want to delete '" + name + "'?", "Question?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             switch (category)
             {
                 case "textures":
-                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Textures[name].FileName);
-                    Game_Project.Textures.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject(GlobalProject.Textures, name);
                     break;
                 case "sprites":
-                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Sprites[name].Name);
-                    Game_Project.Sprites.Remove(name);
-                    RefreshListView();
-                    MakeChange();
-                    break;
-                case "objects":
-                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Instances[name].Name);
-                    Game_Project.Instances.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject((GlobalProject.Sprites).ForceType<Dictionary<string, Asset>>(), name);
                     break;
                 case "music":
-                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Music[name].FileName);
-                    Game_Project.Music.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject(GlobalProject.Music, name);
                     break;
                 case "sounds":
-                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Sounds[name].FileName);
-                    Game_Project.Sounds.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject(GlobalProject.Sounds, name);
                     break;
                 case "font":
-                    FilesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Fonts[name].FileName);
-                    Game_Project.Fonts.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject(GlobalProject.Fonts, name);
                     break;
-
                 case "instances":
-                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Instances[name].Name);
-                    Game_Project.Instances.Remove(name);
-                    RefreshListView();
-                    MakeChange();
+                    DeleteAssetFilesFromProject((GlobalProject.Instances).ForceType<Dictionary<string, Asset>>(), name);
                     break;
                 case "scenes":
-                    FoldersToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + Game_Project.Scenes[name].Name);
-                    Game_Project.Scenes.Remove(name);
-                    RefreshListView();
-                    MakeChange();
-                    break;
-                default:
+                    DeleteAssetFilesFromProject((GlobalProject.Scenes).ForceType<Dictionary<string, Asset>>(), name);
                     break;
             }
         }
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            // czy kategoria
-            if (e.Node.Parent != null)
+            // if asset is clicked, nor category
+            if (e.Node.Parent == null) return;
+            var category = e.Node.FullPath.Split('\\')[0];
+            var name = e.Node.FullPath.Split('\\').Last();
+            OpenAssetFromList(category, name);
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
             {
-                //MessageBox.Show(e.Node.Parent.Name + " - " + e.Node.Text);
-                string category = e.Node.FullPath.Split('\\')[0];
-                string name = e.Node.FullPath.Split('\\').Last();
-                OpenAssetFromList(category, name);
+                OpenProject(args[1]);
+                if(GlobalProject == null)
+                {
+                    MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening", MessageBoxButtons.OK, MessageBoxIcon.Stop); return;
+                }
+                
+            }
+            while (GlobalProject == null)
+            {
+                var welcome = new Welcome();
+                welcome.ShowDialog();
+                if (welcome.DialogResult == DialogResult.OK) // open recent
+                {
+                    OpenProject(welcome.OpenProject + "\\" + Program.ProjectFilename);
+                }
+                else if (welcome.DialogResult == DialogResult.Yes) // create
+                {
+                    newProjectToolStripMenuItem_Click(null, null);
+
+                }
+                else if (welcome.DialogResult == DialogResult.Cancel) // open from file
+                {
+                    OpenProject();
+                }
+                else if (welcome.DialogResult == DialogResult.Abort) // exit
+                {
+                    Application.Exit();
+                    return;
+                }
+            }
+
+            RefreshListView();
+            MakeSaved();
+            if (!CheckCoreFiles())
+            {
+                if (!UpdateProgram())
+                {
+                    MessageBox.Show("Cannot find core files, You can create game but not enable to test or release it. Try  'Project->Update Core' to update or download latest 'Core.tar' from 'https://github.com/atrox31/ArtCore'", "Cannot find 'Core'", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+        }
+
+
+        private void listContext_root(object sender, ToolStripItemClickedEventArgs e)
+        {
+            /* 
+             * cms.Items.Add("Expand All");
+               cms.Items.Add("Coolapse All");
+               cms.Items.Add("Add new folder");
+            */
+            if (e.ClickedItem == null) return;
+            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            switch (e.ClickedItem.Text)
+            {
+                case "Expand All":
+                    ProjectAsserList.ExpandAll();
+                    break;
+                case "Coolapse All":
+                    ProjectAsserList.CollapseAll();
+                    break;
+                case "Add new folder":
+                    // TODO
+                    break;
+                default:
+                    //"New item '" + e.Node.Text + "'"
+                    var item = e.ClickedItem.Text.Split("'")[1];
+                    OpenAssetFromList(item, null);
+                    break;
+            }
+        }
+        private void listContext_element(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem == null) return;
+            if (ProjectAsserList.SelectedNode == null) return;
+
+            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            switch (e.ClickedItem.Text)
+            {
+                case "Open":
+                    OpenAssetFromList(category, name);
+                    break;
+                case "Delete":
+                    DeleteAssetFromList(category, name);
+                    break;
+                case "Move":
+                    // TODO
+                    break;
+                default: break;
+            }
+        }
+        private void listContext_folder(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem == null) return;
+            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            switch (e.ClickedItem.Text)
+            {
+                case "Open":
+                    // TODO
+                    break;
+                case "Delete":
+                    // TODO
+                    break;
+                case "Move":
+                    // TODO
+                    break;
+                default: break;
+            }
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.Node.Tag != null)
+                {
+                    ProjectAsserList.SelectedNode = e.Node;
+
+                    if (e.Node.Tag.ToString() == "root")
+                    {
+                        var cms = new ContextMenuStrip();
+                        cms.ItemClicked += listContext_root;
+
+                        cms.Items.Add("New item '" + e.Node.Text + "'");
+                        cms.Items.Add("Expand All");
+                        cms.Items.Add("Coolapse All");
+                        //TODO cms.Items.Add("Add new folder");
+
+                        cms.Show(MousePosition);
+                    }
+                    else if (e.Node.Tag.ToString() == "folder")
+                    {
+                        // TODO
+                        var cms = new ContextMenuStrip();
+                        cms.ItemClicked += listContext_folder;
+                        cms.Items.Add("Expand All");
+                        cms.Items.Add("Coolapse All");
+                        cms.Items.Add("Add new folder");
+                        cms.Items.Add("Delete");
+
+                        cms.Show(MousePosition);
+                    }
+                    else if (e.Node.Tag.ToString() == "element")
+                    {
+                        var cms = new ContextMenuStrip();
+                        cms.ItemClicked += listContext_element;
+                        cms.Items.Add("Open");
+                        cms.Items.Add("Delete");
+                        //TODO cms.Items.Add("Move");
+
+                        cms.Show(MousePosition);
+                    }
+                }
+            }
+        }
+
+        void RunGame(bool debugMode)
+        {
+            string binPath = debugMode ? "bin_Debug" : "bin_Release";
+            var fileNamePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Core\\{binPath}\\ArtCore.exe";
+            if (!File.Exists(fileNamePath))
+            {
+                MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var compiler = new Process();
+            compiler.StartInfo.FileName = fileNamePath;
+            compiler.StartInfo.Arguments = (debugMode ? "-debug " : "") + "-assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
+            compiler.StartInfo.UseShellExecute = false;
+            compiler.StartInfo.CreateNoWindow = true;
+            compiler.StartInfo.RedirectStandardOutput = debugMode;
+            compiler.StartInfo.RedirectStandardError = debugMode;
+
+            var sb = new StringBuilder();
+            listBox1.Items.Clear();
+            listBox1.Items.Add(compiler.StartInfo.Arguments);
+            if (debugMode)
+            {
+                compiler.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
+                compiler.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
+            }
+
+            compiler.Start();
+            if (debugMode)
+            {
+                compiler.BeginOutputReadLine();
+                compiler.BeginErrorReadLine();
+            }
+            compiler.WaitForExit();
+            listBox1.Items.Add("Process exit with code: " + compiler.ExitCode.ToString());
+
+            if (!debugMode) return;
+            {
+                listBox1.Items.Add("wait for console output...");
+                var bw = new BackgroundWorker();
+                bw.DoWork += (object sender, DoWorkEventArgs e) =>
+                {
+                    foreach (var line in ((StringBuilder)e.Argument).ToString().Split('\n'))
+                    {
+                        listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
+                    }
+                };
+                bw.RunWorkerAsync(sb);
             }
 
         }
 
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            // run
+            if (CheckCoreFiles())
+            {
+                var gameCompiler = new GameCompiler(false, true);
+                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+                RunGame(false);
+            }
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            // run debug
+            if (CheckCoreFiles())
+            {
+                var gameCompiler = new GameCompiler(true);
+                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+            }
+            RunGame(true);
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var settings = new ArtCoreSettings();
+            settings.ShowDialog();
+            // Save settings is automatic
+        }
+
+        // search for unsused assets
+        private int DeleteUnusedFiles<T>(string path, T container) where T : Dictionary<string, Asset>
+        {
+            var total = 0;
+
+            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\" + path))
+            {
+                if (GlobalProject.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item))) continue;
+                _filesToDeleteAtSave.Add(item);
+                total++;
+            }
+
+            return total;
+        }
+
+        // clean up files in project directory, files not used in project
+        private void cleanupFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var total = 0;
+            total += DeleteUnusedFiles("\\assets\\texture", GlobalProject.Textures);
+            total += DeleteUnusedFiles("\\assets\\font", GlobalProject.Fonts);
+            total += DeleteUnusedFiles("\\assets\\music", GlobalProject.Music);
+            total += DeleteUnusedFiles("\\assets\\sound", GlobalProject.Sounds);
+            total += DeleteUnusedFiles("\\assets\\sprite", (GlobalProject.Sprites).ForceType< Dictionary<string, Asset> > ());
+            total += DeleteUnusedFiles("\\scene", (GlobalProject.Scenes).ForceType<Dictionary<string, Asset>>());
+            total += DeleteUnusedFiles("\\object", (GlobalProject.Instances).ForceType<Dictionary<string, Asset>>());
+            MessageBox.Show($"Cleanup complite, deleted {total.ToString()}  elements", "Cleanup");
+        }
+
+        private void setStartSceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Functions.ErrorCheck(GlobalProject.Scenes.Count > 0, "There is no scenes!")) return;
+            var scene = PicFromList.Get(GlobalProject.Scenes.Keys.ToList());
+            if (scene == null) return;
+            GlobalProject.StartingScene = GlobalProject.Scenes[scene];
+        }
+
+        // move game files to output folder, prepare to release game
+        private void releaseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // run
+            if (CheckCoreFiles())
+            {
+                var gameCompiler = new GameCompiler(false,false,true);
+                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
+
+                var output = GameProject.ProjectPath + "\\output\\" + GlobalProject.ProjectName;
+                if (Directory.Exists(output))
+                {
+                    Directory.Delete(output, true);
+                }
+                Directory.CreateDirectory(output);
+
+                var files = new List<string>();
+                files.Add(GameProject.ProjectPath + "\\game.dat");
+                files.Add(GameProject.ProjectPath + "\\assets.pak");
+                foreach (var cfile in Directory.GetFiles("Core\\bin_Release\\"))
+                {
+                    files.Add(cfile);
+                }
+
+                foreach (var file in files)
+                {
+                    if (File.Exists(file))
+                    {
+                        File.Copy(file, output + "\\" + Path.GetFileName(file), true);
+                    }
+                }
+
+                MessageBox.Show("Game files are prepared for release", "Operation complite");
+                Process.Start("explorer.exe", output);
+
+            }
+        }
+
+
+        // split content in filelist.txt in core.tar to separate file names(path included)
         List<string> StripFileList(List<string> content)
         {
-            List<string> output = new List<string>();
+            var output = new List<string>();
 
-            string folder = "";
-            bool readFolderName = true;
-            bool readFileNames = false;
+            var folder = "";
+            var readFolderName = true;
+            var readFileNames = false;
 
             foreach (var line in content)
             {
@@ -593,41 +773,39 @@ namespace ArtCore_Editor
 
         bool UpdateProgram(string file = null)
         {
-            //Directory.CreateDirectory("temp");
-            //HttpHelper.DownloadFileAsync("https://github.com/atrox31/ArtCompiler/releases/download/Fresh/ACompiler.exe", "temp\\ACompiler.exe");
-            string FileName;
+            string fileName;
             if (file == null)
             {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
+                var openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Core.tar|Core.tar";
                 openFileDialog.Multiselect = false;
                 openFileDialog.AddExtension = true;
                 openFileDialog.CheckFileExists = true;
                 if (openFileDialog.ShowDialog() != DialogResult.OK) return false;
-                FileName = openFileDialog.FileName;
+                fileName = openFileDialog.FileName;
             }
             else
             {
-                FileName = file;
+                fileName = file;
             }
 
-
-            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp"))
+            var tempDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp";
+            if (Directory.Exists(tempDirectory))
             {
-                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp", true);
+                Directory.Delete(tempDirectory, true);
             }
             //Directory.CreateDirectory("temp");
             try
             {
-                Tar.ExtractTar(FileName, AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp");
+                Tar.ExtractTar(fileName, tempDirectory);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error while opening '" + FileName + "'\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error while opening '" + fileName + "'\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\Core\\FileList.txt"))
+            if (!File.Exists(tempDirectory + "\\Core\\FileList.txt"))
             {
                 MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -637,24 +815,24 @@ namespace ArtCore_Editor
             {
                 Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core", true);
             }
-            foreach (var content in StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\Core\\FileList.txt").ToList()))
+            foreach (var content in StripFileList(File.ReadAllLines(tempDirectory + "\\Core\\FileList.txt").ToList()))
             {
-                string path = AppDomain.CurrentDomain.BaseDirectory + "\\" + Path.GetDirectoryName(content);
+                var path = AppDomain.CurrentDomain.BaseDirectory + "\\" + Path.GetDirectoryName(content);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
 
-                File.Copy(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp\\" + content, AppDomain.CurrentDomain.BaseDirectory + "\\" + content, true);
+                File.Copy(tempDirectory, AppDomain.CurrentDomain.BaseDirectory + "\\" + content, true);
 
             }
-            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp"))
+            if (Directory.Exists(tempDirectory))
             {
-                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp", true);
+                Directory.Delete(tempDirectory, true);
             }
-            if (File.Exists(FileName))
+            if (File.Exists(fileName))
             {
-                File.Delete(FileName);
+                File.Delete(fileName);
             }
             if (file == null) // silent
             {
@@ -663,446 +841,6 @@ namespace ArtCore_Editor
             // clear ArtLib content
             ScriptEditor.ClearFunctionList();
             return true;
-        }
-
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            var args = Environment.GetCommandLineArgs();
-            if (args.Length > 1)
-            {
-                OpenProject(args[1]);
-                if(Game_Project == null)
-                {
-                    MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening", MessageBoxButtons.OK, MessageBoxIcon.Stop); return;
-                }
-                
-            }
-            while (Game_Project == null)
-            {
-                Welcome welcome = new Welcome();
-                welcome.ShowDialog();
-                if (welcome.DialogResult == DialogResult.OK) // open recent
-                {
-                    OpenProject(welcome.open_project + "\\" + Program.PROJECT_FILENAME);
-                }
-                else if (welcome.DialogResult == DialogResult.Yes) // create
-                {
-                    newProjectToolStripMenuItem_Click(null, null);
-
-                }
-                else if (welcome.DialogResult == DialogResult.Cancel) // open from file
-                {
-                    OpenProject();
-                }
-                else if (welcome.DialogResult == DialogResult.Abort) // exit
-                {
-                    Application.Exit();
-                    return;
-                }
-            }
-
-            RefreshListView();
-            MakeSaved();
-            if (!CheckCoreFiles())
-            {
-                if (!UpdateProgram())
-                {
-                    MessageBox.Show("Cannot find core files, You can create game but not enable to test or release it. Try  'Project->Update Core' to update or download latest 'Core.tar' from 'https://github.com/atrox31/ArtCore'", "Cannot find 'Core'", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-            }
-        }
-
-
-        private void listContext_root(object Sender, ToolStripItemClickedEventArgs e)
-        {
-            /* 
-             * cms.Items.Add("Expand All");
-               cms.Items.Add("Coolapse All");
-               cms.Items.Add("Add new folder");
-            */
-            if (e.ClickedItem == null) return;
-            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
-            switch (e.ClickedItem.Text)
-            {
-                case "Expand All":
-                    ProjectAsserList.ExpandAll();
-                    break;
-                case "Coolapse All":
-                    ProjectAsserList.CollapseAll();
-                    break;
-                case "Add new folder":
-
-                    break;
-                default:
-                    //"New item '" + e.Node.Text + "'"
-                    string item = e.ClickedItem.Text.Split("'")[1];
-                    OpenAssetFromList(item, null);
-                    break;
-            }
-        }
-        private void listContext_element(object Sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem == null) return;
-            if (ProjectAsserList.SelectedNode == null) return;
-
-            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
-            switch (e.ClickedItem.Text)
-            {
-                case "Open":
-                    OpenAssetFromList(category, name);
-                    break;
-                case "Delete":
-                    DeleteAssetFromList(category, name);
-                    break;
-                case "Move":
-
-                    break;
-                default: break;
-            }
-        }
-        private void listContext_folder(object Sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem == null) return;
-            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
-            switch (e.ClickedItem.Text)
-            {
-                case "Open":
-
-                    break;
-                case "Delete":
-
-                    break;
-                case "Move":
-
-                    break;
-                default: break;
-            }
-        }
-
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                if (e.Node.Tag != null)
-                {
-                    ProjectAsserList.SelectedNode = e.Node;
-
-                    if (e.Node.Tag.ToString() == "root")
-                    {
-                        ContextMenuStrip cms = new ContextMenuStrip();
-                        cms.ItemClicked += listContext_root;
-
-                        cms.Items.Add("New item '" + e.Node.Text + "'");
-
-                        cms.Items.Add("Expand All");
-                        cms.Items.Add("Coolapse All");
-                        cms.Items.Add("Add new folder");
-
-                        cms.Show(MousePosition);
-                    }
-                    else if (e.Node.Tag.ToString() == "folder")
-                    {
-                        ContextMenuStrip cms = new ContextMenuStrip();
-                        cms.ItemClicked += listContext_folder;
-                        cms.Items.Add("Expand All");
-                        cms.Items.Add("Coolapse All");
-                        cms.Items.Add("Add new folder");
-                        cms.Items.Add("Delete");
-
-                        cms.Show(MousePosition);
-                    }
-                    else if (e.Node.Tag.ToString() == "element")
-                    {
-                        ContextMenuStrip cms = new ContextMenuStrip();
-                        cms.ItemClicked += listContext_element;
-                        cms.Items.Add("Open");
-                        cms.Items.Add("Delete");
-                        cms.Items.Add("Move");
-
-                        cms.Show(MousePosition);
-                    }
-                }
-            }
-        }
-
-        private void createToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SceneManager sceneManager = new SceneManager();
-            if (sceneManager.ShowDialog() == DialogResult.OK)
-            {
-                RefreshListView();
-                MakeChange();
-            }
-            sceneManager.Dispose();
-            GC.Collect();
-        }
-
-        void RunGame(bool debugMode)
-        {
-
-            // run game in debug mode
-            Process compiler = new Process();
-            if (debugMode)
-            {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Debug\\ArtCore.exe"))
-                {
-                    compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Debug\\ArtCore.exe";
-                }
-                else
-                {
-                    MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-            else
-            {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Release\\ArtCore.exe"))
-                {
-                    compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\bin_Release\\ArtCore.exe";
-                }
-                else
-                {
-                    MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-            compiler.StartInfo.Arguments = (debugMode ? "-debug " : "") + "-assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
-            compiler.StartInfo.UseShellExecute = false;
-            compiler.StartInfo.CreateNoWindow = true;
-            compiler.StartInfo.RedirectStandardOutput = debugMode;
-            compiler.StartInfo.RedirectStandardError = debugMode;
-
-            var sb = new StringBuilder();
-            listBox1.Items.Clear();
-            listBox1.Items.Add(compiler.StartInfo.Arguments);
-            if (debugMode)
-            {
-                compiler.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
-                compiler.ErrorDataReceived += (sender, args) => sb.AppendLine(args.Data);
-            }
-
-            compiler.Start();
-            if (debugMode)
-            {
-                compiler.BeginOutputReadLine();
-                compiler.BeginErrorReadLine();
-            }
-            compiler.WaitForExit();
-            listBox1.Items.Add("Process exit with code: " + compiler.ExitCode.ToString());
-
-            if (debugMode)
-            {
-                listBox1.Items.Add("wait for console output...");
-                var bw = new BackgroundWorker();
-                bw.DoWork += (object sender, DoWorkEventArgs e) =>
-                {
-                    foreach (string line in ((StringBuilder)e.Argument).ToString().Split('\n'))
-                    {
-                        listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
-                    }
-                };
-                bw.RunWorkerAsync(sb);
-
-            }
-
-        }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            // run
-            if (CheckCoreFiles())
-            {
-                //if (!saved)
-                {
-                    GameCompiler gameCompiler = new GameCompiler(false,true);
-                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                }
-                RunGame(false);
-            }
-        }
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            // run debug
-            if (CheckCoreFiles())
-            {
-                //if (!saved)
-                {
-                    GameCompiler gameCompiler = new GameCompiler(true);
-                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                }
-                RunGame(true);
-            }
-        }
-
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ArtCore_Settings settings = new ArtCore_Settings();
-            if (settings.ShowDialog() == DialogResult.OK)
-            {
-                // appy is automatic
-            }
-        }
-
-
-        private void MainWindow_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void showConsoleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.AllocConsole();
-        }
-
-        private void cleanupFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int total = 0;
-            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\texture"))
-            {
-                if (!Game_Project.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item)))
-                {
-                    File.Delete(item);
-                    total++;
-                }
-            }
-            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\font"))
-            {
-                if (!Game_Project.Fonts.ContainsKey(Path.GetFileNameWithoutExtension(item)))
-                {
-                    File.Delete(item);
-                    total++;
-                }
-            }
-            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\music"))
-            {
-                if (!Game_Project.Music.ContainsKey(Path.GetFileNameWithoutExtension(item)))
-                {
-                    File.Delete(item);
-                    total++;
-                }
-            }
-            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\assets\\sound"))
-            {
-                if (!Game_Project.Sounds.ContainsKey(Path.GetFileNameWithoutExtension(item)))
-                {
-                    File.Delete(item);
-                    total++;
-                }
-            }
-
-            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\assets\\sprite"))
-            {
-                if (!Game_Project.Sprites.ContainsKey(item.Split('\\').Last()))
-                {
-                    Directory.Delete(item, true);
-                    total++;
-                }
-            }
-
-            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\scene"))
-            {
-                if (!Game_Project.Scenes.ContainsKey(item.Split('\\').Last()))
-                {
-                    Directory.Delete(item, true);
-                    total++;
-                }
-            }
-
-            foreach (var item in Directory.GetDirectories(GameProject.ProjectPath + "\\object"))
-            {
-                if (!Game_Project.Instances.ContainsKey(item.Split('\\').Last()))
-                {
-                    Directory.Delete(item, true);
-                    total++;
-                }
-            }
-
-
-            MessageBox.Show("Cleanup complite, deleted " + total.ToString() + " elements", "Cleanup");
-        }
-
-        private void setStartSceneToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Functions.ErrorCheck(Game_Project.Scenes.Count > 0, "There is no scenes!")) return;
-            string scene = PicFromList.Get(Game_Project.Scenes.Keys.ToList());
-            if (scene == null) return;
-            Game_Project.StartingScene = Game_Project.Scenes[scene];
-        }
-
-        private void testInDebugToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // run debug
-            if (CheckCoreFiles())
-            {
-                RunGame(true);
-            }
-        }
-
-        private void testToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // run
-            if (CheckCoreFiles())
-            {
-                RunGame(false);
-            }
-        }
-
-        private void releaseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // run
-            if (CheckCoreFiles())
-            {
-                
-                    GameCompiler gameCompiler = new GameCompiler(false,false,true);
-                    if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-                
-
-                var output = GameProject.ProjectPath + "\\output\\" + Game_Project.ProjectName;
-                if (Directory.Exists(output))
-                {
-                    Directory.Delete(output, true);
-                }
-                Directory.CreateDirectory(output);
-
-                List<string> files = new List<string>();
-                files.Add(GameProject.ProjectPath + "\\game.dat");
-                files.Add(GameProject.ProjectPath + "\\assets.pak");
-                foreach (var cfile in Directory.GetFiles("Core\\bin_Release\\"))
-                {
-                    files.Add(cfile);
-                }
-
-                foreach (string file in files)
-                {
-                    if (File.Exists(file))
-                    {
-                        File.Copy(file, output + "\\" + Path.GetFileName(file), true);
-                    }
-                }
-
-                MessageBox.Show("Game files are prepared for release", "Operation complite");
-                Process.Start("explorer.exe", output);
-
-            }
-        }
-
-        private void assetsOnlyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void gamedataOnlyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void allToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1120,7 +858,7 @@ namespace ArtCore_Editor
             MakeSaved();
             if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(true, true);
+                var gameCompiler = new GameCompiler(true, true);
                 gameCompiler.ShowDialog();
             }
         }
@@ -1140,7 +878,7 @@ namespace ArtCore_Editor
             MakeSaved();
             if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(false, true);
+                var gameCompiler = new GameCompiler(false, true);
                 gameCompiler.ShowDialog();
             }
         }

@@ -10,52 +10,52 @@ namespace ArtCore_Editor
 {
     public partial class MusicManager : Form
     {
-        string aid;
-        bool can_play = false;
-        string GetDuration(bool formated = false)
+        private string _aid;
+        private bool _canPlay = false;
+        private readonly SoundPlayer _soundPlayer = new SoundPlayer();
+        private string _fileName;
+        private const string ProjectPath = "assets\\music\\";
+
+
+        string GetDuration()
         {
             return SoundInfo.GetSoundLength(GameProject.ProjectPath + "\\" + textBox2.Text).ToString();
         }
         private void SetInfoBox()
         {
-            soundPlayer.Stop();
-            soundPlayer.SoundLocation = GameProject.ProjectPath + "\\" + textBox2.Text;
-            can_play = false;
-            soundPlayer.LoadAsync();
-            label1.Text = "Duration: " + GetDuration(true) + " \n" +
-                "In project location:\n" + "assets/music/" + textBox1.Text;
+            _soundPlayer.Stop();
+            _soundPlayer.SoundLocation = GameProject.ProjectPath + "\\" + textBox2.Text;
+            _canPlay = false;
+            _soundPlayer.LoadAsync();
+            label1.Text = "Duration: " + GetDuration() + " \n" +
+                "In project location:\n" + ProjectPath + textBox1.Text;
         }
-
-        SoundPlayer soundPlayer = new SoundPlayer();
 
         private void player_LoadCompleted(object sender,
                 AsyncCompletedEventArgs e)
         {
             if (e.Error == null)
-                can_play = true;
+                _canPlay = true;
             else
                 MessageBox.Show(e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         private void player_LocationChanged(object sender, EventArgs e)
         {
-            can_play = true;
+            _canPlay = true;
         }
 
-        string FileName;
-        string ProjectPath = "assets\\music\\";
-
-        public MusicManager(string AssetId = null)
+        public MusicManager(string assetId = null)
         {
-            soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
-            soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
+            _soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
+            _soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
             InitializeComponent(); Program.ApplyTheme(this);
-            aid = AssetId;
-            if (AssetId != null)
+            _aid = assetId;
+            if (assetId != null)
             {
-                textBox1.Text = MainWindow.GetInstance().Game_Project.Music[AssetId].Name;
-                FileName = MainWindow.GetInstance().Game_Project.Music[AssetId].FileName;
+                textBox1.Text = MainWindow.GetInstance().GlobalProject.Music[assetId].Name;
+                _fileName = MainWindow.GetInstance().GlobalProject.Music[assetId].FileName;
 
-                textBox2.Text = ProjectPath + "\\" + FileName;
+                textBox2.Text = ProjectPath + "\\" + _fileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -73,29 +73,27 @@ namespace ArtCore_Editor
         private void button3_Click(object sender, EventArgs e)
         {
             // paly
-            if (can_play)
+            if (!_canPlay) return;
+            try
             {
-                try
-                {
-                    soundPlayer.Play();
-                }
-                catch (Exception ee)
-                {
-                    MessageBox.Show("Edytor jest upośledzony, ten plik muzyki najprawdopodobniej będzie działać w grze...\n" + ee.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                _soundPlayer.Play();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("ArtEditor can not play this file but in game its all good...\n" + ee.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            // pause
+            // TODO pause
 
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             // stop
-            soundPlayer.Stop();
+            _soundPlayer.Stop();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -105,21 +103,27 @@ namespace ArtCore_Editor
                 && (textBox2.Text.Length > 0)
                 && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
             {
-                if (aid == null)
+                if (_aid == null)
                 {
                     // add new
-                    aid = textBox1.Text;
-                    MainWindow.GetInstance().Game_Project.Music.Add(textBox1.Text, new Asset());
+                    _aid = textBox1.Text;
+                    MainWindow.GetInstance().GlobalProject.Music.Add(textBox1.Text, new Asset());
                 }
-                MainWindow.GetInstance().Game_Project.Music[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Music[aid].FileName = FileName;
-                MainWindow.GetInstance().Game_Project.Music[aid].ProjectPath = ProjectPath;
+                MainWindow.GetInstance().GlobalProject.Music[_aid].Name = textBox1.Text;
+                MainWindow.GetInstance().GlobalProject.Music[_aid].FileName = _fileName;
+                MainWindow.GetInstance().GlobalProject.Music[_aid].ProjectPath = ProjectPath;
 
-                if (aid != MainWindow.GetInstance().Game_Project.Music[aid].Name)
+                if (_aid != MainWindow.GetInstance().GlobalProject.Music[_aid].Name)
                 {
-                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Music, aid, textBox1.Text);
+                    MainWindow.GetInstance().GlobalProject.Music.RenameKey(_aid, textBox1.Text);
                 }
-
+                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\music\\" + _fileName)
+                {
+                    _soundPlayer.Dispose();
+                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\music\\" + _fileName);
+                    File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
+                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = "\\assets\\music\\" + textBox1.Text + ".png";
+                }
                 DialogResult = DialogResult.OK;
                 Close();
 
@@ -145,10 +149,10 @@ namespace ArtCore_Editor
                 if (textBox1.TextLength == 0)
                 {
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
-                    FileName = textBox1.Text + "." + ofile.Split('\\').Last().Split('.').Last();
+                    _fileName = textBox1.Text + "." + ofile.Split('\\').Last().Split('.').Last();
                 }
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + FileName, true);
-                textBox2.Text = ProjectPath + "\\" + FileName;
+                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + _fileName, true);
+                textBox2.Text = ProjectPath + "\\" + _fileName;
 
                 SetInfoBox();
             }
@@ -156,8 +160,8 @@ namespace ArtCore_Editor
 
         private void MusicManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            soundPlayer.Stop();
-            soundPlayer.Dispose();
+            _soundPlayer.Stop();
+            _soundPlayer.Dispose();
         }
     }
 }

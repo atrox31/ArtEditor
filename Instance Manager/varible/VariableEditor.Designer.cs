@@ -1,6 +1,8 @@
-﻿namespace ArtCore_Editor
+﻿using System.Windows.Forms;
+
+namespace ArtCore_Editor.Instance_Manager.varible
 {
-    partial class VaribleEditor
+    partial class VariableEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -129,7 +131,7 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // VaribleEditor
+            // VariableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -140,9 +142,9 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.Name = "VaribleEditor";
+            ((Control)this).Name = "VariableEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "VaribleEditor";
+            this.Text = "VariableEditor";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);

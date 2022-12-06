@@ -1,208 +1,195 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ArtCore_Editor.Pick_forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Sprite
 {
     public partial class SpriteEditor : Form
     {
-        bool saved = true;
-        public Sprite global_sprite;
-        int p_firstFrame, p_lastFrame, p_currentFrame;
-        void createNewSprite()
+        private bool _saved = true;
+        public Sprite GlobalSprite;
+        private int _pFirstFrame, _pLastFrame, _pCurrentFrame;
+
+        private void CreateNewSprite()
         {
-            p_currentFrame = p_firstFrame;
-            p_lastFrame = 0;
-            global_sprite = new Sprite();
+            _pCurrentFrame = _pFirstFrame;
+            _pLastFrame = 0;
+            GlobalSprite = new Sprite();
         }
 
-        public SpriteEditor(string sprite)
+        public SpriteEditor(string sprite = null)
         {
-            //this.parrent = parrent;
             InitializeComponent(); Program.ApplyTheme(this);
             s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
             if (sprite != null)
             {
-                global_sprite = GameProject.GetInstance().Sprites[sprite];
-                global_sprite.Load(GameProject.ProjectPath + global_sprite.ProjectPath + "\\" + global_sprite.FileName);
-                p_firstFrame = 0;
-                p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
-
-                p_currentFrame = p_firstFrame;
-
+                GlobalSprite = GameProject.GetInstance().Sprites[sprite];
+                GlobalSprite.Load(GameProject.ProjectPath + GlobalSprite.ProjectPath + "\\" + GlobalSprite.FileName);
+                _pFirstFrame = 0;
+                _pLastFrame = (GlobalSprite.Textures == null ? 0 : GlobalSprite.Textures.Count - 1);
+                _pCurrentFrame = _pFirstFrame;
             }
             else
             {
-                createNewSprite();
+                CreateNewSprite();
             }
-            //importSpriteImages();
-            updateForm();
+            UpdateForm();
             s_preview.Refresh();
-
         }
 
 
-        void saveSprite()
+        private void SaveSprite()
         {
             while (s_spritename.Text.Length == 0)
             {
                 s_spritename.Text = GetString.Get("Sprite name");
             }
 
-            global_sprite.type = (Sprite.Type)s_sprite_type.SelectedIndex;
-            global_sprite.collision_mask =
-                (Sprite.CollisionMask)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : s_col_mask_perpixel.Checked ? 3 : 0) : 0);
-            global_sprite.collision_mask_value = s_col_mask_value.Value;
-            global_sprite.sprite_center = (s_sprite_center_center.Checked ? Sprite.SpriteCenter.center : s_sprite_center_left.Checked ? Sprite.SpriteCenter.leftcorner : Sprite.SpriteCenter.custom);
-            global_sprite.sprite_center_x = (int)s_aprite_center_x.Value;
-            global_sprite.sprite_center_y = (int)s_sprite_center_y.Value;
+            GlobalSprite.CollisionMask =
+                (Sprite.CollisionMaskEnum)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : s_col_mask_perpixel.Checked ? 3 : 0) : 0);
+            GlobalSprite.CollisionMaskValue = s_col_mask_value.Value;
+            GlobalSprite.SpriteCenter = (s_sprite_center_center.Checked ? Sprite.SpriteCenterEnum.Center : s_sprite_center_left.Checked ? Sprite.SpriteCenterEnum.LeftCorner : Sprite.SpriteCenterEnum.Custom);
+            GlobalSprite.SpriteCenterX = (int)s_aprite_center_x.Value;
+            GlobalSprite.SpriteCenterY = (int)s_sprite_center_y.Value;
 
-            global_sprite.editor_fps = (int)s_preview_fps.Value;
-            p_currentFrame = p_firstFrame;
-            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
+            GlobalSprite.EditorFps = (int)s_preview_fps.Value;
+            _pCurrentFrame = _pFirstFrame;
+            _pLastFrame = (GlobalSprite.Textures == null ? 0 : GlobalSprite.Textures.Count - 1);
 
-            global_sprite.Name = s_spritename.Text;
-            global_sprite.Save();
+            GlobalSprite.Name = s_spritename.Text;
+            GlobalSprite.Save();
 
-            if (!MainWindow.GetInstance().Game_Project.Sprites.ContainsKey(global_sprite.Name))
+            if (!MainWindow.GetInstance().GlobalProject.Sprites.ContainsKey(GlobalSprite.Name))
             {
                 // add new
-                MainWindow.GetInstance().Game_Project.Sprites.Add(s_spritename.Text, new Sprite());
+                MainWindow.GetInstance().GlobalProject.Sprites.Add(s_spritename.Text, new Sprite());
             }
             else
             {
-                if (global_sprite.Name != MainWindow.GetInstance().Game_Project.Sprites[global_sprite.Name].Name)
+                if (GlobalSprite.Name != MainWindow.GetInstance().GlobalProject.Sprites[GlobalSprite.Name].Name)
                 {
-                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Sprites, global_sprite.Name, s_spritename.Text);
+                    MainWindow.GetInstance().GlobalProject.Sprites.RenameKey(GlobalSprite.Name, s_spritename.Text);
                 }
             }
-
-            global_sprite.Name = s_spritename.Text;
-            MainWindow.GetInstance().Game_Project.Sprites[global_sprite.Name] = global_sprite;
-
+            GlobalSprite.Name = s_spritename.Text;
+            MainWindow.GetInstance().GlobalProject.Sprites[GlobalSprite.Name] = GlobalSprite;
         }
-
-
-        void updateForm()
+        
+        private void UpdateForm()
         {
-            s_spritename.Text = global_sprite.Name;
-            s_sprite_type.SelectedIndex = (int)global_sprite.type;
+            s_spritename.Text = GlobalSprite.Name;
 
-            s_sprite_center_y.Maximum = global_sprite.sprite_width;
-            s_aprite_center_x.Maximum = global_sprite.sprite_height;
+            s_sprite_center_y.Maximum = GlobalSprite.SpriteWidth;
+            s_aprite_center_x.Maximum = GlobalSprite.SpriteHeight;
 
-            s_col_mask_value.Maximum = Math.Max(global_sprite.sprite_height, global_sprite.sprite_width) / 2;
+            s_col_mask_value.Maximum = Math.Max(GlobalSprite.SpriteHeight, GlobalSprite.SpriteWidth) / 2;
 
-            s_aprite_center_x.Value = global_sprite.sprite_center_x;
-            s_sprite_center_y.Value = global_sprite.sprite_center_y;
+            s_aprite_center_x.Value = GlobalSprite.SpriteCenterX;
+            s_sprite_center_y.Value = GlobalSprite.SpriteCenterY;
 
             s_collision_have_mask.Checked = true;
-            switch (global_sprite.collision_mask)
+            switch (GlobalSprite.CollisionMask)
             {
-                case Sprite.CollisionMask.none:
+                case Sprite.CollisionMaskEnum.None:
                     s_collision_have_mask.Checked = false;
                     break;
-                case Sprite.CollisionMask.circle:
+                case Sprite.CollisionMaskEnum.Circle:
                     s_col_mask_circle.Checked = true;
                     break;
-                case Sprite.CollisionMask.rectangle:
+                case Sprite.CollisionMaskEnum.Rectangle:
                     s_col_mask_rect.Checked = true;
                     break;
-                case Sprite.CollisionMask.perpixel:
+                case Sprite.CollisionMaskEnum.Perpixel:
                     s_col_mask_perpixel.Checked = true;
                     break;
             }
-            s_col_mask_value.Value = global_sprite.collision_mask_value;
+            s_col_mask_value.Value = GlobalSprite.CollisionMaskValue;
 
-            switch (global_sprite.sprite_center)
+            switch (GlobalSprite.SpriteCenter)
             {
-                case Sprite.SpriteCenter.center:
+                case Sprite.SpriteCenterEnum.Center:
                     s_sprite_center_center.Checked = true;
                     break;
-                case Sprite.SpriteCenter.leftcorner:
+                case Sprite.SpriteCenterEnum.LeftCorner:
                     s_sprite_center_left.Checked = true;
                     break;
-                case Sprite.SpriteCenter.custom:
+                case Sprite.SpriteCenterEnum.Custom:
                     s_sprite_center_custom.Checked = true;
                     break;
             }
-            s_preview_fps.Value = global_sprite.editor_fps;
+            s_preview_fps.Value = GlobalSprite.EditorFps;
 
-            p_firstFrame = 0;
-            p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
+            _pFirstFrame = 0;
+            _pLastFrame = (GlobalSprite.Textures == null ? 0 : GlobalSprite.Textures.Count - 1);
 
 
-            p_currentFrame = p_firstFrame;
+            _pCurrentFrame = _pFirstFrame;
 
-            s_preview_loop.Checked = global_sprite.editor_preview_loop;
-            s_sprite_center_show.Checked = global_sprite.editor_show_center;
-            s_col_mask_show.Checked = global_sprite.editor_show_mask;
-            label4.Text = "Current: " + (global_sprite.textures == null ? 0 : global_sprite.textures.Count).ToString();
-            label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = (global_sprite.textures == null || global_sprite.textures.Count == 0 ? null : global_sprite.textures[p_currentFrame]);
+            s_preview_loop.Checked = GlobalSprite.EditorPreviewLoop;
+            s_sprite_center_show.Checked = GlobalSprite.EditorShowCenter;
+            s_col_mask_show.Checked = GlobalSprite.EditorShowMask;
+            label4.Text = "Current: " + (GlobalSprite.Textures?.Count ?? 0).ToString();
+            label5.Text = _pCurrentFrame.ToString() + "/" + _pLastFrame.ToString();
+            s_preview.Image = (GlobalSprite.Textures == null || GlobalSprite.Textures.Count == 0 ? null : GlobalSprite.Textures[_pCurrentFrame]);
 
             s_animationSequencePreview.Items.Clear();
             s_animationSequencePreview.Items.Add("<All frames>");
             s_animationSequencePreview.SelectedIndex = 0;
             listBox1.Items.Clear();
-            foreach (var item in global_sprite.sprite_animationSquence)
+            foreach (var item in GlobalSprite.SpriteAnimationSequence)
             {
-                s_animationSequencePreview.Items.Add("[" + item.Value.index + "] " + item.Value.name);
-                listBox1.Items.Add("[" + item.Value.index + "] " + item.Value.name + "( " + item.Value.frameFrom.ToString() + ":" + item.Value.frameTo.ToString() + " )");
+                s_animationSequencePreview.Items.Add("[" + item.Value.Index + "] " + item.Value.Name);
+                listBox1.Items.Add("[" + item.Value.Index + "] " + item.Value.Name + "( " + item.Value.FrameFrom.ToString() + ":" + item.Value.FrameTo.ToString() + " )");
             }
 
         }
 
-        bool importSpriteImages(bool clearList)
+        private void ImportSpriteImages(bool clearList)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (clearList)
             {
-                if (clearList)
-                {
-                    global_sprite.ClearImages();
-                    GC.Collect();
-                    global_sprite.textures = new System.Collections.Generic.List<Image>(openFileDialog1.FileNames.Length);
-                }
-
-
-                int max_x = 0;
-                int max_y = 0;
-                int i = 0;
-                foreach (string file in openFileDialog1.FileNames)
-                {
-                    global_sprite.AddImage(file);
-                    max_x = Math.Max(global_sprite.textures[i].Width, max_x);
-                    max_y = Math.Max(global_sprite.textures[i].Height, max_y);
-                    i++;
-                }
-                s_preview.Image = global_sprite.textures[0];
-                label4.Text = "Current: " + global_sprite.textures.Count.ToString();
-                p_lastFrame = global_sprite.textures.Count - 1;
-                p_currentFrame = p_firstFrame;
-
-                global_sprite.sprite_width = max_x;
-                global_sprite.sprite_height = max_y;
-
-                s_sprite_center_y.Maximum = global_sprite.sprite_width;
-                s_aprite_center_x.Maximum = global_sprite.sprite_height;
-                saved = false;
-                return true;
+                GlobalSprite.ClearImages();
+                GC.Collect();
+                GlobalSprite.Textures = new System.Collections.Generic.List<Image>(openFileDialog1.FileNames.Length);
             }
-            return false;
+            
+            var maxX = 0;
+            var maxY = 0;
+            var i = 0;
+            foreach (var file in openFileDialog1.FileNames)
+            {
+                GlobalSprite.AddImage(file);
+                maxX = Math.Max(GlobalSprite.Textures[i].Width, maxX);
+                maxY = Math.Max(GlobalSprite.Textures[i].Height, maxY);
+                i++;
+            }
+            s_preview.Image = GlobalSprite.Textures[0];
+            label4.Text = "Current: " + GlobalSprite.Textures.Count.ToString();
+            _pLastFrame = GlobalSprite.Textures.Count - 1;
+            _pCurrentFrame = _pFirstFrame;
+
+            GlobalSprite.SpriteWidth = maxX;
+            GlobalSprite.SpriteHeight = maxY;
+
+            s_sprite_center_y.Maximum = GlobalSprite.SpriteWidth;
+            s_aprite_center_x.Maximum = GlobalSprite.SpriteHeight;
+            _saved = false;
         }
 
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            // inport textures
-            importSpriteImages(MessageBox.Show("Do You want to clear image list before adding new images?", "Replace or add", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
-            saved = false;
-            updateForm();
+            // import textures
+            ImportSpriteImages(MessageBox.Show("Do You want to clear image list before adding new images?", "Replace or add", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
+            _saved = false;
+            UpdateForm();
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            ImageListViewer ilv = new ImageListViewer(global_sprite);
+            ImageListViewer ilv = new ImageListViewer(GlobalSprite);
             ilv.ShowDialog();
             ilv.Dispose();
         }
@@ -210,41 +197,36 @@ namespace ArtCore_Editor
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
 
-            saveSprite();
-            saved = true;
+            SaveSprite();
+            _saved = true;
         }
 
 
         private void SpriteAddForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!saved)
+            if (!_saved)
             {
-                DialogResult q = MessageBox.Show("Do You want to save?", "Data changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (q == DialogResult.Cancel)
+                switch (MessageBox.Show("Do You want to save?", "Data changed", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
                 {
-                    e.Cancel = true;
-                    return;
-                }
-                if (q == DialogResult.Yes)
-                {
-                    while (s_spritename.Text.Length == 0)
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                    case DialogResult.Yes:
                     {
-                        s_spritename.Text = GetString.Get("Sprite name");
+                        while (s_spritename.Text.Length == 0)
+                        {
+                            s_spritename.Text = GetString.Get("Sprite name");
+                        }
+                        GlobalSprite.Save();
+                        break;
                     }
-                    global_sprite.Save();
                 }
-                this.DialogResult = DialogResult.OK;
+
+                DialogResult = DialogResult.OK;
             }
             else
             {
-                if (global_sprite.Name.Length == 0)
-                {
-                    this.DialogResult = DialogResult.No;
-                }
-                else
-                {
-                    this.DialogResult = DialogResult.OK;
-                }
+                DialogResult = GlobalSprite.Name.Length == 0 ? DialogResult.No : DialogResult.OK;
             }
 
         }
@@ -264,23 +246,23 @@ namespace ArtCore_Editor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            p_currentFrame++;
-            if (p_currentFrame > p_lastFrame)
+            _pCurrentFrame++;
+            if (_pCurrentFrame > _pLastFrame)
             {
-                if (global_sprite.editor_preview_loop)
+                if (GlobalSprite.EditorPreviewLoop)
                 {
-                    p_currentFrame = p_firstFrame;
+                    _pCurrentFrame = _pFirstFrame;
                 }
                 else
                 {
-                    p_currentFrame = p_lastFrame;
+                    _pCurrentFrame = _pLastFrame;
                     timer1.Stop();
                     s_preview_play.Enabled = true;
                     s_preview_stop.Enabled = false;
                 }
             }
-            label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = global_sprite.textures[p_currentFrame];
+            label5.Text = _pCurrentFrame.ToString() + "/" + _pLastFrame.ToString();
+            s_preview.Image = GlobalSprite.Textures[_pCurrentFrame];
         }
 
         private void s_preview_stop_Click(object sender, EventArgs e)
@@ -293,69 +275,55 @@ namespace ArtCore_Editor
 
         private void s_preview_loop_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.editor_preview_loop = s_preview_loop.Checked;
+            GlobalSprite.EditorPreviewLoop = s_preview_loop.Checked;
         }
 
         private void s_preview_fps_ValueChanged(object sender, EventArgs e)
         {
-            global_sprite.editor_fps = (int)s_preview_fps.Value;
+            GlobalSprite.EditorFps = (int)s_preview_fps.Value;
             timer1.Interval = (int)(1000 / s_preview_fps.Value);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
 
-            p_currentFrame = p_firstFrame;
-            label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = global_sprite.textures[p_currentFrame];
+            _pCurrentFrame = _pFirstFrame;
+            label5.Text = _pCurrentFrame.ToString() + "/" + _pLastFrame.ToString();
+            s_preview.Image = GlobalSprite.Textures[_pCurrentFrame];
         }
 
         private void s_preview_next_Click(object sender, EventArgs e)
         {
-            p_currentFrame++;
-            if (p_currentFrame > p_lastFrame)
+            _pCurrentFrame++;
+            if (_pCurrentFrame > _pLastFrame)
             {
-                if (global_sprite.editor_preview_loop)
-                {
-                    p_currentFrame = p_firstFrame;
-                }
-                else
-                {
-                    p_currentFrame = p_lastFrame;
-                }
+                _pCurrentFrame = GlobalSprite.EditorPreviewLoop ? _pFirstFrame : _pLastFrame;
             }
-            label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = global_sprite.textures[p_currentFrame];
+            label5.Text = _pCurrentFrame.ToString() + "/" + _pLastFrame.ToString();
+            s_preview.Image = GlobalSprite.Textures[_pCurrentFrame];
         }
 
         private void s_preview_prev_Click(object sender, EventArgs e)
         {
-            p_currentFrame--;
-            if (p_currentFrame < 0)
+            _pCurrentFrame--;
+            if (_pCurrentFrame < 0)
             {
-                if (global_sprite.editor_preview_loop)
-                {
-                    p_currentFrame = p_lastFrame;
-                }
-                else
-                {
-                    p_currentFrame = p_firstFrame;
-                }
+                _pCurrentFrame = GlobalSprite.EditorPreviewLoop ? _pLastFrame : _pFirstFrame;
             }
-            label5.Text = p_currentFrame.ToString() + "/" + p_lastFrame.ToString();
-            s_preview.Image = global_sprite.textures[p_currentFrame];
+            label5.Text = _pCurrentFrame.ToString() + "/" + _pLastFrame.ToString();
+            s_preview.Image = GlobalSprite.Textures[_pCurrentFrame];
         }
 
 
-        private void s_aprite_center_x_ValueChanged(object sender, EventArgs e)
+        private void s_sprite_center_x_ValueChanged(object sender, EventArgs e)
         {
-            global_sprite.sprite_center_x = Convert.ToInt32(s_aprite_center_x.Value);
+            GlobalSprite.SpriteCenterX = Convert.ToInt32(s_aprite_center_x.Value);
             s_preview.Refresh();
         }
 
         private void s_sprite_center_y_ValueChanged(object sender, EventArgs e)
         {
-            global_sprite.sprite_center_y = Convert.ToInt32(s_sprite_center_y.Value);
+            GlobalSprite.SpriteCenterY = Convert.ToInt32(s_sprite_center_y.Value);
             s_preview.Refresh();
         }
 
@@ -366,128 +334,112 @@ namespace ArtCore_Editor
 
         private void s_preview_Paint(object sender, PaintEventArgs e)
         {
-            if (global_sprite.textures != null)
+            if (GlobalSprite.Textures == null) return;
+            if (GlobalSprite.EditorShowCenter)
             {
-                if (global_sprite.editor_show_center)
-                {
-                    Pen redPen = new Pen(Color.Red, 1);
-                    Pen bluePen = new Pen(Color.Blue, 1);
-                    int x1 = Remap(global_sprite.sprite_center_x, 0, global_sprite.sprite_width, 0, s_preview.Width);
-                    int y2 = Remap(global_sprite.sprite_center_y, 0, global_sprite.sprite_height, 0, s_preview.Height);
-                    e.Graphics.DrawLine(redPen, x1, 0, x1, s_preview.Width);
-                    e.Graphics.DrawLine(bluePen, 0, y2, s_preview.Height, y2);
+                Pen redPen = new Pen(Color.Red, 1);
+                Pen bluePen = new Pen(Color.Blue, 1);
+                int x1 = Remap(GlobalSprite.SpriteCenterX, 0, GlobalSprite.SpriteWidth, 0, s_preview.Width);
+                int y2 = Remap(GlobalSprite.SpriteCenterY, 0, GlobalSprite.SpriteHeight, 0, s_preview.Height);
+                e.Graphics.DrawLine(redPen, x1, 0, x1, s_preview.Width);
+                e.Graphics.DrawLine(bluePen, 0, y2, s_preview.Height, y2);
 
-                    //Dispose of objects
-                    redPen.Dispose();
-                    bluePen.Dispose();
-                }
-                if (global_sprite.editor_show_mask)
+                //Dispose of objects
+                redPen.Dispose();
+                bluePen.Dispose();
+            }
+
+            if (!GlobalSprite.EditorShowMask) return;
+            {
+                switch (GlobalSprite.CollisionMask)
                 {
-                    switch (global_sprite.collision_mask)
+                    case Sprite.CollisionMaskEnum.None:
+                        break;
+                    case Sprite.CollisionMaskEnum.Circle:
                     {
-                        case Sprite.CollisionMask.none:
-                            break;
-                        case Sprite.CollisionMask.circle:
-                            {
-                                int x = Remap(global_sprite.sprite_center_x, 0, global_sprite.sprite_width, 0, s_preview.Width);
-                                int y = Remap(global_sprite.sprite_center_y, 0, global_sprite.sprite_height, 0, s_preview.Height);
-                                Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
-                                Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
-                                Rectangle r = new Rectangle(
-                                    x - Remap(global_sprite.collision_mask_value / 2, 0, (global_sprite.sprite_width + global_sprite.sprite_height) / 2, 0, s_preview.Width),
-                                    y - Remap(global_sprite.collision_mask_value / 2, 0, (global_sprite.sprite_width + global_sprite.sprite_height) / 2, 0, s_preview.Width),
-                                    Remap(global_sprite.collision_mask_value, 0, (global_sprite.sprite_width + global_sprite.sprite_height) / 2, 0, s_preview.Width),
-                                    Remap(global_sprite.collision_mask_value, 0, (global_sprite.sprite_width + global_sprite.sprite_height) / 2, 0, s_preview.Width)
-                                    );
-                                e.Graphics.FillEllipse(fillPen, r);
-                                e.Graphics.DrawEllipse(redPen, r);
-                                redPen.Dispose();
-                            }
-                            break;
-                        case Sprite.CollisionMask.rectangle:
-                            {
-                                int x = Remap(global_sprite.sprite_center_x, 0, global_sprite.sprite_width, 0, s_preview.Width);
-                                int y = Remap(global_sprite.sprite_center_y, 0, global_sprite.sprite_height, 0, s_preview.Height);
-                                Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
-                                Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
-                                Rectangle r = new Rectangle(
-                                    x - global_sprite.collision_mask_value / 2,
-                                    y - global_sprite.collision_mask_value / 2,
-                                    global_sprite.collision_mask_value,
-                                    global_sprite.collision_mask_value
-                                    );
-                                e.Graphics.FillRectangle(fillPen, r);
-                                e.Graphics.DrawRectangle(redPen, r);
-                                redPen.Dispose();
-                            }
-                            break;
-                        case Sprite.CollisionMask.perpixel:
-
-                            break;
-                        default:
-                            break;
+                        int x = Remap(GlobalSprite.SpriteCenterX, 0, GlobalSprite.SpriteWidth, 0, s_preview.Width);
+                        int y = Remap(GlobalSprite.SpriteCenterY, 0, GlobalSprite.SpriteHeight, 0, s_preview.Height);
+                        Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
+                        Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
+                        Rectangle r = new Rectangle(
+                            x - Remap(GlobalSprite.CollisionMaskValue / 2, 0, (GlobalSprite.SpriteWidth + GlobalSprite.SpriteHeight) / 2, 0, s_preview.Width),
+                            y - Remap(GlobalSprite.CollisionMaskValue / 2, 0, (GlobalSprite.SpriteWidth + GlobalSprite.SpriteHeight) / 2, 0, s_preview.Width),
+                            Remap(GlobalSprite.CollisionMaskValue, 0, (GlobalSprite.SpriteWidth + GlobalSprite.SpriteHeight) / 2, 0, s_preview.Width),
+                            Remap(GlobalSprite.CollisionMaskValue, 0, (GlobalSprite.SpriteWidth + GlobalSprite.SpriteHeight) / 2, 0, s_preview.Width)
+                        );
+                        e.Graphics.FillEllipse(fillPen, r);
+                        e.Graphics.DrawEllipse(redPen, r);
+                        redPen.Dispose();
                     }
+                        break;
+                    case Sprite.CollisionMaskEnum.Rectangle:
+                    {
+                        int x = Remap(GlobalSprite.SpriteCenterX, 0, GlobalSprite.SpriteWidth, 0, s_preview.Width);
+                        int y = Remap(GlobalSprite.SpriteCenterY, 0, GlobalSprite.SpriteHeight, 0, s_preview.Height);
+                        Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
+                        Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
+                        Rectangle r = new Rectangle(
+                            x - GlobalSprite.CollisionMaskValue / 2,
+                            y - GlobalSprite.CollisionMaskValue / 2,
+                            GlobalSprite.CollisionMaskValue,
+                            GlobalSprite.CollisionMaskValue
+                        );
+                        e.Graphics.FillRectangle(fillPen, r);
+                        e.Graphics.DrawRectangle(redPen, r);
+                        redPen.Dispose();
+                    }
+                        break;
+                    case Sprite.CollisionMaskEnum.Perpixel:
+                        // draw nothing
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
         private void s_sprite_center_center_CheckedChanged(object sender, EventArgs e)
         {
-            if (s_sprite_center_center.Checked)
-            {
-                global_sprite.sprite_center_x = global_sprite.sprite_width / 2;
-                global_sprite.sprite_center_y = global_sprite.sprite_height / 2;
-                s_aprite_center_x.Value = global_sprite.sprite_center_x;
-                s_sprite_center_y.Value = global_sprite.sprite_center_y;
-                s_preview.Refresh();
-                s_aprite_center_x.Enabled = false;
-                s_sprite_center_y.Enabled = false;
-            }
+            if (!s_sprite_center_center.Checked) return;
+            GlobalSprite.SpriteCenterX = GlobalSprite.SpriteWidth / 2;
+            GlobalSprite.SpriteCenterY = GlobalSprite.SpriteHeight / 2;
+            s_aprite_center_x.Value = GlobalSprite.SpriteCenterX;
+            s_sprite_center_y.Value = GlobalSprite.SpriteCenterY;
+            s_preview.Refresh();
+            s_aprite_center_x.Enabled = false;
+            s_sprite_center_y.Enabled = false;
         }
 
         private void s_sprite_center_left_CheckedChanged(object sender, EventArgs e)
         {
-            if (s_sprite_center_left.Checked)
-            {
-                global_sprite.sprite_center_x = 0;
-                global_sprite.sprite_center_y = 0;
-                s_aprite_center_x.Value = 0;
-                s_sprite_center_y.Value = 0;
-                s_preview.Refresh();
-                s_aprite_center_x.Enabled = false;
-                s_sprite_center_y.Enabled = false;
-            }
+            if (!s_sprite_center_left.Checked) return;
+            GlobalSprite.SpriteCenterX = 0;
+            GlobalSprite.SpriteCenterY = 0;
+            s_aprite_center_x.Value = 0;
+            s_sprite_center_y.Value = 0;
+            s_preview.Refresh();
+            s_aprite_center_x.Enabled = false;
+            s_sprite_center_y.Enabled = false;
         }
 
         private void s_sprite_center_custom_CheckedChanged(object sender, EventArgs e)
         {
-            if (s_sprite_center_custom.Checked)
-            {
-                global_sprite.sprite_center_x = Convert.ToInt32(s_aprite_center_x.Value);
-                global_sprite.sprite_center_y = Convert.ToInt32(s_sprite_center_y.Value);
-                s_preview.Refresh();
-                s_aprite_center_x.Enabled = true;
-                s_sprite_center_y.Enabled = true;
-            }
+            if (!s_sprite_center_custom.Checked) return;
+            GlobalSprite.SpriteCenterX = Convert.ToInt32(s_aprite_center_x.Value);
+            GlobalSprite.SpriteCenterY = Convert.ToInt32(s_sprite_center_y.Value);
+            s_preview.Refresh();
+            s_aprite_center_x.Enabled = true;
+            s_sprite_center_y.Enabled = true;
         }
 
         private void s_sprite_center_show_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.editor_show_center = s_sprite_center_show.Checked;
+            GlobalSprite.EditorShowCenter = s_sprite_center_show.Checked;
             s_preview.Refresh();
         }
 
         private void s_collision_have_mask_CheckedChanged(object sender, EventArgs e)
         {
-            if (s_collision_have_mask.Checked == false)
-            {
-                //global_sprite.collision_mask = Sprite.CollisionMask.none;
-            }
-            else
-            {
-                //global_sprite.collision_mask = (Sprite.CollisionMask)(s_collision_have_mask.Checked ? 0 : s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : s_col_mask_perpixel.Checked ? 3 : 0);
-
-            }
             s_col_mask_circle.Enabled = s_collision_have_mask.Checked;
             s_col_mask_perpixel.Enabled = s_collision_have_mask.Checked;
             s_col_mask_rect.Enabled = s_collision_have_mask.Checked;
@@ -496,57 +448,49 @@ namespace ArtCore_Editor
             s_preview.Refresh();
         }
 
-        private void SpriteAddForm_Load_1(object sender, EventArgs e)
-        {
-            //s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
-            //p_firstFrame = 0;
-            //p_lastFrame = 0;
-            //p_currentFrame = p_firstFrame;
-        }
-
         private void s_col_mask_circle_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.collision_mask = Sprite.CollisionMask.circle;
+            GlobalSprite.CollisionMask = Sprite.CollisionMaskEnum.Circle;
             s_preview.Refresh();
         }
 
         private void s_col_mask_rect_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.collision_mask = Sprite.CollisionMask.rectangle;
+            GlobalSprite.CollisionMask = Sprite.CollisionMaskEnum.Rectangle;
             s_preview.Refresh();
         }
 
         private void s_col_mask_perpixel_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.collision_mask = Sprite.CollisionMask.perpixel;
+            GlobalSprite.CollisionMask = Sprite.CollisionMaskEnum.Perpixel;
             s_preview.Refresh();
         }
 
         private void s_col_mask_show_CheckedChanged(object sender, EventArgs e)
         {
-            global_sprite.editor_show_mask = s_col_mask_show.Checked;
+            GlobalSprite.EditorShowMask = s_col_mask_show.Checked;
             s_preview.Refresh();
         }
 
         private void s_col_mask_value_Scroll(object sender, EventArgs e)
         {
-            global_sprite.collision_mask_value = Convert.ToInt32((Convert.ToDecimal(s_col_mask_value.Value) / 100) * Convert.ToDecimal((global_sprite.sprite_width + global_sprite.sprite_height) / 2));
-            label3.Text = "Value ( " + global_sprite.collision_mask_value + " px)";
+            GlobalSprite.CollisionMaskValue = Convert.ToInt32((Convert.ToDecimal(s_col_mask_value.Value) / 100) * Convert.ToDecimal((GlobalSprite.SpriteWidth + GlobalSprite.SpriteHeight) / 2));
+            label3.Text = "Value ( " + GlobalSprite.CollisionMaskValue + " px)";
             s_preview.Refresh();
         }
 
         private void button4_Click_1(object sender, EventArgs e)
         {
-            animationSequencerForm asf = new animationSequencerForm();
-            asf.f_frameFromMin = 0;
-            asf.f_frameFromMax = global_sprite.textures.Count - 1;
-            asf.f_frameToMin = 0;
-            asf.f_frameToMax = global_sprite.textures.Count - 1;
+            AnimationSequencerForm asf = new AnimationSequencerForm();
+            asf.FFrameFromMin = 0;
+            asf.FFrameFromMax = GlobalSprite.Textures.Count - 1;
+            asf.FFrameToMin = 0;
+            asf.FFrameToMax = GlobalSprite.Textures.Count - 1;
             asf.ShowDialog();
             if (asf.DialogResult == DialogResult.OK)
             {
-                global_sprite.sprite_animationSquence.Add(asf.f_indexName, new Sprite.animationSequence(asf.f_fullName, asf.f_indexName, asf.f_frameFrom, asf.f_frameTo));
-                updateForm();
+                GlobalSprite.SpriteAnimationSequence.Add(asf.FIndexName, new Sprite.AnimationSequence(asf.FFullName, asf.FIndexName, asf.FFrameFrom, asf.FFrameTo));
+                UpdateForm();
             }
         }
 
@@ -554,17 +498,21 @@ namespace ArtCore_Editor
         {
             if (s_animationSequencePreview.SelectedIndex == 0)
             {
-                p_firstFrame = 0;
-                p_lastFrame = (global_sprite.textures == null ? 0 : global_sprite.textures.Count - 1);
+                _pFirstFrame = 0;
+                _pLastFrame = (GlobalSprite.Textures == null ? 0 : GlobalSprite.Textures.Count - 1);
 
-                p_currentFrame = p_firstFrame;
+                _pCurrentFrame = _pFirstFrame;
             }
             else
             {
-                string tmp_index = s_animationSequencePreview.SelectedItem.ToString().Split(']')[0].Split('[')[1];
-                p_firstFrame = global_sprite.sprite_animationSquence[tmp_index].frameFrom;
-                p_lastFrame = global_sprite.sprite_animationSquence[tmp_index].frameTo;
-                p_currentFrame = p_firstFrame;
+                string tmpIndex = s_animationSequencePreview.SelectedItem.ToString()?.Split(']')[0].Split('[')[1];
+                if (tmpIndex != null)
+                {
+                    _pFirstFrame = GlobalSprite.SpriteAnimationSequence[tmpIndex].FrameFrom;
+                    _pLastFrame = GlobalSprite.SpriteAnimationSequence[tmpIndex].FrameTo;
+                }
+
+                _pCurrentFrame = _pFirstFrame;
             }
         }
 
@@ -572,39 +520,38 @@ namespace ArtCore_Editor
         {
             if (listBox1.SelectedItem != null)
             {
-                animationSequencerForm asf = new animationSequencerForm();
-                asf.f_frameFromMin = 0;
-                asf.f_frameFromMax = global_sprite.textures.Count - 1;
-                asf.f_frameToMin = 0;
-                asf.f_frameToMax = global_sprite.textures.Count - 1;
+                AnimationSequencerForm asf = new AnimationSequencerForm();
+                asf.FFrameFromMin = 0;
+                asf.FFrameFromMax = GlobalSprite.Textures.Count - 1;
+                asf.FFrameToMin = 0;
+                asf.FFrameToMax = GlobalSprite.Textures.Count - 1;
 
-                string tmp_index = listBox1.SelectedItem.ToString().Split(']')[0].Split('[')[1];
-                asf.f_fullName = global_sprite.sprite_animationSquence[tmp_index].name;
-                asf.f_indexName = global_sprite.sprite_animationSquence[tmp_index].index;
-                asf.f_frameFrom = global_sprite.sprite_animationSquence[tmp_index].frameFrom;
-                asf.f_frameTo = global_sprite.sprite_animationSquence[tmp_index].frameTo;
+                var tmpIndex = listBox1.SelectedItem.ToString()?.Split(']')[0].Split('[')[1];
+                if (tmpIndex != null)
+                {
+                    asf.FFullName = GlobalSprite.SpriteAnimationSequence[tmpIndex].Name;
+                    asf.FIndexName = GlobalSprite.SpriteAnimationSequence[tmpIndex].Index;
+                    asf.FFrameFrom = GlobalSprite.SpriteAnimationSequence[tmpIndex].FrameFrom;
+                    asf.FFrameTo = GlobalSprite.SpriteAnimationSequence[tmpIndex].FrameTo;
+                }
 
                 asf.ShowDialog();
-                if (asf.DialogResult == DialogResult.OK)
-                {
-                    global_sprite.sprite_animationSquence[asf.f_indexName].frameFrom = asf.f_frameFrom;
-                    global_sprite.sprite_animationSquence[asf.f_indexName].frameTo = asf.f_frameTo;
-                    global_sprite.sprite_animationSquence[asf.f_indexName].name = asf.f_fullName;
-                    updateForm();
-                }
+                if (asf.DialogResult != DialogResult.OK) return;
+                GlobalSprite.SpriteAnimationSequence[asf.FIndexName].FrameFrom = asf.FFrameFrom;
+                GlobalSprite.SpriteAnimationSequence[asf.FIndexName].FrameTo = asf.FFrameTo;
+                GlobalSprite.SpriteAnimationSequence[asf.FIndexName].Name = asf.FFullName;
+                UpdateForm();
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedItem != null)
-            {
-                if (MessageBox.Show("Do You want to delete selected item?", "Delete [" + listBox1.SelectedItem.ToString().Split(']')[0].Split('[')[1] + "]", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    global_sprite.sprite_animationSquence.Remove(listBox1.SelectedItem.ToString().Split(']')[0].Split('[')[1]);
-                    updateForm();
-                }
-            }
+            if (listBox1.SelectedItem == null) return;
+            if (MessageBox.Show("Do You want to delete selected item?",
+                    "Delete [" + listBox1.SelectedItem.ToString()?.Split(']')[0].Split('[')[1] + "]",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            GlobalSprite.SpriteAnimationSequence.Remove(listBox1.SelectedItem.ToString()?.Split(']')[0].Split('[')[1] ?? string.Empty);
+            UpdateForm();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Instance_Manager
 {
     partial class ObjectManager
     {
@@ -95,7 +95,7 @@
             this.groupBox6.Size = new System.Drawing.Size(239, 95);
             this.groupBox6.TabIndex = 4;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Body type";
+            this.groupBox6.Text = "BodyData type";
             // 
             // bodyType_IsSolid
             // 

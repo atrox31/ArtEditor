@@ -1,65 +1,65 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Sprite
 {
-    public partial class animationSequencerForm : Form
+    public partial class AnimationSequencerForm : Form
     {
-        public string f_fullName;
-        public string f_indexName;
-        public int f_frameFrom;
-        public int f_frameTo;
-        public int f_frameFromMin;
-        public int f_frameToMin;
-        public int f_frameFromMax;
-        public int f_frameToMax;
+        public string FFullName;
+        public string FIndexName;
+        public int FFrameFrom;
+        public int FFrameTo;
+        public int FFrameFromMin;
+        public int FFrameToMin;
+        public int FFrameFromMax;
+        public int FFrameToMax;
 
-        public animationSequencerForm()
+        public AnimationSequencerForm()
         {
             InitializeComponent(); Program.ApplyTheme(this);
         }
 
         private void animationSequencerForm_Load(object sender, EventArgs e)
         {
-            textBox1.Text = f_fullName;
-            textBox2.Text = f_indexName;
-            numericUpDown1.Minimum = f_frameFromMin;
-            numericUpDown2.Minimum = f_frameToMin;
-            numericUpDown1.Maximum = f_frameFromMax;
-            numericUpDown2.Maximum = f_frameToMax;
-            numericUpDown1.Value = f_frameFrom;
-            numericUpDown2.Value = (f_frameTo == 0 ? f_frameToMax : f_frameTo);
+            textBox1.Text = FFullName;
+            textBox2.Text = FIndexName;
+            numericUpDown1.Minimum = FFrameFromMin;
+            numericUpDown2.Minimum = FFrameToMin;
+            numericUpDown1.Maximum = FFrameFromMax;
+            numericUpDown2.Maximum = FFrameToMax;
+            numericUpDown1.Value = FFrameFrom;
+            numericUpDown2.Value = (FFrameTo == 0 ? FFrameToMax : FFrameTo);
             if (textBox2.Text.Length > 0) textBox2.ReadOnly = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.Close();
-            this.DialogResult = DialogResult.OK;
+            Close();
+            DialogResult = DialogResult.OK;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            f_fullName = textBox1.Text;
+            FFullName = textBox1.Text;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            f_indexName = textBox2.Text;
+            FIndexName = textBox2.Text;
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            f_frameFrom = Convert.ToInt32(numericUpDown1.Value);
+            FFrameFrom = Convert.ToInt32(numericUpDown1.Value);
             numericUpDown2.Minimum = numericUpDown1.Value;
-            f_frameTo = Convert.ToInt32(numericUpDown2.Value);
+            FFrameTo = Convert.ToInt32(numericUpDown2.Value);
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            f_frameTo = Convert.ToInt32(numericUpDown2.Value);
+            FFrameTo = Convert.ToInt32(numericUpDown2.Value);
             numericUpDown1.Maximum = numericUpDown2.Value;
-            f_frameFrom = Convert.ToInt32(numericUpDown1.Value);
+            FFrameFrom = Convert.ToInt32(numericUpDown1.Value);
         }
 
         private void animationSequencerForm_FormClosing(object sender, FormClosingEventArgs e)

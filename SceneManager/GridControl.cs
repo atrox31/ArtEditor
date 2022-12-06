@@ -31,14 +31,12 @@ namespace ArtCore_Editor
             Close();
         }
 
-        public static void GetGridDimensions(ref Point Dimensions)
+        public static void GetGridDimensions(ref Point dimensions)
         {
-            GridControl gridControl = new GridControl(Dimensions.X, Dimensions.Y);
-            if (gridControl.ShowDialog() == DialogResult.OK)
-            {
-                Dimensions.X = gridControl.GWidth;
-                Dimensions.Y = gridControl.GHeight;
-            }
+            var gridControl = new GridControl(dimensions.X, dimensions.Y);
+            if (gridControl.ShowDialog() != DialogResult.OK) return;
+            dimensions.X = gridControl.GWidth;
+            dimensions.Y = gridControl.GHeight;
         }
     }
 }

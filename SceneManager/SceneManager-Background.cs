@@ -8,6 +8,9 @@ using static ArtCore_Editor.GameProject;
 
 namespace ArtCore_Editor
 {
+    /// <summary>
+    /// scene background tab page
+    /// </summary>
     public partial class SceneManager
     {
         // 
@@ -16,28 +19,28 @@ namespace ArtCore_Editor
             PicFromList picFromList = new PicFromList(GameProject.GetInstance().Textures.Keys.ToList());
             if (picFromList.ShowDialog() == DialogResult.OK)
             {
-                bc_selected_preview.BackgroundImage = BcPreviewList.Images[picFromList.SelectedIndex];
-                cScene.BackGroundTexture_name = picFromList.Selected;
+                bc_selected_preview.BackgroundImage = _bcPreviewList.Images[picFromList.SelectedIndex];
+                _cScene.BackGroundTextureName = picFromList.Selected;
             }
 
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            if (cScene.BackGroundTexture_name == null) return;
+            if (_cScene.BackGroundTextureName == null) return;
             r_bc_texture.Select();
 
-            BcTexture?.Dispose();
+            _bcTexture?.Dispose();
             GC.Collect();
 
-            cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawTexture;
+            _cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawTexture;
 
-            cScene.BackGroundTexture = GameProject.GetInstance().Textures[cScene.BackGroundTexture_name].ProjectPath + GameProject.GetInstance().Textures[cScene.BackGroundTexture_name].FileName;
-            BcTexture = Image.FromFile(GameProject.ProjectPath + "\\" + cScene.BackGroundTexture);
+            _cScene.BackGroundTexture = GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].ProjectPath + GameProject.GetInstance().Textures[_cScene.BackGroundTextureName].FileName;
+            _bcTexture = Image.FromFile(ProjectPath + "\\" + _cScene.BackGroundTexture);
 
-            if (rb_td_normal.Checked) cScene.BackGroundWrapMode = WrapMode.Tile;
-            if (rb_td_w.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipX;
-            if (rb_td_h.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipY;
-            if (rb_td_w_h.Checked) cScene.BackGroundWrapMode = WrapMode.TileFlipXY;
+            if (rb_td_normal.Checked) _cScene.BackGroundWrapMode = WrapMode.Tile;
+            if (rb_td_w.Checked) _cScene.BackGroundWrapMode = WrapMode.TileFlipX;
+            if (rb_td_h.Checked) _cScene.BackGroundWrapMode = WrapMode.TileFlipY;
+            if (rb_td_w_h.Checked) _cScene.BackGroundWrapMode = WrapMode.TileFlipXY;
 
             MakeChange();
             RedrawScene();
@@ -63,8 +66,8 @@ namespace ArtCore_Editor
             {
                 if (!Functions.ErrorCheck(Regex.IsMatch(bc_color_pick_value.Text, @"[#][0-9A-Fa-f]{6}\b"), "Hex color value is inwalid"))
                 {
-                    cScene.BackGroundColor = Functions.HexToColor(bc_color_pick_value.Text);
-                    cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawColor;
+                    _cScene.BackGroundColor = Functions.HexToColor(bc_color_pick_value.Text);
+                    _cScene.BackGroundType = Scene.BackGroundTypeEnum.DrawColor;
                     RedrawScene();
                     MakeChange();
 

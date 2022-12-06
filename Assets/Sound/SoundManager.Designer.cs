@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor { 
+﻿namespace ArtCore_Editor.Assets.Sound { 
     partial class SoundManager
     {
     /// <summary>

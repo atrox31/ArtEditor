@@ -13,25 +13,27 @@ namespace ArtCore_Editor
 {
     public static class Functions
     {
-
-        public static bool IsHex(string text)
+        // return if string is hex value
+        public static bool IsHex(this string text)
         {
             if ( !(text.Length == 7 || text.Length == 9)) return false;
             if (text[0] != '#') return false;
             return (System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{6}") || System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{8}"));
         }
 
+        // convert color value to hex code #RRGGBB
         public static string ColorToHex(Color color)
         {
             return "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
         }
 
+        // convert hex value to color
         public static Color HexToColor(string hex)
         {
-            return (Color)System.Drawing.ColorTranslator.FromHtml(hex);
+            return (Color)ColorTranslator.FromHtml(hex);
         }
 
-        public static void ButtonAlter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        public static void ButtonAlter_Paint(object sender, PaintEventArgs e)
         {
             dynamic btn = (Button)sender;
             dynamic drawBrush = new SolidBrush(btn.Enabled ? btn.ForeColor : Color.FromArgb(57, 91, 100));
@@ -48,20 +50,18 @@ namespace ArtCore_Editor
 
         }
 
-        public static T ForceType<T>(this object o)
+        // Convert object to target type <T>
+        public static T ForceType<T>(this object obj)
         {
-            T res;
-            res = Activator.CreateInstance<T>();
-
-            Type x = o.GetType();
+            T res = Activator.CreateInstance<T>();
+            Type x = obj.GetType();
             Type y = res.GetType();
-
             foreach (var destinationProp in y.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
             {
                 var sourceProp = x.GetProperty(destinationProp.Name);
                 if (sourceProp != null)
                 {
-                    destinationProp.SetValue(res, sourceProp.GetValue(o));
+                    destinationProp.SetValue(res, sourceProp.GetValue(obj));
                 }
             }
 
@@ -93,18 +93,15 @@ namespace ArtCore_Editor
         /// </summary>
         /// <param name="filename">Filename</param>
         /// <returns></returns>
-        public static string CalculateMD5(string filename)
+        public static string CalculateMd5(string filename)
         {
-            using (var md5 = System.Security.Cryptography.MD5.Create())
-            {
-                var stream = File.ReadAllBytes(filename);
-                //var hash = md5.ComputeHash(stream);
-                return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
-
-            }
+            using var md5 = System.Security.Cryptography.MD5.Create();
+            var stream = File.ReadAllBytes(filename);
+            //var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
         }
         /// <summary>
-        /// 
+        /// Get linear value convert
         /// </summary>
         /// <param name="value"></param>
         /// <param name="min"></param>
@@ -112,9 +109,9 @@ namespace ArtCore_Editor
         /// <param name="minScale"></param>
         /// <param name="maxScale"></param>
         /// <returns></returns>
-        public static int Scale(int value, int min, int max, int minScale, int maxScale)
+        public static int Scale(int value, int valueMin, int ValueMax, int minScale, int maxScale)
         {
-            float scaled = (float)minScale + (float)(value - min) / (float)(max - min) * (float)(maxScale - minScale);
+            var scaled = (float)minScale + (float)(value - valueMin) / (float)(ValueMax - valueMin) * (float)(maxScale - minScale);
             return (int)Math.Round(scaled);
         }
         /// <summary>
@@ -145,10 +142,10 @@ namespace ArtCore_Editor
             if (text.Length == 0) return text;
             if (text.Length <= length) return text;
             if (text.Length - 3 <= length) return text;
-            int str_len = (length - 3) / 2;
-            if (str_len <= 0) return text;
-            string left = text.Substring(0, str_len);
-            string right = text.Substring(text.Length - 1 - str_len, str_len);
+            int strLen = (length - 3) / 2;
+            if (strLen <= 0) return text;
+            string left = text.Substring(0, strLen);
+            string right = text.Substring(text.Length - 1 - strLen, strLen);
             return left + "..." + right;
         }
         /// <summary>
@@ -169,7 +166,7 @@ namespace ArtCore_Editor
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static System.Drawing.Image ResizeImage(System.Drawing.Image image, int width, int height)
+        public static Image ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
@@ -191,13 +188,13 @@ namespace ArtCore_Editor
                 }
             }
 
-            return System.Drawing.Image.FromHbitmap(destImage.GetHbitmap());
+            return Image.FromHbitmap(destImage.GetHbitmap());
         }
         /// <summary>
         /// if(ErrorCheck( condition, message )) return;
         /// If condition is false, shows error message and return true
         /// </summary>
-        /// <param name="condition">If this is true nothink hapen, if else show errorbox</param>
+        /// <param name="condition">If this is true nothing happen, if else show error-box</param>
         /// <param name="errorMsg">Message with error</param>
         /// <returns></returns>
         public static bool ErrorCheck(bool condition, string errorMsg)

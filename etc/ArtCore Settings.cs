@@ -5,70 +5,66 @@ using System.Windows.Forms;
 
 namespace ArtCore_Editor
 {
-    public partial class ArtCore_Settings : Form
+    public partial class ArtCoreSettings : Form
     {
         Control AddNewField(string name, string value)
         {
-            GroupBox t_groupBox1 = new GroupBox();
-            TextBox t_textBox1 = new TextBox();
-            t_groupBox1.SuspendLayout();
+            GroupBox tGroupBox1 = new GroupBox();
+            TextBox tTextBox1 = new TextBox();
+            tGroupBox1.SuspendLayout();
 
             // 
             // groupBox1
             // 
-            t_groupBox1.Controls.Add(t_textBox1);
-            t_groupBox1.Location = new System.Drawing.Point(3, 3);
-            t_groupBox1.Name = "groupBox_" + name;
-            t_groupBox1.Size = new System.Drawing.Size(200, 50);
-            t_groupBox1.TabIndex = 0;
-            t_groupBox1.TabStop = false;
-            t_groupBox1.Text = name;
+            tGroupBox1.Controls.Add(tTextBox1);
+            tGroupBox1.Location = new Point(3, 3);
+            tGroupBox1.Name = "groupBox_" + name;
+            tGroupBox1.Size = new Size(200, 50);
+            tGroupBox1.TabIndex = 0;
+            tGroupBox1.TabStop = false;
+            tGroupBox1.Text = name;
             // 
             // VALUE_NAME_BOX
             // 
-            t_textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            t_textBox1.Location = new System.Drawing.Point(3, 16);
-            t_textBox1.Name = "value_" + name;
-            t_textBox1.Text = value;
-            t_textBox1.Size = new System.Drawing.Size(194, 20);
-            t_textBox1.TabIndex = 0;
+            tTextBox1.Dock = DockStyle.Fill;
+            tTextBox1.Location = new Point(3, 16);
+            tTextBox1.Name = "value_" + name;
+            tTextBox1.Text = value;
+            tTextBox1.Size = new Size(194, 20);
+            tTextBox1.TabIndex = 0;
 
-            t_groupBox1.ResumeLayout(false);
-            t_groupBox1.PerformLayout();
+            tGroupBox1.ResumeLayout(false);
+            tGroupBox1.PerformLayout();
 
-            flowLayoutPanel1.Controls.Add(t_groupBox1);
+            flowLayoutPanel1.Controls.Add(tGroupBox1);
 
-            return t_groupBox1;
+            return tGroupBox1;
         }
-        public ArtCore_Settings()
+        public ArtCoreSettings()
         {
             InitializeComponent(); Program.ApplyTheme(this);
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
-                var f_name = property.Name;
+                var fName = property.Name;
                 int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
-                AddNewField(f_name, value.ToString());
+                AddNewField(fName, value.ToString());
 
             }
-            this.Size = new Size(Size.Width, 140 + flowLayoutPanel1.Controls.Count / 2 * 50);
-            this.DialogResult = DialogResult.Cancel;
+            Size = new Size(Size.Width, 140 + flowLayoutPanel1.Controls.Count / 2 * 50);
+            DialogResult = DialogResult.Cancel;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
-                var f_name = "value_" + property.Name;
-                int value = Convert.ToInt32(((TextBox)flowLayoutPanel1.Controls.Find(f_name, true)[0]).Text);
+                var fName = "value_" + property.Name;
+                int value = Convert.ToInt32(((TextBox)flowLayoutPanel1.Controls.Find(fName, true)[0]).Text);
                 property.SetValue(GameProject.GetInstance().ArtCoreDefaultSettings, value);
             }
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
             Close();
         }
-
-        private void ArtCore_Settings_Load(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }

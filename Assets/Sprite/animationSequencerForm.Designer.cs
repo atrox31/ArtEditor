@@ -1,6 +1,6 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Assets.Sprite
 {
-    partial class animationSequencerForm
+    partial class AnimationSequencerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -143,12 +143,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "animationSequencerForm";
+            this.Name = "AnimationSequencerForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Animation Sequence";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.animationSequencerForm_FormClosing);
             this.Load += new System.EventHandler(this.animationSequencerForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

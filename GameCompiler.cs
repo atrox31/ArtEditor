@@ -8,6 +8,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using ArtCore_Editor.Assets.Sprite;
+using ArtCore_Editor.Instance_Manager;
 
 namespace ArtCore_Editor
 {
@@ -20,17 +22,17 @@ namespace ArtCore_Editor
             public int ProgressBarValue { get; set; }
             public bool ReplaceLastLine { get; set; }
             public Message() { }
-            public Message(string Text, int ProgressBarValue, bool ReplaceLastLine)
+            public Message(string text, int progressBarValue, bool replaceLastLine)
             {
-                this.Text = Text;
-                this.ReplaceLastLine = ReplaceLastLine;
-                this.ProgressBarValue = ProgressBarValue;
+                Text = text;
+                ReplaceLastLine = replaceLastLine;
+                ProgressBarValue = progressBarValue;
             }
         }
 
-        public static void OutputWrite(string message, bool replace_last_line = false)
+        public static void OutputWrite(string message, bool replaceLastLine = false)
         {
-            if (replace_last_line)
+            if (replaceLastLine)
             {
                 _instance.OutputLog.Items[_instance.OutputLog.Items.Count - 1] = message;
             }
@@ -39,52 +41,52 @@ namespace ArtCore_Editor
                 _instance.OutputLog.Items.Add(message);
             }
         }
-        bool _is_debug;
-        bool _run_game;
-        bool _close_after_done;
-        public GameCompiler(bool DebugMode, bool RunGame = false, bool CloseAfterDone = false)
+        bool _isDebug;
+        bool _runGame;
+        bool _closeAfterDone;
+        public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
         {
             InitializeComponent(); Program.ApplyTheme(this);
             _instance = this;
-            this._is_debug = DebugMode;
-            this._run_game = RunGame;
-            this._close_after_done = CloseAfterDone;
+            _isDebug = debugMode;
+            _runGame = runGame;
+            _closeAfterDone = closeAfterDone;
 
                 if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
                 {
                     File.Delete(GameProject.ProjectPath + "\\" + "assets.pak");
                 }
             
-            if (!_is_debug)
+            if (!_isDebug)
             {
                 button2.Visible = false;
             }
         }
-        public void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string AssetName, int progress_min, int progress_max)
+        public void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string assetName, int progressMin, int progressMax)
         {
             string output = GameProject.ProjectPath + "\\" + "assets.pak";
 
-            int max_count = asset.Count();
-            int current_item = 0;
+            int maxCount = asset.Count();
+            int currentItem = 0;
             int skipped = 0;
-            sender.ReportProgress(1, new Message(AssetName + " (" + current_item.ToString() + "/" + max_count.ToString() + ")", progress_min, false));
+            sender.ReportProgress(1, new Message(assetName + " (" + currentItem.ToString() + "/" + maxCount.ToString() + ")", progressMin, false));
             foreach (var item in asset)
             {
-                int current_progress = Functions.Scale(current_item, 0, max_count, progress_min, progress_max);
+                int currentProgress = Functions.Scale(currentItem, 0, maxCount, progressMin, progressMax);
                 if (CancelRequest(sender, e)) return;
 
-                string Name = (string)(typeof(T).GetProperty("Name").GetValue(item.Value, null));
-                string File_MD5 = (string)(typeof(T).GetProperty("File_MD5").GetValue(item.Value, null));
-                string FileName = ((string)(typeof(T).GetProperty("FileName").GetValue(item.Value, null))).Split('\\').Last();
-                string ProjectPath = (string)(typeof(T).GetProperty("ProjectPath").GetValue(item.Value, null));
+                string name = (string)(typeof(T).GetProperty("Name")?.GetValue(item.Value, null));
+                string fileMd5 = (string)(typeof(T).GetProperty("File_MD5")?.GetValue(item.Value, null));
+                string fileName = ((string)(typeof(T).GetProperty("FileName")?.GetValue(item.Value, null)))?.Split('\\').Last();
+                string projectPath = (string)(typeof(T).GetProperty("ProjectPath")?.GetValue(item.Value, null));
 
                 //Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
 
-                sender.ReportProgress(1, new Message(AssetName + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
+                sender.ReportProgress(1, new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") " + name, currentProgress, true));
 
-                if (!File.Exists(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
+                if (!File.Exists(GameProject.ProjectPath + "\\" + projectPath + "\\" + fileName))
                 {
-                    sender.ReportProgress(1, new Message("Asset type: '" + Name + "' file not exists", current_progress, false));
+                    sender.ReportProgress(1, new Message("Asset type: '" + name + "' file not exists", currentProgress, false));
                     return;
                 }
 
@@ -93,37 +95,37 @@ namespace ArtCore_Editor
                 {
                     using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
-                        string MD5 = null;
-                        if (_is_debug)
+                        string md5 = null;
+                        if (_isDebug)
                         {
-                            string MD5_File = $"DEBUG\\{(typeof(T)).FullName}.{FileName}.MD5";
-                            if (archive.GetEntry(MD5_File) != null)
+                            string md5File = $"DEBUG\\{(typeof(T)).FullName}.{fileName}.MD5";
+                            if (archive.GetEntry(md5File) != null)
                             {
-                                MD5 = new StreamReader(archive.GetEntry(MD5_File).Open()).ReadToEnd();
+                                md5 = new StreamReader(archive.GetEntry(md5File).Open()).ReadToEnd();
                             }
                             else
                             {
-                                ZipArchiveEntry readmeEntry = archive.CreateEntry(MD5_File);
+                                ZipArchiveEntry readmeEntry = archive.CreateEntry(md5File);
                                 using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                                 {
-                                    writer.Write(File_MD5);
+                                    writer.Write(fileMd5);
                                 }
 
                             }
                         }
-                        if (MD5 == null || MD5 != File_MD5)
+                        if (md5 == null || md5 != fileMd5)
                         {
-                            string EntryName = AssetName + "\\" + FileName;
-                            ZipArchiveEntry FileEntry = archive.GetEntry(EntryName);
-                            if (FileEntry != null)
+                            string entryName = assetName + "\\" + fileName;
+                            ZipArchiveEntry fileEntry = archive.GetEntry(entryName);
+                            if (fileEntry != null)
                             {
-                                FileEntry.Delete();
+                                fileEntry.Delete();
                             }
-                            FileEntry = archive.CreateEntry(EntryName);
+                            fileEntry = archive.CreateEntry(entryName);
 
-                            using (StreamWriter writer = new StreamWriter(FileEntry.Open()))
+                            using (StreamWriter writer = new StreamWriter(fileEntry.Open()))
                             {
-                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + ProjectPath + "\\" + FileName))
+                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + projectPath + "\\" + fileName))
                                 {
                                     file.BaseStream.CopyTo(writer.BaseStream);
                                 }
@@ -131,16 +133,16 @@ namespace ArtCore_Editor
                                 if (typeof(T) == typeof(Sprite))
                                 {
                                     int i = 0;
-                                    foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
+                                    foreach (var f in Directory.GetFiles(GameProject.ProjectPath + "\\" + projectPath + "\\img\\"))
                                     {
                                         //foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
-                                        ZipArchiveEntry FileEntry_img = archive.CreateEntry(AssetName + "\\" + Name + "\\" + i.ToString() + ".png");
+                                        ZipArchiveEntry fileEntryImg = archive.CreateEntry(assetName + "\\" + name + "\\" + i.ToString() + ".png");
                                         i++;
-                                        using (StreamWriter writer_img = new StreamWriter(FileEntry_img.Open()))
+                                        using (StreamWriter writerImg = new StreamWriter(fileEntryImg.Open()))
                                         {
-                                            using (StreamReader file = new StreamReader(_f))
+                                            using (StreamReader file = new StreamReader(f))
                                             {
-                                                file.BaseStream.CopyTo(writer_img.BaseStream);
+                                                file.BaseStream.CopyTo(writerImg.BaseStream);
                                             }
                                         }
                                     }
@@ -151,14 +153,14 @@ namespace ArtCore_Editor
                         {
                             skipped++;
                         }
-                        fileList.Add(AssetName + "\\" + FileName);
+                        _fileList.Add(assetName + "\\" + fileName);
 
                     }
                 }
-                sender.ReportProgress(1, new Message(AssetName + " (" + (++current_item).ToString() + "/" + max_count.ToString() + ") " + Name, current_progress, true));
+                sender.ReportProgress(1, new Message(assetName + " (" + (++currentItem).ToString() + "/" + maxCount.ToString() + ") " + name, currentProgress, true));
             }
-            sender.ReportProgress(1, new Message(AssetName + " (" + (current_item).ToString() + "/" + max_count.ToString() + ") ", progress_max, true));
-            sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progress_max, false));
+            sender.ReportProgress(1, new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") ", progressMax, true));
+            sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progressMax, false));
         }
 
         public static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
@@ -194,10 +196,10 @@ namespace ArtCore_Editor
             //compiler.StartInfo.WorkingDirectory = GameProject.ProjectPath;
             compiler.Start();
 
-            string standard_output;
-            while ((standard_output = compiler.StandardOutput.ReadLine()) != null)
+            string standardOutput;
+            while ((standardOutput = compiler.StandardOutput.ReadLine()) != null)
             {
-                sender.ReportProgress(1, new Message(standard_output, -1, false));
+                sender.ReportProgress(1, new Message(standardOutput, -1, false));
             }
 
             compiler.WaitForExit();
@@ -212,13 +214,13 @@ namespace ArtCore_Editor
                         {
                             if (CancelRequest(sender, e)) return false;
 
-                            string EntryName = "object_compile.acp";
-                            ZipArchiveEntry readmeEntry = archive.GetEntry(EntryName);
+                            string entryName = "object_compile.acp";
+                            ZipArchiveEntry readmeEntry = archive.GetEntry(entryName);
                             if (readmeEntry != null)
                             {
                                 readmeEntry.Delete();
                             }
-                            readmeEntry = archive.CreateEntry(EntryName);
+                            readmeEntry = archive.CreateEntry(entryName);
 
                             using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                             {
@@ -242,22 +244,22 @@ namespace ArtCore_Editor
             return false;
         }
 
-        void UpdateCoreFiles(string folder, string File, int c, int max)
+        void UpdateCoreFiles(string folder, string file, int c, int max)
         {
             using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
-                    ZipArchiveEntry readmeEntry = archive.GetEntry("files\\" + File);
+                    ZipArchiveEntry readmeEntry = archive.GetEntry("files\\" + file);
                     if (readmeEntry == null)
                     {
-                        readmeEntry = archive.CreateEntry("files\\" + File);
+                        readmeEntry = archive.CreateEntry("files\\" + file);
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\" + folder + "\\" + File))
+                        using (StreamReader fileWriter = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\" + folder + "\\" + file))
                         {
-                            file.BaseStream.CopyTo(writer.BaseStream);
+                            fileWriter.BaseStream.CopyTo(writer.BaseStream);
                         }
                     }
 
@@ -269,20 +271,20 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
 
-        void WriteFileToGameDat(string FileDest, string FileSource)
+        void WriteFileToGameDat(string fileDest, string fileSource)
         {
             using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                 {
-                    ZipArchiveEntry readmeEntry = archive.GetEntry(FileSource);
+                    ZipArchiveEntry readmeEntry = archive.GetEntry(fileSource);
                     if (readmeEntry == null)
                     {
-                        readmeEntry = archive.CreateEntry(FileSource);
+                        readmeEntry = archive.CreateEntry(fileSource);
                     }
                     using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                     {
-                        using (StreamReader file = new StreamReader(FileDest))
+                        using (StreamReader file = new StreamReader(fileDest))
                         {
                             file.BaseStream.CopyTo(writer.BaseStream);
                         }
@@ -317,10 +319,10 @@ namespace ArtCore_Editor
                 }
             }
         }
-        static List<string> fileList = new List<string>();
+        static List<string> _fileList = new List<string>();
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.VERSION.ToString(), 1, false));
+            Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.Version.ToString(), 1, false));
 
             // saving project
             Bgw.ReportProgress(1, new Message("Saving project", 2, false));
@@ -329,7 +331,7 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
 
 
-            fileList.Clear();
+            _fileList.Clear();
             PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
             if (CancelRequest(Bgw, e)) return;
 
@@ -345,11 +347,9 @@ namespace ArtCore_Editor
             PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
             if (CancelRequest(Bgw, e)) return;
 
-            WriteListToArchive("assets.pak", "filelist.txt", fileList);
+            WriteListToArchive("assets.pak", "filelist.txt", _fileList);
             Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
-            GameProject.GetInstance().AssetsMD5 = Functions.CalculateMD5(GameProject.ProjectPath + "\\" + "assets.pak");
-
-
+            
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
 
@@ -383,9 +383,9 @@ namespace ArtCore_Editor
                 List<string> content = new List<string>();
                 foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
                 {
-                    var f_name = property.Name;
+                    var fName = property.Name;
                     int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
-                    content.Add(f_name + "=" + value);
+                    content.Add(fName + "=" + value);
                 }
                 WriteListToArchive("game.dat", "setup.ini", content);
             }
@@ -435,13 +435,13 @@ namespace ArtCore_Editor
                     }
                     foreach (var scene in GameProject.GetInstance().Scenes)
                     {
-                        string EntryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
-                        ZipArchiveEntry readmeEntry = archive.GetEntry(EntryName);
+                        string entryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
+                        ZipArchiveEntry readmeEntry = archive.GetEntry(entryName);
                         if (readmeEntry != null)
                         {
                             readmeEntry.Delete();
                         }
-                        readmeEntry = archive.CreateEntry(EntryName);
+                        readmeEntry = archive.CreateEntry(entryName);
                         using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
                         {
 
@@ -450,13 +450,13 @@ namespace ArtCore_Editor
                             writer.WriteLine("Width=" + scene.Value.Width);
                             writer.WriteLine("Height=" + scene.Value.Height);
                             writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture);
-                            writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTexture_name);
+                            writer.WriteLine("BackGroundTexture_name=" + scene.Value.BackGroundTextureName);
                             writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
                             writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
                             writer.WriteLine("BackGroundColor=" + Functions.ColorToHex(scene.Value.BackGroundColor));
                             
                             writer.WriteLine("[regions]");
-                            foreach (var regions in scene.Value.regions)
+                            foreach (var regions in scene.Value.Regions)
                             {
                                 writer.WriteLine(regions.ToString());
                             }
@@ -470,7 +470,7 @@ namespace ArtCore_Editor
                             writer.WriteLine("[instance]");
                             foreach (var sIns in scene.Value.SceneInstances)
                             {
-                                writer.WriteLine(sIns.instance.Name + "|" + sIns.x + "|" + sIns.y);
+                                writer.WriteLine(sIns.Instance.Name + "|" + sIns.X + "|" + sIns.Y);
                             }
                         }
 
@@ -495,12 +495,12 @@ namespace ArtCore_Editor
             {
 
                 button2.Enabled = true;
-                if (_run_game)
+                if (_runGame)
                 {
                     DialogResult = DialogResult.OK;
                     Close();
                 }
-                if (_close_after_done)
+                if (_closeAfterDone)
                 {
                     DialogResult = DialogResult.OK;
                     Close();

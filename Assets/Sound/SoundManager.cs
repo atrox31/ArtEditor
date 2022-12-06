@@ -1,58 +1,58 @@
-﻿using ArtCore_Editor.Assets;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Sound
 {
     public partial class SoundManager : Form
     {
-        string aid;
-        bool can_play = false;
-        string GetDuration(bool formated = false)
+        private string _aid;
+        private bool _canPlay = false;
+        readonly SoundPlayer _soundPlayer = new SoundPlayer();
+        private string _fileName;
+        private const string ProjectPath = "assets\\sound\\";
+
+        string GetDuration()
         {
             return SoundInfo.GetSoundLength(GameProject.ProjectPath + "\\" + textBox2.Text).ToString();
         }
         private void SetInfoBox()
         {
-            soundPlayer.Stop();
-            soundPlayer.SoundLocation = GameProject.ProjectPath + "\\" + textBox2.Text;
-            can_play = false;
-            soundPlayer.LoadAsync();
-            label1.Text = "Duration: " + GetDuration(true) + " \n" +
+            _soundPlayer.Stop();
+            _soundPlayer.SoundLocation = GameProject.ProjectPath + "\\" + textBox2.Text;
+            _canPlay = false;
+            _soundPlayer.LoadAsync();
+            label1.Text = "Duration: " + GetDuration() + " \n" +
                 "In project location:\n" + "assets/music/" + textBox1.Text;
         }
 
-        SoundPlayer soundPlayer = new SoundPlayer();
 
         private void player_LoadCompleted(object sender,
                 AsyncCompletedEventArgs e)
         {
-            can_play = true;
+            _canPlay = true;
         }
         private void player_LocationChanged(object sender, EventArgs e)
         {
-            can_play = true;
+            _canPlay = true;
         }
 
-        string FileName;
-        string ProjectPath = "assets\\sound\\";
 
-        public SoundManager(string AssetId = null)
+        public SoundManager(string assetId = null)
         {
-            soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
-            soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
+            _soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
+            _soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
             InitializeComponent(); Program.ApplyTheme(this);
-            aid = AssetId;
-            if (AssetId != null)
+            _aid = assetId;
+            if (assetId != null)
             {
-                textBox1.Text = MainWindow.GetInstance().Game_Project.Sounds[AssetId].Name;
-                FileName = MainWindow.GetInstance().Game_Project.Sounds[AssetId].FileName;
+                textBox1.Text = MainWindow.GetInstance().GlobalProject.Sounds[assetId].Name;
+                _fileName = MainWindow.GetInstance().GlobalProject.Sounds[assetId].FileName;
 
-                textBox2.Text = ProjectPath + "\\" + FileName;
+                textBox2.Text = ProjectPath + "\\" + _fileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -69,15 +69,15 @@ namespace ArtCore_Editor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            // paly
-            if (can_play)
-                soundPlayer.Play();
+            // play
+            if (_canPlay)
+                _soundPlayer.Play();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             // stop
-            soundPlayer.Stop();
+            _soundPlayer.Stop();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -87,22 +87,28 @@ namespace ArtCore_Editor
                 && (textBox2.Text.Length > 0)
                 && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
             {
-                if (aid == null)
+                if (_aid == null)
                 {
                     // add new
-                    aid = textBox1.Text;
-                    MainWindow.GetInstance().Game_Project.Sounds.Add(textBox1.Text, new Asset());
+                    _aid = textBox1.Text;
+                    MainWindow.GetInstance().GlobalProject.Sounds.Add(textBox1.Text, new Asset());
                 }
-                MainWindow.GetInstance().Game_Project.Sounds[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Sounds[aid].FileName = FileName;
-                MainWindow.GetInstance().Game_Project.Sounds[aid].ProjectPath = ProjectPath;
+                MainWindow.GetInstance().GlobalProject.Sounds[_aid].Name = textBox1.Text;
+                MainWindow.GetInstance().GlobalProject.Sounds[_aid].FileName = _fileName;
+                MainWindow.GetInstance().GlobalProject.Sounds[_aid].ProjectPath = ProjectPath;
 
 
-                if (aid != MainWindow.GetInstance().Game_Project.Sounds[aid].Name)
+                if (_aid != MainWindow.GetInstance().GlobalProject.Sounds[_aid].Name)
                 {
-                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Sounds, aid, textBox1.Text);
+                    MainWindow.GetInstance().GlobalProject.Sounds.RenameKey(_aid, textBox1.Text);
                 }
-
+                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\sound\\" + textBox1.Text + ".png")
+                {
+                    _soundPlayer.Dispose();
+                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\music\\" + _fileName);
+                    File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
+                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = "\\assets\\sound\\" + textBox1.Text + ".png";
+                }
                 DialogResult = DialogResult.OK;
                 Close();
 
@@ -122,25 +128,23 @@ namespace ArtCore_Editor
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "WAV|*.wav";
             openFileDialog.Title = "Select file";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            string file = openFileDialog.FileName;
+            if (textBox1.TextLength == 0)
             {
-                string ofile = openFileDialog.FileName;
-                if (textBox1.TextLength == 0)
-                {
-                    textBox1.Text = ofile.Split('\\').Last().Split('.').First();
-                    FileName = textBox1.Text + ".wav";
-                }
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\sound\\" + FileName, true);
-                textBox2.Text = ProjectPath + "\\" + FileName;
-
-                SetInfoBox();
+                textBox1.Text = file.Split('\\').Last().Split('.').First();
+                _fileName = textBox1.Text + ".wav";
             }
+            File.Copy(file, GameProject.ProjectPath + "\\assets\\sound\\" + _fileName, true);
+            textBox2.Text = ProjectPath + "\\" + _fileName;
+
+            SetInfoBox();
         }
 
         private void MusicManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            soundPlayer.Stop();
-            soundPlayer.Dispose();
+            _soundPlayer.Stop();
+            _soundPlayer.Dispose();
         }
     }
 }

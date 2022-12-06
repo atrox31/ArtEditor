@@ -10,23 +10,22 @@ namespace ArtCore_Editor
 {
     public partial class FontManager : Form
     {
-        string aid;
-        Font font;
+        private string _aid;
+        private Font _font;
 
+        private string _fileName;
+        private const string ProjectPath = "assets\\font\\";
 
-        string FileName;
-        string ProjectPath = "assets\\font\\";
-
-        public FontManager(string AssetId = null)
+        public FontManager(string assetId = null)
         {
             InitializeComponent(); Program.ApplyTheme(this);
-            aid = AssetId;
-            if (AssetId != null)
+            _aid = assetId;
+            if (assetId != null)
             {
-                textBox1.Text = MainWindow.GetInstance().Game_Project.Fonts[AssetId].Name;
-                FileName = MainWindow.GetInstance().Game_Project.Fonts[AssetId].FileName;
+                textBox1.Text = MainWindow.GetInstance().GlobalProject.Fonts[assetId].Name;
+                _fileName = MainWindow.GetInstance().GlobalProject.Fonts[assetId].FileName;
 
-                textBox2.Text = ProjectPath + "\\" + FileName;
+                textBox2.Text = ProjectPath + "\\" + _fileName;
                 if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
                 {
                     textBox2.Text = "FILE NOT FOUND";
@@ -36,13 +35,13 @@ namespace ArtCore_Editor
                     PrivateFontCollection collection = new PrivateFontCollection();
                     collection.AddFontFile(GameProject.ProjectPath + "\\" + textBox2.Text);
                     FontFamily fontFamily = new FontFamily(collection.Families[0].Name, collection);
-                    font = new Font(fontFamily, 8);
-                    richTextBox1.Font = font;
+                    _font = new Font(fontFamily, 8);
+                    richTextBox1.Font = _font;
                 }
             }
             else
             {
-                font = new Font("Arial", 8);
+                _font = new Font("Arial", 8);
             }
         }
 
@@ -62,13 +61,13 @@ namespace ArtCore_Editor
                 }
                 File.Copy(ofile, GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf", true);
                 textBox2.Text = "assets\\font\\" + textBox1.Text + ".ttf";
-                FileName = ofile.Split('\\').Last();
+                _fileName = ofile.Split('\\').Last();
 
                 PrivateFontCollection collection = new PrivateFontCollection();
                 collection.AddFontFile(GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf");
                 FontFamily fontFamily = new FontFamily(collection.Families[0].Name, collection);
-                font = new Font(fontFamily, 8);
-                richTextBox1.Font = font;
+                _font = new Font(fontFamily, 8);
+                richTextBox1.Font = _font;
                 button1.Enabled = false;
             }
         }
@@ -80,21 +79,27 @@ namespace ArtCore_Editor
                 && (textBox2.Text.Length > 0)
                 && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
             {
-                if (aid == null)
+                if (_aid == null)
                 {
                     // add new
-                    aid = textBox1.Text;
-                    MainWindow.GetInstance().Game_Project.Fonts.Add(textBox1.Text, new Asset());
+                    _aid = textBox1.Text;
+                    MainWindow.GetInstance().GlobalProject.Fonts.Add(textBox1.Text, new Asset());
                 }
-                MainWindow.GetInstance().Game_Project.Fonts[aid].Name = textBox1.Text;
-                MainWindow.GetInstance().Game_Project.Fonts[aid].FileName = FileName;
-                MainWindow.GetInstance().Game_Project.Fonts[aid].ProjectPath = ProjectPath;
+                MainWindow.GetInstance().GlobalProject.Fonts[_aid].Name = textBox1.Text;
+                MainWindow.GetInstance().GlobalProject.Fonts[_aid].FileName = _fileName;
+                MainWindow.GetInstance().GlobalProject.Fonts[_aid].ProjectPath = ProjectPath;
 
-                if (aid != MainWindow.GetInstance().Game_Project.Fonts[aid].Name)
+                if (_aid != MainWindow.GetInstance().GlobalProject.Fonts[_aid].Name)
                 {
-                    Functions.RenameKey(MainWindow.GetInstance().Game_Project.Fonts, aid, textBox1.Text);
+                    MainWindow.GetInstance().GlobalProject.Fonts.RenameKey(_aid, textBox1.Text);
                 }
-
+                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf")
+                {
+                    _font.Dispose();
+                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\font\\" + textBox1.Text + ".ttf");
+                    File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
+                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = "\\assets\\font\\" + textBox1.Text + ".ttf";
+                }
 
                 DialogResult = DialogResult.OK;
                 Close();

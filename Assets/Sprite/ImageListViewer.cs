@@ -2,51 +2,52 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Sprite
 {
     public partial class ImageListViewer : Form
     {
-
-        Sprite this_sprite;
-        public ImageListViewer(Sprite sprite_data)
+        private readonly Sprite _thisSprite;
+        public ImageListViewer(Sprite spriteData)
         {
-            if (sprite_data == null)
+            if (spriteData == null)
             {
                 Close();
             }
-            this_sprite = sprite_data;
+            _thisSprite = spriteData;
             InitializeComponent(); Program.ApplyTheme(this);
         }
 
         private void ImageListViewer_Load(object sender, EventArgs e)
         {
-            if (this_sprite.textures == null)
+            if (_thisSprite.Textures == null)
             {
                 Close();
                 return;
             }
-            foreach (Image img in this_sprite.textures)
+            foreach (Image img in _thisSprite.Textures)
             {
                 try
                 {
-                    this.imageList1.Images.Add(img);
+                    imageList1.Images.Add(img);
                 }
                 catch
                 {
                     Console.WriteLine("This is not an image file");
                 }
             }
-            this.listView1.View = View.LargeIcon;
-            this.imageList1.ImageSize = new Size(64, 64);
+            listView1.View = View.LargeIcon;
+            imageList1.ImageSize = new Size(64, 64);
 
 
-            for (int j = 0; j < this.imageList1.Images.Count; j++)
+            for (int j = 0; j < imageList1.Images.Count; j++)
             {
-                ListViewItem item = new ListViewItem();
-                item.ImageIndex = j;
-                this.listView1.Items.Add(item);
+                ListViewItem item = new ListViewItem
+                {
+                    ImageIndex = j
+                };
+                listView1.Items.Add(item);
             }
-            this.listView1.LargeImageList = this.imageList1;
+            listView1.LargeImageList = imageList1;
 
         }
     }

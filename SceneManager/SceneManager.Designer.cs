@@ -37,8 +37,6 @@
             this.dimensionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.gUIEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -70,9 +68,6 @@
             this.bc_color_pick_value = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.bc_color_box = new System.Windows.Forms.PictureBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Content = new System.Windows.Forms.PictureBox();
@@ -102,8 +97,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
-            this.toolStripDropDownButton1,
-            this.toolStripDropDownButton2});
+            this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1585, 25);
@@ -138,7 +132,7 @@
             this.showToolStripMenuItem,
             this.snapToGridToolStripMenuItem});
             this.gridToolStripMenuItem.Name = "gridToolStripMenuItem";
-            this.gridToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.gridToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.gridToolStripMenuItem.Text = "Grid";
             // 
             // dimensionsToolStripMenuItem
@@ -165,24 +159,6 @@
             this.snapToGridToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.snapToGridToolStripMenuItem.Text = "Snap to Grid";
             this.snapToGridToolStripMenuItem.Click += new System.EventHandler(this.snapToGridToolStripMenuItem_Click);
-            // 
-            // toolStripDropDownButton2
-            // 
-            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.gUIEditorToolStripMenuItem});
-            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
-            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(66, 22);
-            this.toolStripDropDownButton2.Text = "Interface";
-            // 
-            // gUIEditorToolStripMenuItem
-            // 
-            this.gUIEditorToolStripMenuItem.Name = "gUIEditorToolStripMenuItem";
-            this.gUIEditorToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-            this.gUIEditorToolStripMenuItem.Text = "GUI Editor";
-            this.gUIEditorToolStripMenuItem.Click += new System.EventHandler(this.gUIEditorToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -310,9 +286,6 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(4, 19);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -543,36 +516,6 @@
             this.bc_color_box.TabIndex = 0;
             this.bc_color_box.TabStop = false;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 24);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(270, 315);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Particle";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tabPage4
-            // 
-            this.tabPage4.Location = new System.Drawing.Point(4, 24);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(270, 315);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Region";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.Location = new System.Drawing.Point(4, 24);
-            this.tabPage5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(270, 315);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Path";
-            this.tabPage5.UseVisualStyleBackColor = true;
-            // 
             // groupBox6
             // 
             this.groupBox6.Location = new System.Drawing.Point(3, 515);
@@ -605,9 +548,7 @@
             this.Content.DragDrop += new System.Windows.Forms.DragEventHandler(this.Content_DragDrop);
             this.Content.DragEnter += new System.Windows.Forms.DragEventHandler(this.Content_DragEnter);
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
-            this.Content.MouseLeave += new System.EventHandler(this.Content_MouseLeave);
             this.Content.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Content_MouseMove);
-            this.Content.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Content_MouseUp);
             // 
             // SceneManager
             // 
@@ -663,9 +604,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.ListView instanceListView;
         private System.Windows.Forms.ImageList Instance_imagelist;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
@@ -679,8 +617,6 @@
         private System.Windows.Forms.ToolStripMenuItem dimensionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem snapToGridToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
-        private System.Windows.Forms.ToolStripMenuItem gUIEditorToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton r_bc_solidcolor;

@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Assets.Sprite
 {
     partial class SpriteEditor
     {
@@ -41,8 +41,6 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.s_sprite_type = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.s_spritename = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -83,7 +81,6 @@
             this.groupBox1.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox10.SuspendLayout();
@@ -108,9 +105,9 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.groupBox9);
             this.groupBox1.Controls.Add(this.groupBox7);
-            this.groupBox1.Controls.Add(this.groupBox8);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
@@ -121,12 +118,11 @@
             // 
             // groupBox9
             // 
-            this.groupBox9.Controls.Add(this.label6);
             this.groupBox9.Controls.Add(this.button5);
             this.groupBox9.Controls.Add(this.button6);
             this.groupBox9.Controls.Add(this.button4);
             this.groupBox9.Controls.Add(this.listBox1);
-            this.groupBox9.Location = new System.Drawing.Point(6, 199);
+            this.groupBox9.Location = new System.Drawing.Point(6, 144);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(188, 171);
             this.groupBox9.TabIndex = 4;
@@ -138,7 +134,7 @@
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label6.Location = new System.Drawing.Point(2, 134);
+            this.label6.Location = new System.Drawing.Point(9, 312);
             this.label6.MinimumSize = new System.Drawing.Size(180, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(180, 17);
@@ -225,30 +221,6 @@
             this.label4.Size = new System.Drawing.Size(59, 15);
             this.label4.TabIndex = 0;
             this.label4.Text = "Current: 0";
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.s_sprite_type);
-            this.groupBox8.Location = new System.Drawing.Point(6, 144);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(188, 49);
-            this.groupBox8.TabIndex = 2;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Type";
-            // 
-            // s_sprite_type
-            // 
-            this.s_sprite_type.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.s_sprite_type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.s_sprite_type.FormattingEnabled = true;
-            this.s_sprite_type.Items.AddRange(new object[] {
-            "assets",
-            "core",
-            "particle"});
-            this.s_sprite_type.Location = new System.Drawing.Point(3, 19);
-            this.s_sprite_type.Name = "s_sprite_type";
-            this.s_sprite_type.Size = new System.Drawing.Size(182, 23);
-            this.s_sprite_type.TabIndex = 0;
             // 
             // groupBox3
             // 
@@ -494,7 +466,7 @@
             this.s_aprite_center_x.Name = "s_aprite_center_x";
             this.s_aprite_center_x.Size = new System.Drawing.Size(57, 23);
             this.s_aprite_center_x.TabIndex = 3;
-            this.s_aprite_center_x.ValueChanged += new System.EventHandler(this.s_aprite_center_x_ValueChanged);
+            this.s_aprite_center_x.ValueChanged += new System.EventHandler(this.s_sprite_center_x_ValueChanged);
             // 
             // s_sprite_center_custom
             // 
@@ -685,13 +657,11 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sprite";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpriteAddForm_FormClosing);
-            this.Load += new System.EventHandler(this.SpriteAddForm_Load_1);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -719,8 +689,6 @@
 
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.ComboBox s_sprite_type;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox s_spritename;
         private System.Windows.Forms.GroupBox groupBox2;

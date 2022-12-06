@@ -1,6 +1,6 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Instance_Manager.Behavior.pickers
 {
-    partial class object_event_picker
+    partial class ObjectEventPicker
 {
     /// <summary>
     /// Required designer variable.
@@ -73,7 +73,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listBox1);
-            this.Name = "object_event_picker";
+            this.Name = "ObjectEventPicker";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "object_event_picker";
             this.Load += new System.EventHandler(this.object_event_picker_Load);

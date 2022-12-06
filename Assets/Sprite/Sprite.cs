@@ -1,117 +1,89 @@
-﻿using ArtCore_Editor.Assets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Sprite
 {
     public class Sprite : Asset
     {
-        /*
-        public static Sprite Default()
-        {
-            Sprite sprite = new Sprite();
-            sprite.Width = 32;
-            sprite.Height = 32;
-            sprite.CenterX = 16;
-            sprite.CenterY = 16;
-            sprite.EditorImage = Resources.interrogation;
-            return sprite;
-        }*/
-        public void SetImgId(bool force = false)
-        {
-            if (textures != null)
-            {
-                if (imgId != -1 || force)
-                {
-                    //imgId = Form1.addImageToList(textures[0].GetThumbnailImage(64, 64, null, IntPtr.Zero));
-                }
-            }
-        }
         public Sprite()
         {
-            sprite_animationSquence = new Dictionary<string, animationSequence>();
-            this.type = Sprite.Type.asset;
-            this.collision_mask = Sprite.CollisionMask.none;
-            this.collision_mask_value = 0;
-            this.sprite_center = Sprite.SpriteCenter.leftcorner;
-            this.sprite_center_x = 0;
-            this.sprite_center_y = 0;
-            this.sprite_width = 0;
-            this.sprite_height = 0;
+            SpriteAnimationSequence = new Dictionary<string, AnimationSequence>();
+            this.CollisionMask = Sprite.CollisionMaskEnum.None;
+            CollisionMaskValue = 0;
+            this.SpriteCenter = Sprite.SpriteCenterEnum.LeftCorner;
+            SpriteCenterX = 0;
+            SpriteCenterY = 0;
+            SpriteWidth = 0;
+            SpriteHeight = 0;
 
-            this.editor_fps = 60;
+            EditorFps = 60;
 
-            this.editor_preview_loop = false;
-            this.editor_preview_play = false;
-            this.editor_show_center = false;
-            this.editor_show_mask = false;
-            textures = new List<Image>();
+            EditorPreviewLoop = false;
+            EditorPreviewPlay = false;
+            EditorShowCenter = false;
+            EditorShowMask = false;
+            Textures = new List<Image>();
         }
 
-        public List<Image> textures;
-        public enum Type
+        public List<Image> Textures;
+        public enum CollisionMaskEnum
         {
-            asset, core, particle
+            None, Circle, Rectangle, Perpixel
         }
-        public Type type;
-        public enum CollisionMask
+        public CollisionMaskEnum CollisionMask;
+        public int CollisionMaskValue;
+        public enum SpriteCenterEnum
         {
-            none, circle, rectangle, perpixel
+            Center, LeftCorner, Custom
         }
-        public CollisionMask collision_mask;
-        public int collision_mask_value;
-        public enum SpriteCenter
-        {
-            center, leftcorner, custom
-        }
-        public SpriteCenter sprite_center;
-        public int sprite_center_x;
-        public int sprite_center_y;
+        public SpriteCenterEnum SpriteCenter;
+        public int SpriteCenterX;
+        public int SpriteCenterY;
 
         // editor value
-        public bool editor_show_mask;
-        public bool editor_show_center;
-        public bool editor_preview_play;
-        public bool editor_preview_loop;
-        public int editor_fps;
-        public int editor_frame;
-        public int editor_frame_max;
+        public bool EditorShowMask;
+        public bool EditorShowCenter;
+        public bool EditorPreviewPlay;
+        public bool EditorPreviewLoop;
+        public int EditorFps;
+        public int EditorFrame;
+        public int EditorFrameMax;
 
-        public class animationSequence
+        public class AnimationSequence
         {
-            public string name;
-            public string index;
-            public int frameFrom;
-            public int frameTo;
-            public animationSequence(string data)
+            public string Name;
+            public string Index;
+            public int FrameFrom;
+            public int FrameTo;
+            public AnimationSequence(string data)
             {
                 string[] tmp = data.Split('|');
-                this.name = tmp[0];
-                this.index = tmp[1];
-                this.frameFrom = Convert.ToInt32(tmp[2]);
-                this.frameTo = Convert.ToInt32(tmp[3]);
+                Name = tmp[0];
+                Index = tmp[1];
+                FrameFrom = Convert.ToInt32(tmp[2]);
+                FrameTo = Convert.ToInt32(tmp[3]);
             }
-            public animationSequence(string name, string index, int frameFrom, int frameTo)
+            public AnimationSequence(string name, string index, int frameFrom, int frameTo)
             {
-                this.name = name;
-                this.index = index;
-                this.frameFrom = frameFrom;
-                this.frameTo = frameTo;
+                Name = name;
+                Index = index;
+                FrameFrom = frameFrom;
+                FrameTo = frameTo;
             }
-            public string get()
+            public string Get()
             {
-                return name + '|' + index + '|' + frameFrom + '|' + frameTo;
+                return Name + '|' + Index + '|' + FrameFrom + '|' + FrameTo;
             }
 
         }
-        public Dictionary<string, animationSequence> sprite_animationSquence;
-        public int sprite_width;
-        public int sprite_height;
+        public Dictionary<string, AnimationSequence> SpriteAnimationSequence;
+        public int SpriteWidth;
+        public int SpriteHeight;
 
-        public int imgId { get; private set; }
+        public int ImgId { get; private set; }
 
         //public string path;
 
@@ -120,22 +92,22 @@ namespace ArtCore_Editor
             byte[] content = File.ReadAllBytes(file);
             using (Image image = Image.FromStream(new MemoryStream(content)))
             {
-                textures.Add(new Bitmap(new MemoryStream(content)));
-                editor_frame_max = textures.Count() - 1;
+                Textures.Add(new Bitmap(new MemoryStream(content)));
+                EditorFrameMax = Textures.Count() - 1;
             }
         }
 
         public void ClearImages()
         {
-            if (textures != null)
+            if (Textures != null)
             {
-                if (textures.Count > 0)
+                if (Textures.Count > 0)
                 {
-                    for (int i = 0; i < textures.Count; i++)
+                    for (int i = 0; i < Textures.Count; i++)
                     {
-                        textures[i].Dispose();
+                        Textures[i].Dispose();
                     }
-                    textures.Clear();
+                    Textures.Clear();
                 }
             }
         }
@@ -145,73 +117,66 @@ namespace ArtCore_Editor
             string buffer = "";
 
             buffer += "[editor]\n";
-            buffer += "editor_show_mask=" + (editor_show_mask ? "1" : "0") + "\n";
-            buffer += "editor_show_center=" + (editor_show_center ? "1" : "0") + "\n";
-            buffer += "editor_preview_play=" + (editor_preview_play ? "1" : "0") + "\n";
-            buffer += "editor_preview_loop=" + (editor_preview_loop ? "1" : "0") + "\n";
+            buffer += "editor_show_mask=" + (EditorShowMask ? "1" : "0") + "\n";
+            buffer += "editor_show_center=" + (EditorShowCenter ? "1" : "0") + "\n";
+            buffer += "editor_preview_play=" + (EditorPreviewPlay ? "1" : "0") + "\n";
+            buffer += "editor_preview_loop=" + (EditorPreviewLoop ? "1" : "0") + "\n";
 
-            buffer += "editor_fps=" + editor_fps.ToString() + "\n";
-            buffer += "editor_frame=" + editor_frame.ToString() + "\n";
-            buffer += "editor_frame_max=" + editor_frame_max.ToString() + "\n";
+            buffer += "editor_fps=" + EditorFps.ToString() + "\n";
+            buffer += "editor_frame=" + EditorFrame.ToString() + "\n";
+            buffer += "editor_frame_max=" + EditorFrameMax.ToString() + "\n";
             //buffer += "path=" + path + "\n";
             buffer += "[/editor]\n";
 
-            if (sprite_animationSquence.Count() > 0)
+            if (SpriteAnimationSequence.Any())
             {
                 buffer += "[animation]\n";
-                foreach (animationSequence entry in sprite_animationSquence.Values)
+                foreach (AnimationSequence entry in SpriteAnimationSequence.Values)
                 {
-                    buffer += entry.get() + '\n';
+                    buffer += entry.Get() + '\n';
                 }
                 buffer += "[/animation]\n";
             }
             buffer += "[sprite]\n";
 
             buffer += "name=" + Name + "\n";
-            switch (type)
+            switch (CollisionMask)
             {
-                case Type.asset: buffer += "type=asset\n"; break;
-                case Type.core: buffer += "type=core\n"; break;
-                case Type.particle: buffer += "type=particle\n"; break;
-                default: buffer += "type=undefined\n"; break;
-            }
-            switch (collision_mask)
-            {
-                case CollisionMask.none: buffer += "collision_mask=none\n"; break;
-                case CollisionMask.circle: buffer += "collision_mask=circle\n"; break;
-                case CollisionMask.rectangle: buffer += "collision_mask=rectangle\n"; break;
-                case CollisionMask.perpixel: buffer += "collision_mask=perpixel\n"; break;
+                case CollisionMaskEnum.None: buffer += "collision_mask=none\n"; break;
+                case CollisionMaskEnum.Circle: buffer += "collision_mask=circle\n"; break;
+                case CollisionMaskEnum.Rectangle: buffer += "collision_mask=rectangle\n"; break;
+                case CollisionMaskEnum.Perpixel: buffer += "collision_mask=perpixel\n"; break;
                 default: buffer += "collision_mask=undefined\n"; break;
             }
 
-            buffer += "collision_mask_value=" + collision_mask_value.ToString() + "\n";
+            buffer += "collision_mask_value=" + CollisionMaskValue.ToString() + "\n";
 
-            switch (sprite_center)
+            switch (SpriteCenter)
             {
-                case SpriteCenter.center: buffer += "sprite_center=center\n"; break;
-                case SpriteCenter.leftcorner: buffer += "sprite_center=leftcorner\n"; break;
-                case SpriteCenter.custom: buffer += "sprite_center=custom\n"; break;
+                case SpriteCenterEnum.Center: buffer += "sprite_center=center\n"; break;
+                case SpriteCenterEnum.LeftCorner: buffer += "sprite_center=leftcorner\n"; break;
+                case SpriteCenterEnum.Custom: buffer += "sprite_center=custom\n"; break;
                 default: buffer += "sprite_center=undefined\n"; break;
             }
-            buffer += "sprite_center_x=" + sprite_center_x.ToString() + "\n";
-            buffer += "sprite_center_y=" + sprite_center_y.ToString() + "\n";
-            buffer += "sprite_width=" + sprite_width.ToString() + "\n";
-            buffer += "sprite_height=" + sprite_width.ToString() + "\n";
+            buffer += "sprite_center_x=" + SpriteCenterX.ToString() + "\n";
+            buffer += "sprite_center_y=" + SpriteCenterY.ToString() + "\n";
+            buffer += "sprite_width=" + SpriteWidth.ToString() + "\n";
+            buffer += "sprite_height=" + SpriteWidth.ToString() + "\n";
 
             buffer += "[/sprite]\n";
             buffer += "[image_list]\n";
 
-            buffer += "count=" + (textures == null ? "0" : textures.Count.ToString()) + "\n";
+            buffer += "count=" + (Textures == null ? "0" : Textures.Count.ToString()) + "\n";
 
-            string FilePath = GameProject.ProjectPath + "\\assets\\sprite\\" + Name;
-            Directory.CreateDirectory(FilePath + "\\img\\");
+            string filePath = GameProject.ProjectPath + "\\assets\\sprite\\" + Name;
+            Directory.CreateDirectory(filePath + "\\img\\");
 
-            if (textures != null && textures.Count > 0)
+            if (Textures != null && Textures.Count > 0)
             {
                 int i = 0;
-                foreach (Image img in textures)
+                foreach (Image img in Textures)
                 {
-                    string pth = FilePath + "\\img\\" + i.ToString() + ".png";
+                    string pth = filePath + "\\img\\" + i.ToString() + ".png";
                     if (!File.Exists(pth))
                     {
                         img.Save(pth, System.Drawing.Imaging.ImageFormat.Png);
@@ -221,7 +186,7 @@ namespace ArtCore_Editor
                 }
             }
             buffer += "[/image_list]\n";
-            File.WriteAllText(FilePath + "\\" + Name + ".spr", buffer);
+            File.WriteAllText(filePath + "\\" + Name + ".spr", buffer);
 
             FileName = Name + ".spr";
             ProjectPath = "\\assets\\sprite\\" + Name + "\\";
@@ -255,14 +220,14 @@ namespace ArtCore_Editor
                             if (line == "[/editor]") { phase = 0; break; }
                             string[] tmp = line.Split('=');
                             //if (tmp[0] == "path") { path = tmp[1]; break; }
-                            if (tmp[0] == "editor_show_mask") { editor_show_mask = (tmp[1] == "1" ? true : false); break; }
-                            if (tmp[0] == "editor_show_center") { editor_show_center = (tmp[1] == "1" ? true : false); break; }
-                            if (tmp[0] == "editor_preview_play") { editor_preview_play = (tmp[1] == "1" ? true : false); break; }
-                            if (tmp[0] == "editor_preview_loop") { editor_preview_loop = (tmp[1] == "1" ? true : false); break; }
+                            if (tmp[0] == "editor_show_mask") { EditorShowMask = (tmp[1] == "1" ? true : false); break; }
+                            if (tmp[0] == "editor_show_center") { EditorShowCenter = (tmp[1] == "1" ? true : false); break; }
+                            if (tmp[0] == "editor_preview_play") { EditorPreviewPlay = (tmp[1] == "1" ? true : false); break; }
+                            if (tmp[0] == "editor_preview_loop") { EditorPreviewLoop = (tmp[1] == "1" ? true : false); break; }
 
-                            if (tmp[0] == "editor_fps") { editor_fps = Convert.ToInt32(tmp[1]); break; }
-                            if (tmp[0] == "editor_frame") { editor_frame = Convert.ToInt32(tmp[1]); break; }
-                            if (tmp[0] == "editor_frame_max") { editor_frame_max = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "editor_fps") { EditorFps = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "editor_frame") { EditorFrame = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "editor_frame_max") { EditorFrameMax = Convert.ToInt32(tmp[1]); break; }
 
                         }
                         break;
@@ -271,40 +236,32 @@ namespace ArtCore_Editor
                             if (line == "[/sprite]") { phase = 0; break; }
                             string[] tmp = line.Split('=');
                             if (tmp[0] == "name") { Name = tmp[1]; break; }
-
-                            if (tmp[0] == "type")
-                            {
-                                if (tmp[1] == "asset") type = Type.asset;
-                                if (tmp[1] == "core") type = Type.core;
-                                if (tmp[1] == "particle") type = Type.particle;
-                                if (tmp[1] == "undefined") type = 0;
-                                break;
-                            }
+                            
 
                             if (tmp[0] == "collision_mask")
                             {
-                                if (tmp[1] == "none") collision_mask = CollisionMask.none;
-                                if (tmp[1] == "circle") collision_mask = CollisionMask.circle;
-                                if (tmp[1] == "rectangle") collision_mask = CollisionMask.rectangle;
-                                if (tmp[1] == "perpixel") collision_mask = CollisionMask.perpixel;
-                                if (tmp[1] == "undefined") collision_mask = 0;
+                                if (tmp[1] == "none") CollisionMask = CollisionMaskEnum.None;
+                                if (tmp[1] == "circle") CollisionMask = CollisionMaskEnum.Circle;
+                                if (tmp[1] == "rectangle") CollisionMask = CollisionMaskEnum.Rectangle;
+                                if (tmp[1] == "perpixel") CollisionMask = CollisionMaskEnum.Perpixel;
+                                if (tmp[1] == "undefined") CollisionMask = 0;
                                 break;
                             }
 
-                            if (tmp[0] == "collision_mask_value") { collision_mask_value = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "collision_mask_value") { CollisionMaskValue = Convert.ToInt32(tmp[1]); break; }
 
                             if (tmp[0] == "sprite_center")
                             {
-                                if (tmp[1] == "center") sprite_center = SpriteCenter.center;
-                                if (tmp[1] == "leftcorner") sprite_center = SpriteCenter.leftcorner;
-                                if (tmp[1] == "custom") sprite_center = SpriteCenter.custom;
-                                if (tmp[1] == "undefined") sprite_center = 0;
+                                if (tmp[1] == "center") SpriteCenter = SpriteCenterEnum.Center;
+                                if (tmp[1] == "leftcorner") SpriteCenter = SpriteCenterEnum.LeftCorner;
+                                if (tmp[1] == "custom") SpriteCenter = SpriteCenterEnum.Custom;
+                                if (tmp[1] == "undefined") SpriteCenter = 0;
                                 break;
                             }
-                            if (tmp[0] == "sprite_center_x") { sprite_center_x = Convert.ToInt32(tmp[1]); break; }
-                            if (tmp[0] == "sprite_center_y") { sprite_center_y = Convert.ToInt32(tmp[1]); break; }
-                            if (tmp[0] == "sprite_width") { sprite_width = Convert.ToInt32(tmp[1]); break; }
-                            if (tmp[0] == "sprite_height") { sprite_height = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "sprite_center_x") { SpriteCenterX = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "sprite_center_y") { SpriteCenterY = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "sprite_width") { SpriteWidth = Convert.ToInt32(tmp[1]); break; }
+                            if (tmp[0] == "sprite_height") { SpriteHeight = Convert.ToInt32(tmp[1]); break; }
 
                         }
                         break;
@@ -315,7 +272,7 @@ namespace ArtCore_Editor
                             if (tmp[0] == "count")
                             {
                                 imgc = Convert.ToInt32(tmp[1]);
-                                textures = new List<Image>(imgc);
+                                Textures = new List<Image>(imgc);
                                 for (int i = 0; i < imgc; i++)
                                 {
                                     AddImage(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\" + i.ToString() + ".png");
@@ -326,7 +283,7 @@ namespace ArtCore_Editor
                     case 4:
                         //animation
                         if (line == "[/animation]") { phase = 0; break; }
-                        sprite_animationSquence.Add(line.Split('|')[1], new animationSequence(line));
+                        SpriteAnimationSequence.Add(line.Split('|')[1], new AnimationSequence(line));
                         break;
                     default:
                         return false;
@@ -335,8 +292,7 @@ namespace ArtCore_Editor
 
             FileName = Name + ".spr";
             ProjectPath = "\\assets\\sprite\\" + Name + "\\";
-
-            SetImgId(true);
+            
             return true;
         }
     }

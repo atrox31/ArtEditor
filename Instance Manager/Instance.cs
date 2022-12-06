@@ -1,47 +1,49 @@
-﻿using ArtCore_Editor.Assets;
+﻿using System.Collections.Generic;
+using ArtCore_Editor.Assets;
+using ArtCore_Editor.Assets.Sprite;
+using ArtCore_Editor.Enums;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Instance_Manager;
+
+[JsonObject(MemberSerialization.OptIn)]
+public class Instance : Asset
 {
-    public partial class GameProject
+    public class BodyData
     {
-        [JsonObject(MemberSerialization.OptIn)]
-        public class Instance : Asset
+        public enum BType
         {
-            public class Body
-            {
-                public enum type
-                {
-                    NONE,SPRITE,RECT,CIRCLE
-                };
-                public type Type;
-                public int Value;
-                public Body()
-                {
-                    Type = type.NONE;
-                    Value = 0;
-                }
-            }
-            [JsonProperty]
-            public Body BodyType { get; set; }
-            [JsonProperty]
-            public Sprite Sprite { get; set; }
-            // TODO
-            // dataset
-            [JsonProperty]
-            public Dictionary<Event.EventType, string> Events { get; set; }
-            [JsonProperty]
-            public List<Varible> Varible { get; set; }
-            public Instance()
-            {
-                Varible = new List<Varible>();
-                Events = new Dictionary<Event.EventType, string>();
-                Name = "new_instance";
-                BodyType = new Body();
-            }
+            None,
+            Sprite,
+            Rect,
+            Circle
+        };
 
+        public BType Type;
+        public int Value;
+
+        public BodyData()
+        {
+            Type = BType.None;
+            Value = 0;
         }
-
     }
+
+    [JsonProperty] public BodyData BodyDataType { get; set; }
+
+    [JsonProperty] public Sprite Sprite { get; set; }
+
+    // TODO
+    // dataset
+    [JsonProperty] public Dictionary<Event.EventType, string> Events { get; set; }
+    [JsonProperty] public List<Variable> Variables { get; set; }
+
+    public Instance()
+    {
+        Variables = new List<Variable>();
+        Events = new Dictionary<Event.EventType, string>();
+        Name = "new_instance";
+        BodyDataType = new BodyData();
+    }
+
 }

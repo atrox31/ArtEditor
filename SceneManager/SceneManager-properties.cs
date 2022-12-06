@@ -3,8 +3,10 @@
 namespace ArtCore_Editor
 {
     public partial class SceneManager
-    {
-        private void UpdateProperties(Scene.SceneInstance selected_sceneInstance)
+    {    /// <summary>
+        /// scene properties window
+        /// </summary>
+        private void UpdateProperties(SceneInstance selectedSceneInstance)
         {
 
         }

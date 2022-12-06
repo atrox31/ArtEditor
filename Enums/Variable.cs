@@ -14,7 +14,7 @@ namespace ArtCore_Editor.Enums
             // assets
             VTypeSprite, VTypeTexture, VTypeSound, VTypeMusic, VTypeFont,
             // structs
-            VTypePoint, VTypeRect, VTypeString, VTypeColor
+            VTypePoint, VTypeRectangle, VTypeString, VTypeColor
         }
         public VariableType Type { get; set; }
         public string Name { get; set; }

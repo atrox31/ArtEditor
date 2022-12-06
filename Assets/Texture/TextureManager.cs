@@ -15,7 +15,7 @@ namespace ArtCore_Editor.Assets.Texture
                 "Height: " + pictureBox1.Image.Height.ToString() + "px\n" +
                 "In project location:\n" + "assets/textures/" + textBox1.Text;
         }
-        private const string ProjectPath = "assets\\textures";
+        private const string ProjectPath = "\\assets\\textures";
         string _projectPath;
         string _fileName;
 

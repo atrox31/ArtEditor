@@ -14,7 +14,7 @@ namespace ArtCore_Editor
         private Font _font;
 
         private string _fileName;
-        private const string ProjectPath = "assets\\fonts\\";
+        private const string ProjectPath = "\\assets\\fonts\\";
 
         public FontManager(string assetId = null)
         {

@@ -13,7 +13,7 @@ internal static class Program
     // name for new created project files
     public const string ProjectFilename = "Project.acg";
     // global program version
-    public const float Version = 0.43f;
+    public const float Version = 0.50f;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [STAThread]
     private static void Main()

@@ -13,7 +13,7 @@ namespace ArtCore_Editor.Assets.Sound
         private bool _canPlay = false;
         readonly SoundPlayer _soundPlayer = new SoundPlayer();
         private string _fileName;
-        private const string ProjectPath = "assets\\sound\\";
+        private const string ProjectPath = "assets\\sounds\\";
 
         string GetDuration()
         {

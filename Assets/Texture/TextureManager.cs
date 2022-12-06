@@ -15,7 +15,7 @@ namespace ArtCore_Editor.Assets.Texture
                 "Height: " + pictureBox1.Image.Height.ToString() + "px\n" +
                 "In project location:\n" + "assets/textures/" + textBox1.Text;
         }
-
+        private const string ProjectPath = "assets\\textures";
         string _projectPath;
         string _fileName;
 
@@ -57,9 +57,9 @@ namespace ArtCore_Editor.Assets.Texture
                     textBox1.Text = ofile.Split('\\').Last().Split('.').First();
                 }
                 pictureBox1.Image?.Dispose();
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png", true);
+                File.Copy(ofile, GameProject.ProjectPath + ProjectPath + "\\" + textBox1.Text + ".png", true);
 
-                _projectPath = "assets\\texture\\";
+                _projectPath = ProjectPath + "\\";
                 _fileName = textBox1.Text + ".png";
 
                 textBox2.Text = _projectPath + _fileName;
@@ -91,13 +91,13 @@ namespace ArtCore_Editor.Assets.Texture
                     MainWindow.GetInstance().GlobalProject.Textures.RenameKey(_aid, textBox1.Text);
                 }
 
-                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png")
+                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + ProjectPath + "\\" + textBox1.Text + ".png")
                 {
                     pictureBox1.Image.Dispose();
                     pictureBox1.Image = null;
-                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\texture\\" + textBox1.Text + ".png");
+                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + ProjectPath + "\\" + textBox1.Text + ".png");
                     File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
-                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = "\\assets\\texture\\" + textBox1.Text + ".png";
+                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = ProjectPath + "\\" + textBox1.Text + ".png";
                 }
                 DialogResult = DialogResult.OK;
                 Close();

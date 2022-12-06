@@ -822,8 +822,8 @@ namespace ArtCore_Editor
                 {
                     Directory.CreateDirectory(path);
                 }
-
-                File.Copy(tempDirectory, AppDomain.CurrentDomain.BaseDirectory + "\\" + content, true);
+                
+                File.Copy(tempDirectory + "\\" + content, AppDomain.CurrentDomain.BaseDirectory + "\\" + content, true);
 
             }
             if (Directory.Exists(tempDirectory))

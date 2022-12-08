@@ -359,7 +359,6 @@ namespace ArtCore_Editor
                     new string[]{ "pack", "gamecontrollerdb.txt" },
                     new string[]{ "pack", "TitilliumWeb-Light.ttf" },
                     new string[]{ "shaders", "bloom.frag" },
-                    new string[]{ "shaders", "color.frag" },
                     new string[]{ "shaders", "common.vert" },
                     new string[]{ "", "AScript.lib" },
                 };

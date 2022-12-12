@@ -352,12 +352,6 @@ public partial class ObjectManager : Form
             string instanceMain = "";
             // main
             instanceMain += "object " + _currentObject.Name + "\n";
-            /*
-            foreach (var item in LocalVaribles)
-            {
-                instance_main += "local " + (item.ReadOnly ? "READ_ONLY " : "") + item.Type.ToString().ToLower() + " " + item.Name + "\n";
-            }
-            */
             foreach (var item in _currentObject.Variables)
             {
                 instanceMain += "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n";
@@ -381,9 +375,6 @@ public partial class ObjectManager : Form
                     switch (item.Type)
                     {
                         case Variable.VariableType.VTypeObject:
-
-                            break;
-                        case Variable.VariableType.VTypeColor:
 
                             break;
                         case Variable.VariableType.VTypeScene:

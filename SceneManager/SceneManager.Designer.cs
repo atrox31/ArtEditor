@@ -100,7 +100,7 @@
             this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1585, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1584, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -132,7 +132,7 @@
             this.showToolStripMenuItem,
             this.snapToGridToolStripMenuItem});
             this.gridToolStripMenuItem.Name = "gridToolStripMenuItem";
-            this.gridToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gridToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.gridToolStripMenuItem.Text = "Grid";
             // 
             // dimensionsToolStripMenuItem
@@ -174,7 +174,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 955F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1585, 836);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1584, 726);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -280,7 +280,7 @@
             this.groupBox2.Size = new System.Drawing.Size(286, 365);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Object picker";
+            this.groupBox2.Text = "Scene editor";
             // 
             // tabControl1
             // 
@@ -520,7 +520,7 @@
             // 
             this.groupBox6.Location = new System.Drawing.Point(3, 515);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(288, 318);
+            this.groupBox6.Size = new System.Drawing.Size(288, 205);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Properties";
@@ -554,11 +554,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1585, 861);
+            this.ClientSize = new System.Drawing.Size(1584, 751);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.toolStrip1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SceneManager";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "SceneManager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SceneManager_FormClosing);
             this.Load += new System.EventHandler(this.SceneManager_Load);

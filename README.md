@@ -5,11 +5,12 @@ Download release ArtCoreEditor_binx64, unzip and run editor<br>
 Or<br>
 1. Clone ArtEditor
 2. Download Core.zip, unpack to Core.tar (do not unpack future) this is binary pack from compatible ArtCore release
+<br>Or run script from ArtCore repository to create new Core.tar.
 3. Run ArtCore Editor
 4. Select Core.tar when Editor ask to
 <br>
-Create new project or download and unzip test_game.zip <- open 'Project.acg' with ArtEditor<br>
-Click ![plbtn](https://user-images.githubusercontent.com/5814733/206944194-d0af268b-c106-42b0-b251-f0e04e91c895.png) to play game in debug mode.<br>
+Create new project or download and unzip test_game.zip <- open 'Project.acg' with ArtEditor<br>Click this button to play game in debug mode.
+<img src="https://user-images.githubusercontent.com/5814733/206944317-78709c1e-a0ef-43c6-9b44-aeecc667482e.png" /><br>
 
 # Features
 * Add custom assets like:

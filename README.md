@@ -9,7 +9,7 @@ Or<br>
 4. Select Core.tar when Editor ask to
 <br>
 Create new project or download and unzip test_game.zip <- open 'Project.acg' with ArtEditor<br>
-Click ![plbtn](https://user-images.githubusercontent.com/5814733/205962203-646bf87c-2777-4d2d-b783-6e951fad7b4d.png) to play game in debug mode.<br>
+Click ![plbtn](https://user-images.githubusercontent.com/5814733/206944194-d0af268b-c106-42b0-b251-f0e04e91c895.png) to play game in debug mode.<br>
 
 # Features
 * Add custom assets like:

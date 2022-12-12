@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using ArtCore_Editor.Enums;
 
@@ -13,9 +15,13 @@ public partial class VariableEditor : Form
         return v.ShowDialog() == DialogResult.OK ? new Variable(v.VariableType, v.Name, v.Default) : null;
     }
 
-    public Variable.VariableType VariableType;
+    private Variable.VariableType VariableType { get; }
     public string Default;
-    public Variable Variable;
+    public Variable Variable { get; private set; }
+
+    // enum can be edited only if editor wants to, there is no possibility to create custom enum
+    private bool _isEnum;
+    private List<string> _enumValues;
 
     private readonly bool _defaultIsNeeded = false;
 
@@ -30,8 +36,9 @@ public partial class VariableEditor : Form
         FieldName.Text = variable.Name;
         FieldDefault.Text = variable.Default;
         FieldType.SelectedIndex = (int)variable.Type;
+        _isEnum = false;
     }
-    public VariableEditor(bool getValueForCodeEditor, string varType, string value = "")
+    public VariableEditor(bool getValueForCodeEditor, string varType, string value = "", List<string> enumValues = null)
     {
         InitializeComponent(); Program.ApplyTheme(this);
         _defaultIsNeeded = true;
@@ -39,8 +46,20 @@ public partial class VariableEditor : Form
         FieldName.ReadOnly = true;
         FieldDefault.Text = value;
         FieldType.DataSource = Enum.GetValues(typeof(Variable.VariableType));
-        FieldType.SelectedItem = Enum.Parse(typeof(Variable.VariableType), varType.ToUpper());
+        VariableType = (Variable.VariableType)Enum.Parse(typeof(Variable.VariableType), varType.ToUpper());
+        FieldType.SelectedItem = VariableType;
         FieldType.Enabled = false;
+
+
+        if (VariableType == Variable.VariableType.VTypeEnum)
+        {
+            _isEnum = true;
+            _enumValues = enumValues;
+        }
+        else
+        {
+            _isEnum = false;
+        }
     }
 
     private void button1_Click(object sender, EventArgs e)
@@ -157,6 +176,10 @@ public partial class VariableEditor : Form
                     if (Functions.ErrorCheck(float.TryParse(rect[2], out float _), "Wrong default value. must be: x:y:w:h")) return;
                     if (Functions.ErrorCheck(float.TryParse(rect[3], out float _), "Wrong default value. must be: x:y:w:h")) return;
                     break;
+                case Variable.VariableType.VTypeEnum:
+                    if (Functions.ErrorCheck(_enumValues != null, "Can not create custom enums.")) return;
+                    if (Functions.ErrorCheck(_enumValues.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -203,6 +226,8 @@ public partial class VariableEditor : Form
     private void button3_Click(object sender, EventArgs e)
     {
         Enum.TryParse<Variable.VariableType>(FieldType.SelectedValue.ToString(), out var status);
+        // must check if enum is user defined or ArtCore defined
+        if (status == Variable.VariableType.VTypeEnum && _enumValues == null) return;
         FieldDefault.Text = status switch
         {
             Variable.VariableType.VTypeObject => PicFromList.Get(GameProject.GetInstance().Instances.Keys.ToList()),
@@ -212,6 +237,7 @@ public partial class VariableEditor : Form
             Variable.VariableType.VTypeMusic => PicFromList.Get(GameProject.GetInstance().Music.Keys.ToList()),
             Variable.VariableType.VTypeFont => PicFromList.Get(GameProject.GetInstance().Fonts.Keys.ToList()),
             Variable.VariableType.VTypeScene => PicFromList.Get(GameProject.GetInstance().Scenes.Keys.ToList()),
+            Variable.VariableType.VTypeEnum => PicFromList.Get(_enumValues),
             _ => "" //default
         };
     }

@@ -13,8 +13,8 @@ namespace ArtCore_Editor.Enums
             VTypeInstance, VTypeObject, VTypeScene,
             // assets
             VTypeSprite, VTypeTexture, VTypeSound, VTypeMusic, VTypeFont,
-            // structs
-            VTypePoint, VTypeRectangle, VTypeString, VTypeColor
+            // structs                                           as string
+            VTypePoint, VTypeRectangle, VTypeString, VTypeColor, VTypeEnum
         }
         public VariableType Type { get; set; }
         public string Name { get; set; }

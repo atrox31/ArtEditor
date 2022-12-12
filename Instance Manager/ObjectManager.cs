@@ -229,7 +229,7 @@ public partial class ObjectManager : Form
             {
                 if (var.Name == ((Control)variable).Name)
                 {
-                    MessageBox.Show("Varible name exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Variable name exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
             }

@@ -40,13 +40,11 @@ public partial class ScriptEditor : Form
         if (FunctionsList == null)
         {
             FunctionsList = new List<Function>();
-            foreach (var line in System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
+            foreach (string line in System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
             {
                 if (line.Length == 0) continue;
                 if (line.StartsWith("//")) continue;
-                if (line == null) continue;
-                string copy = line;
-                if (String.Concat(copy.Where(c => !Char.IsWhiteSpace(c))).Length == 0) continue;
+                if (string.Concat(line.Where(c => !char.IsWhiteSpace(c))).Length == 0) continue;
                 FunctionsList.Add(new Function(line));
             }
         }
@@ -104,7 +102,7 @@ public partial class ScriptEditor : Form
     {
         if (comboBox2.SelectedItem.ToString() == "New Value")
         {
-            VariableEditor variableEditor = new VariableEditor(true, _requiredType.ToString().Substring(1));
+            VariableEditor variableEditor = new VariableEditor(true, _requiredType.ToString());
             if (variableEditor.ShowDialog() == DialogResult.OK)
             {
                 // populate

@@ -9,6 +9,7 @@ namespace ArtCore_Editor.Instance_Manager.varible;
 
 public partial class VariableEditor : Form
 {
+    // get new value, user select name, type and default
     public static Variable GetValue()
     {
         VariableEditor v = new VariableEditor();
@@ -46,7 +47,7 @@ public partial class VariableEditor : Form
         FieldName.ReadOnly = true;
         FieldDefault.Text = value;
         FieldType.DataSource = Enum.GetValues(typeof(Variable.VariableType));
-        VariableType = (Variable.VariableType)Enum.Parse(typeof(Variable.VariableType), varType.ToUpper());
+        VariableType = (Variable.VariableType)Enum.Parse(typeof(Variable.VariableType), varType);
         FieldType.SelectedItem = VariableType;
         FieldType.Enabled = false;
 
@@ -64,15 +65,15 @@ public partial class VariableEditor : Form
 
     private void button1_Click(object sender, EventArgs e)
     {// apply
-        if (Functions.ErrorCheck(FieldName.TextLength > 3, "Wrong Variable name. Minimum 3 char, maximum 24 char")) return;
-        if (Functions.ErrorCheck(FieldName.TextLength < 24, "Wrong Variable name. Minimum 3 char, maximum 24 char.")) return;
+        if (Functions.Functions.ErrorCheck(FieldName.TextLength > 3, "Wrong Variable name. Minimum 3 char, maximum 24 char")) return;
+        if (Functions.Functions.ErrorCheck(FieldName.TextLength < 24, "Wrong Variable name. Minimum 3 char, maximum 24 char.")) return;
         Name = FieldName.Text;
 
         Enum.TryParse(FieldType.SelectedValue.ToString(), out Variable.VariableType type);
 
         if (_defaultIsNeeded)
         {
-            if (Functions.ErrorCheck(FieldDefault.Text.Length > 0, "Type variable value in default field.")) return;
+            if (Functions.Functions.ErrorCheck(FieldDefault.Text.Length > 0, "Type variable value in default field.")) return;
         }
 
         if (FieldDefault.Text.Length > 0)
@@ -82,65 +83,65 @@ public partial class VariableEditor : Form
             {
                 case Variable.VariableType.VTypeInt:
                 {
-                    if (Functions.ErrorCheck(int.TryParse(FieldDefault.Text, out int _), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(int.TryParse(FieldDefault.Text, out int _), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeFloat:
                 {
-                    if (Functions.ErrorCheck(float.TryParse(FieldDefault.Text, out float _), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(FieldDefault.Text, out float _), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeBool:
                 {
-                    if (Functions.ErrorCheck(bool.TryParse(FieldDefault.Text, out bool _), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(bool.TryParse(FieldDefault.Text, out bool _), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeInstance:
                 {
-                    if (Functions.ErrorCheck(false, "instance is defined on runtime, not allow to default in editor!")) return;
+                    if (Functions.Functions.ErrorCheck(false, "instance is defined on runtime, not allow to default in editor!")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeObject:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Instances.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Instances.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeSprite:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Sprites.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Sprites.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeTexture:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Textures.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Textures.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeSound:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Sounds.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Sounds.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeMusic:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Music.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Music.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeFont:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Fonts.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Fonts.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeScene:
                 {
-                    if (Functions.ErrorCheck(GameProject.GetInstance().Scenes.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(GameProject.GetInstance().Scenes.Keys.Contains(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypePoint:
                 {
                     var point = FieldDefault.Text.Split(':');
-                    if (Functions.ErrorCheck(point.Length == 2, "Wrong default value. must be: x:y")) return;
-                    if (Functions.ErrorCheck(float.TryParse(point[0], out float _), "Wrong default value. must be: x:y")) return;
-                    if (Functions.ErrorCheck(float.TryParse(point[1], out float _), "Wrong default value. must be: x:y")) return;
+                    if (Functions.Functions.ErrorCheck(point.Length == 2, "Wrong default value. must be: x:y")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(point[0], out float _), "Wrong default value. must be: x:y")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(point[1], out float _), "Wrong default value. must be: x:y")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeColor:
@@ -149,7 +150,7 @@ public partial class VariableEditor : Form
                     {
                         FieldDefault.Text = FieldDefault.Text.Insert(0, "#");
                     }
-                    if (Functions.ErrorCheck(Functions.IsHex(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(Functions.Functions.IsHex(FieldDefault.Text), "Wrong default value.")) return;
                 }
                     break;
                 case Variable.VariableType.VTypeString:
@@ -162,7 +163,7 @@ public partial class VariableEditor : Form
                     {
                         FieldDefault.Text += "\"";
                     }
-                    if (Functions.ErrorCheck(FieldDefault.Text.Count(c => c == '"') == 2, "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(FieldDefault.Text.Count(c => c == '"') == 2, "Wrong default value.")) return;
                 }
                     break;
 
@@ -170,15 +171,15 @@ public partial class VariableEditor : Form
                     break;
                 case Variable.VariableType.VTypeRectangle:
                     var rect = FieldDefault.Text.Split(':');
-                    if (Functions.ErrorCheck(rect.Length == 4, "Wrong default value. must be: x:y")) return;
-                    if (Functions.ErrorCheck(float.TryParse(rect[0], out float _), "Wrong default value. must be: x:y:w:h")) return;
-                    if (Functions.ErrorCheck(float.TryParse(rect[1], out float _), "Wrong default value. must be: x:y:w:h")) return;
-                    if (Functions.ErrorCheck(float.TryParse(rect[2], out float _), "Wrong default value. must be: x:y:w:h")) return;
-                    if (Functions.ErrorCheck(float.TryParse(rect[3], out float _), "Wrong default value. must be: x:y:w:h")) return;
+                    if (Functions.Functions.ErrorCheck(rect.Length == 4, "Wrong default value. must be: x:y")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(rect[0], out float _), "Wrong default value. must be: x:y:w:h")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(rect[1], out float _), "Wrong default value. must be: x:y:w:h")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(rect[2], out float _), "Wrong default value. must be: x:y:w:h")) return;
+                    if (Functions.Functions.ErrorCheck(float.TryParse(rect[3], out float _), "Wrong default value. must be: x:y:w:h")) return;
                     break;
                 case Variable.VariableType.VTypeEnum:
-                    if (Functions.ErrorCheck(_enumValues != null, "Can not create custom enums.")) return;
-                    if (Functions.ErrorCheck(_enumValues.Contains(FieldDefault.Text), "Wrong default value.")) return;
+                    if (Functions.Functions.ErrorCheck(_enumValues != null, "Can not create custom enums.")) return;
+                    if (Functions.Functions.ErrorCheck(_enumValues != null && _enumValues.Contains(FieldDefault.Text), "Wrong default value.")) return;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

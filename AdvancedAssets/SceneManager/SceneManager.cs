@@ -313,7 +313,11 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
         
         private void SceneManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_saved) return;
+            if (_saved)
+            {
+                this.DialogResult = DialogResult.OK;
+                return;
+            }
             switch (MessageBox.Show("You made some changes, save?", "Save variables?",
                         MessageBoxButtons.YesNoCancel,
                         MessageBoxIcon.Question))

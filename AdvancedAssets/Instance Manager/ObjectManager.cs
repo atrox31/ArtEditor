@@ -340,7 +340,7 @@ public partial class ObjectManager : Form
         using FileStream createStream = File.Create(ProjectPath + "\\" + _currentObject.ProjectPath + "\\" + _currentObject.FileName);
         byte[] buffer = JsonConvert.SerializeObject(_currentObject).Select(c => (byte)c).ToArray();
         createStream.Write(buffer);
-        /* write all code do diffrent files
+        // write all code do different files
         if (_currentObject.Events.Keys.Count > 0)
         {
 
@@ -353,7 +353,7 @@ public partial class ObjectManager : Form
                 }// else error
             }
         }
-        */
+        
     }
 
     public void WriteObjectCode()

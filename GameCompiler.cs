@@ -390,7 +390,7 @@ namespace ArtCore_Editor
                     "[setup]",
                     "Width=" + scene.Value.Width,
                     "Height=" + scene.Value.Height,
-                    "BackGroundTexture=" + scene.Value.BackGroundTexture.Name,
+                    "BackGroundTexture=" + scene.Value.BackGroundTexture?.Name,
                     "BackGroundType=" + scene.Value.BackGroundType.ToString(),
                     "BackGroundWrapMode=" + scene.Value.BackGroundWrapMode,
                     "BackGroundColor=" + scene.Value.BackGroundColor.ColorToHex(),

@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace ArtCore_Editor.etc
 {
-    public partial class LoadScreen : Form
+    public sealed partial class LoadScreen : Form
     {
-        bool _fake;
+        private readonly bool _fake;
         public LoadScreen(bool fake)
         {
             InitializeComponent(); Program.ApplyTheme(this);
@@ -14,6 +14,7 @@ namespace ArtCore_Editor.etc
             progressBar1.Value = 10;
             progressBar1.Visible = true;
             progressBar1.Enabled = true;
+            Refresh();
         }
         public void SetProgress(int val)
         {

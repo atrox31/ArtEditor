@@ -1,6 +1,6 @@
 ﻿namespace ArtCore_Editor.etc
 {
-    partial class LoadScreen
+    sealed partial class LoadScreen
     {
         /// <summary>
         /// Required designer variable.

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using ArtCore_Editor.Functions;
 using ArtCore_Editor.Pick_forms;
@@ -16,6 +19,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
         private PointF[] _spritePerPixelPolygon;
         private const int SpritePerPixelMaxPrecision = 64;
+        private string _aid;
 
         private void CreateNewSprite()
         {
@@ -28,9 +32,10 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         {
             InitializeComponent(); Program.ApplyTheme(this);
             s_preview.SizeMode = PictureBoxSizeMode.StretchImage;
+            _aid = sprite;
             if (sprite != null)
             {
-                _globalSprite = GameProject.GetInstance().Sprites[sprite];
+                _globalSprite = (Sprite)GameProject.GetInstance().Sprites[sprite].Clone();
                 _globalSprite.Load();
                 _pFirstFrame = 0;
                 _pLastFrame = (_globalSprite.Textures == null ? 0 : _globalSprite.Textures.Count - 1);
@@ -48,10 +53,13 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
         private void SaveSprite()
         {
-            while (s_spritename.Text.Length == 0)
-            {
-                s_spritename.Text = GetString.Get("Sprite name");
-            }
+            // check if asset have name
+            if (Functions.Functions.ErrorCheck(s_spritename.Text.Length > 0,
+                    $"Asset must have name!")) return;
+
+            // check if asset name is longer than 3 chars
+            if (Functions.Functions.ErrorCheck(s_spritename.Text.Length > 3,
+                    $"Asset name must have more that 3 chars ({s_spritename.Text.Length} current)")) return;
 
             _globalSprite.CollisionMask =
                 (Sprite.CollisionMaskEnum)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : s_col_mask_perpixel.Checked ? 3 : 0) : 0);
@@ -65,23 +73,37 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             _pLastFrame = (_globalSprite.Textures == null ? 0 : _globalSprite.Textures.Count - 1);
 
             _globalSprite.Name = s_spritename.Text;
+            _globalSprite.ProjectPath = $"\\assets\\sprite\\{_globalSprite.Name}";
+            _globalSprite.FileName = $"{_globalSprite.Name}.spr";
 
-            Dictionary<string, Sprite> spriteDic = MainWindow.GetInstance().GlobalProject.Sprites;
-            if (!spriteDic.ContainsKey(_globalSprite.Name))
+            // fresh sprite
+            if (_aid == null)
             {
-                // add new
-                spriteDic.Add(s_spritename.Text, new Sprite());
+                _aid = _globalSprite.Name;
+                _globalSprite.Save();
+                GameProject.GetInstance().Sprites.Add(_aid, (Sprite)_globalSprite.Clone());
+                return;
+            }
+            // edited sprite
+            if (_globalSprite.Name != _aid)
+            {// change name
+                string oldProjectPath = $"\\assets\\sprite\\{_aid}";
+                if (Directory.Exists(GameProject.ProjectPath + oldProjectPath))
+                {
+                    Directory.Delete(GameProject.ProjectPath + oldProjectPath, true);
+                }
+                _globalSprite.Save();
+                GameProject.GetInstance().Sprites.Remove(_aid);
+                _aid = _globalSprite.Name;
+                GameProject.GetInstance().Sprites.Add(_aid, (Sprite)_globalSprite.Clone());
+                return;
             }
             else
             {
-                if (_globalSprite.Name != spriteDic[_globalSprite.Name].Name)
-                {
-                    spriteDic.RenameKey(_globalSprite.Name, s_spritename.Text);
-                }
+                // the same name
+                _globalSprite.Save();
+                GameProject.GetInstance().Sprites[_aid] = (Sprite)_globalSprite.Clone();
             }
-            _globalSprite.Name = s_spritename.Text;
-            _globalSprite.Save();
-            spriteDic[_globalSprite.Name] = (Sprite)_globalSprite.Clone();
         }
 
         private void SetCollisionMaskSliderValues()
@@ -173,6 +195,11 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
         private void ImportSpriteImages(bool clearList)
         {
+            if (s_spritename.Text.Length == 0)
+            {
+                s_spritename.Text = "Unnamed_" + GameProject.GetInstance().Sprites
+                    .Select(s => s.Value.Name.Contains("Unnamed_")).Count().ToString();
+            }
             if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
             if (clearList)
             {

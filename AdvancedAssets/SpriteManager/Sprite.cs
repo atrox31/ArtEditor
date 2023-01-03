@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ArtCore_Editor.Assets;
+using ArtCore_Editor.etc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -127,18 +128,46 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
         public void Save()
         {
-            using FileStream createStream =
-                File.Create( GameProject.ProjectPath + ProjectPath + "\\" + FileName);
-            byte[] buffer = JsonConvert.SerializeObject(this).Select(c => (byte)c).ToArray();
-            createStream.Write(buffer);
+            LoadScreen load = new LoadScreen(true);
+            load.Show();
+            {
+                if (Directory.Exists(GameProject.ProjectPath + ProjectPath) && ProjectPath.Length > 0)
+                {
+                    Directory.Delete(GameProject.ProjectPath + ProjectPath, true);
+                }
+
+                Directory.CreateDirectory(GameProject.ProjectPath + ProjectPath + "\\img");
+
+                using FileStream createStream =
+                    File.Create(GameProject.ProjectPath + ProjectPath + "\\" + FileName);
+
+                byte[] buffer = JsonConvert.SerializeObject(this).Select(c => (byte)c).ToArray();
+                createStream.Write(buffer);
+
+                if (Textures.Count <= 0) return;
+                int i = 0;
+                foreach (Image texture in Textures)
+                {
+                    texture.Save(GameProject.ProjectPath + ProjectPath + "\\img\\" + (i++) + ".png");
+                }
+            }
+            load.Close();
+            load.Dispose();
         }
 
         public bool Load()
         {
-            foreach (string enumerateFile in Directory.EnumerateFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
+            LoadScreen load = new LoadScreen(true);
+            load.Show();
             {
-                AddImage(enumerateFile);
+                foreach (string enumerateFile in 
+                         Directory.EnumerateFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
+                {
+                    AddImage(enumerateFile);
+                }
             }
+            load.Close();
+            load.Dispose();
             return true;
         }
             

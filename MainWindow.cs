@@ -147,6 +147,9 @@ namespace ArtCore_Editor
                         }
                         lines.Insert(0, path);
                         File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, lines);
+
+                        RefreshListView(false);
+
                         loadScreen.SetProgress(100);
                         loadScreen.Close();
                         return;
@@ -351,9 +354,16 @@ namespace ArtCore_Editor
 
         private void DeleteAssetFilesFromProject<T>(T list, string name) where T : Dictionary<string, Asset>
         {
-            list.Remove(name);
-            RefreshListView();
-            MakeChange();
+            if (list.ContainsKey(name))
+            {
+                list.Remove(name);
+                RefreshListView();
+                MakeChange();
+            }
+            else
+            {
+                // error?
+            }
         }
         private void DeleteAssetFromList(string category, string name)
         {

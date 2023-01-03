@@ -135,6 +135,8 @@ namespace ArtCore_Editor.Assets
             {
                 if (RefToGameProjectDictionary.ContainsKey(CurrentAsset.Name))
                 {
+                    if (Functions.Functions.ErrorCheck(!RefToGameProjectDictionary.ContainsKey(nameInputBox.Text),
+                            $"Asset with that name exists! First delete old asset.")) return;
                     RefToGameProjectDictionary.RenameKey(CurrentAsset.Name, nameInputBox.Text);
                 }
 

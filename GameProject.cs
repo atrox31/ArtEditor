@@ -2,13 +2,13 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
-using ArtCore_Editor.Assets.Sprite;
-using ArtCore_Editor.Instance_Manager;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager;
+using ArtCore_Editor.etc;
+using ArtCore_Editor.AdvancedAssets.SceneManager;
+using ArtCore_Editor.AdvancedAssets.SpriteManager;
 
 namespace ArtCore_Editor
 {
@@ -65,7 +65,7 @@ namespace ArtCore_Editor
         [JsonProperty]
         public string ProjectName = "New game";
         [JsonProperty]
-        public Scene StartingScene = null;
+        public string StartingScene = null;
 
         // game assets
         [JsonProperty]
@@ -79,7 +79,7 @@ namespace ArtCore_Editor
         [JsonProperty]
         public Dictionary<string, Asset> Music { get; set; }
         [JsonProperty]
-        public Dictionary<string, Instance_Manager.Instance> Instances { get; set; }
+        public Dictionary<string, Instance> Instances { get; set; }
         [JsonProperty]
         public Dictionary<string, Scene> Scenes { get; set; }
 
@@ -88,11 +88,11 @@ namespace ArtCore_Editor
             ArtCoreDefaultSettings = new ArtCorePreset();
         }
 
-        private void CalcualteMd5HashForAllAssets<T>(T assetListDictionary) where T : Dictionary<string, Asset>
+        private void CalculateHashForAllAssets<T>(T assetListDictionary) where T : Dictionary<string, Asset>
         {
-            foreach (var item in assetListDictionary)
+            foreach (KeyValuePair<string, Asset> item in assetListDictionary)
             {
-                item.Value.FileMd5 = Functions.CalculateMd5(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
+                item.Value.FileMd5 = Functions.Functions.CalculateHash(ProjectPath + "\\" + item.Value.ProjectPath + "\\" + item.Value.FileName);
             }
         }
 
@@ -106,21 +106,23 @@ namespace ArtCore_Editor
             {
                 byte[] buffer = JsonConvert.SerializeObject(this, Formatting.Indented).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
+                
             }
+            
             // md5 hash is use to skip asset in pack to asset.pak file
-            CalcualteMd5HashForAllAssets(Music);
-            CalcualteMd5HashForAllAssets(Fonts);
-            CalcualteMd5HashForAllAssets(Sounds);
-            CalcualteMd5HashForAllAssets(Textures);
+            CalculateHashForAllAssets(Music);
+            CalculateHashForAllAssets(Fonts);
+            CalculateHashForAllAssets(Sounds);
+            CalculateHashForAllAssets(Textures);
             loadScreen.Close();
         }
 
         private static void TryToFindAndAddAsset<T>(GameProject sender, T assetListDictionary, string assetKind) where T : Dictionary<string, Asset>
         {
             if (!Directory.Exists(ProjectPath + "\\assets\\" + assetKind)) return;
-            foreach (var file in Directory.GetFiles(ProjectPath + "\\assets\\" + assetKind))
+            foreach (string file in Directory.GetFiles(ProjectPath + "\\assets\\" + assetKind))
             {
-                sender.Music.Add(Path.GetFileName(file).Split('.')[0], new Asset()
+                assetListDictionary.Add(Path.GetFileName(file).Split('.')[0], new Asset()
                 {
                     Name = Path.GetFileName(file).Split('.')[0],
                     FileMd5 = "",
@@ -133,11 +135,11 @@ namespace ArtCore_Editor
         public static GameProject LoadFromFile(string project)
         {
             string fileContents;
-            using (var reader = new StreamReader(File.Open(project, FileMode.Open)))
+            using (StreamReader reader = new StreamReader(File.Open(project, FileMode.Open)))
             {
                 fileContents = reader.ReadToEnd();
             }
-            var gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
+            GameProject gameProject = JsonConvert.DeserializeObject<GameProject>(fileContents);
 
             if (gameProject == null)
             {
@@ -157,21 +159,20 @@ namespace ArtCore_Editor
                     // special type to load
                     if (Directory.Exists(projectPath + "\\assets\\sprite"))
                     {
-                        foreach (var file in Directory.GetDirectories(projectPath + "\\assets\\sprite", "*", SearchOption.TopDirectoryOnly))
+                        foreach (string file in Directory.GetDirectories(projectPath + "\\assets\\sprite", "*", SearchOption.TopDirectoryOnly))
                         {
-                            string fileName = file.Split("\\").Last();
-                            if (File.Exists(projectPath + "\\assets\\sprite\\" + fileName + "\\" + fileName + ".spr"))
+                            string fileName = projectPath + "\\assets\\sprite\\" + file.Split("\\").Last() + "\\" +
+                                              file.Split("\\").Last() + ".spr";
+                            if (File.Exists(fileName))
                             {
-                                Sprite tmp = new Sprite()
+                                using (StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open)))
                                 {
-                                    Name = fileName,
-                                    FileMd5 = "",
-                                    ProjectPath = "\\assets\\sprite\\" + fileName,
-                                    FileName = fileName + ".spr",
-                                };
-                                if (tmp.Load(projectPath + "\\assets\\sprite\\" + fileName + "\\" + tmp.FileName))
-                                {
-                                    gameProject.Sprites.Add(tmp.Name, tmp);
+                                    fileContents = reader.ReadToEnd();
+                                    Sprite sprite = JsonConvert.DeserializeObject<Sprite>(fileContents);
+                                    if (sprite != null)
+                                    {
+                                        gameProject.Sprites.Add(Path.GetFileName(file.Split("\\").Last()).Split('.')[0], sprite);
+                                    }
                                 }
                             }
                         }
@@ -180,46 +181,42 @@ namespace ArtCore_Editor
                 
                 if (Directory.Exists(projectPath + "\\object"))
                 {
-                    foreach (var file in Directory.GetDirectories(projectPath + "\\object", "*", SearchOption.TopDirectoryOnly))
+                    foreach (string file in Directory.GetDirectories(projectPath + "\\object", "*", SearchOption.TopDirectoryOnly))
                     {
                         string fileName = file + "\\" + file.Split('\\').Last() + ".obj";
-                        using (StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open)))
+                        using StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open));
+                        fileContents = reader.ReadToEnd();
+                        Instance instance = JsonConvert.DeserializeObject<Instance>(fileContents);
+                        if(instance != null)
                         {
-                            fileContents = reader.ReadToEnd();
-                            Instance instance = JsonConvert.DeserializeObject<Instance>(fileContents);
-                            if(instance != null)
-                            {
-                                gameProject.Instances.Add(Path.GetFileName(file).Split('.')[0], instance);
-                            }
+                            gameProject.Instances.Add(Path.GetFileName(file).Split('.')[0], instance);
                         }
                     }
                 }
                 if (Directory.Exists(projectPath + "\\scene"))
                 {
-                    foreach (var file in Directory.GetDirectories(projectPath + "\\scene", "*", SearchOption.TopDirectoryOnly))
+                    foreach (string file in Directory.GetDirectories(projectPath + "\\scene", "*", SearchOption.TopDirectoryOnly))
                     {
                         string fileName = file.Split("\\").Last();
                         if (File.Exists(projectPath + "\\scene\\" + fileName + "\\" + fileName + ".scd"))
                         {
-                            using (StreamReader reader = new StreamReader(File.Open(projectPath + "\\scene\\" + fileName + "\\" + fileName + ".scd", FileMode.Open)))
+                            using StreamReader reader = new StreamReader(File.Open(projectPath + "\\scene\\" + fileName + "\\" + fileName + ".scd", FileMode.Open));
+                            fileContents = reader.ReadToEnd();
+                            Scene scene = JsonConvert.DeserializeObject<Scene>(fileContents);
+                            if (scene != null)
                             {
-                                fileContents = reader.ReadToEnd();
-                                Scene scene = JsonConvert.DeserializeObject<Scene>(fileContents);
-                                if (scene != null)
-                                {
-                                    gameProject.Scenes.Add(fileName, scene);
-                                }
+                                gameProject.Scenes.Add(fileName, scene);
                             }
                         }
                     }
                 }
             }
 
-            foreach (var cScene in gameProject.Scenes.Values.ToList())
+            foreach (Scene cScene in gameProject.Scenes.Values.ToList())
             {
-                foreach (var ins in cScene.SceneInstancesList)
+                foreach (string ins in cScene.SceneInstancesList)
                 {
-                    var data = ins.Split('|');
+                    string[] data = ins.Split('|');
                     if (gameProject.Instances.ContainsKey(data[0]))
                     {
                         cScene.SceneInstances.Add(new SceneManager.SceneInstance(Convert.ToInt32(data[1]), Convert.ToInt32(data[2]), gameProject.Instances[data[0]]));

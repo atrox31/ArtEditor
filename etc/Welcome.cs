@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ArtCore_Editor.Functions;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.etc
 {
     public partial class Welcome : Form
     {
@@ -28,11 +29,11 @@ namespace ArtCore_Editor
             if (list.Count > 0)
             {
                 _haveLast = true;
-                foreach (var line in list)
+                foreach (string line in list)
                 {
                     if (!File.Exists(line + "\\" + Program.ProjectFilename)) continue;
                     LastProjects.Add(line);
-                    listBox1.Items.Add(line.Split('\\').Last() + " (" + Functions.ShortString(line, 30) + ")");
+                    listBox1.Items.Add(line.Split('\\').Last() + " (" + line.ShortString(30) + ")");
                     projects.Add(line);
                 }
                 File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename);

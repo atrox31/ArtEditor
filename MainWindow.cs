@@ -4,18 +4,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using System.Windows.Media;
-using System.Xml.Linq;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
+using ArtCore_Editor.AdvancedAssets.SceneManager;
+using ArtCore_Editor.AdvancedAssets.SpriteManager;
+using ArtCore_Editor.Assets.Font;
+using ArtCore_Editor.Assets.Music;
 using ArtCore_Editor.Assets.Sound;
-using ArtCore_Editor.Assets.Sprite;
 using ArtCore_Editor.Assets.Texture;
-using ArtCore_Editor.Instance_Manager;
+using ArtCore_Editor.etc;
+using ArtCore_Editor.Functions;
+using ArtCore_Editor.Pick_forms;
 using File = System.IO.File;
 using Path = System.IO.Path;
 
@@ -26,32 +30,58 @@ namespace ArtCore_Editor
         public GameProject GlobalProject;
         private static MainWindow _instance;
         private bool _projectSaved = true;
+        private readonly string _aCompilerVersion = null;
 
-        private readonly List<string> _filesToDeleteAtSave = new List<string>();
+        private string GetTitleString() => $"ArtCore Editor({Program.Version}) ArtCompiler({_aCompilerVersion ?? "not found"}) - \"{GlobalProject.ProjectName}\"";
 
-        private string GetTitleString() => $"ArtCore Editor - \"{GlobalProject.ProjectName}\"";
-
-        public void MakeChange()
+        private void MakeChange()
         {
             _projectSaved = false;
             Text = GetTitleString()+" *";
         }
-        public void MakeSaved()
+
+        private void MakeSaved()
         {
             _projectSaved = true;
             Text = GetTitleString();
         }
+
         public MainWindow()
         {
             // change number separator to .
-            var customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            CultureInfo customCulture =
+                (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
-            InitializeComponent(); Program.ApplyTheme(this);
-            
+            InitializeComponent();
+            Program.ApplyTheme(this);
+
             // static instance to this object
             _instance = this;
+
+            // get version of art compiler
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe"))
+            {
+                Process compiler = new Process();
+                compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe";
+                compiler.StartInfo.Arguments = "-version";
+                compiler.StartInfo.RedirectStandardOutput = true;
+                compiler.StartInfo.UseShellExecute = false;
+                compiler.StartInfo.CreateNoWindow = true;
+                compiler.Start();
+                List<string> output = new List<string>();
+                while (compiler.StandardOutput.ReadLine() is { } standardOutput)
+                {
+                    output.Add(standardOutput);
+                }
+
+                compiler.WaitForExit();
+                if (output.Count >= 2)
+                {
+                    _aCompilerVersion = output.Last();
+                }
+            }
         }
 
         public static MainWindow GetInstance()
@@ -62,18 +92,6 @@ namespace ArtCore_Editor
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GlobalProject.SaveToFile();
-            foreach (var file in _filesToDeleteAtSave)
-            {
-                if (File.Exists(file))
-                {
-                    File.Delete(file);
-                }
-                if (Directory.Exists(file))
-                {
-                    Directory.Delete(file, true);
-                }
-            }
-            _filesToDeleteAtSave.Clear();
             MakeSaved();
         }
 
@@ -95,10 +113,10 @@ namespace ArtCore_Editor
                     }
                     else
                     {
-                        var loadScreen = new LoadScreen(false);
+                        LoadScreen loadScreen = new LoadScreen(false);
                         loadScreen.Show();
 
-                        var path = folderBrowserDialog1.SelectedPath;
+                        string path = folderBrowserDialog1.SelectedPath;
                         GlobalProject = new GameProject();
                         GlobalProject.Prepare_new();
                         GlobalProject.ProjectName = path.Split('\\').Last();
@@ -117,13 +135,12 @@ namespace ArtCore_Editor
                         Directory.CreateDirectory(path + "\\scene");
                         Directory.CreateDirectory(path + "\\levels");
                         Directory.CreateDirectory(path + "\\output");
-                        Directory.CreateDirectory(path + "\\gui");
 
                         GlobalProject.SaveToFile();
                         MakeSaved();
 
                         loadScreen.SetProgress(80);
-                        var lines = new List<string>();
+                        List<string> lines = new List<string>();
                         if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
                         {
                             lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
@@ -151,7 +168,7 @@ namespace ArtCore_Editor
             }
             if (pathname == null)
             {
-                var dialog = new OpenFileDialog();
+                OpenFileDialog dialog = new OpenFileDialog();
                 dialog.Filter = "ArtCore Project|" + Program.ProjectFilename;
                 dialog.AddExtension = true;
                 dialog.Multiselect = false;
@@ -169,7 +186,7 @@ namespace ArtCore_Editor
 
             if (File.Exists(pathname))
             {
-                var ls = new LoadScreen(true);
+                LoadScreen ls = new LoadScreen(true);
                 ls.Show();
 
                 if (GlobalProject != null)
@@ -194,7 +211,7 @@ namespace ArtCore_Editor
 
             }
             
-            var lines = new List<string>();
+            List<string> lines = new List<string>();
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
             {
                 lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
@@ -215,8 +232,8 @@ namespace ArtCore_Editor
 
         private void AddToAssetList<T>(string category, Dictionary<string, T> objects, string categoryIcon)
         {
-            var lastNode = ProjectAsserList.Nodes.Count;
-            var categoryIndex = ProjectAssetList_imagelist.Images.IndexOfKey(categoryIcon);
+            int lastNode = ProjectAsserList.Nodes.Count;
+            int categoryIndex = ProjectAssetList_imagelist.Images.IndexOfKey(categoryIcon);
             if (categoryIndex < 0)
             {
                 ProjectAssetList_imagelist.Images.Add(Properties.Resources.ResourceManager.GetObject(categoryIcon) as Bitmap);
@@ -226,9 +243,9 @@ namespace ArtCore_Editor
             ProjectAsserList.Nodes[lastNode].Tag = "root";
 
             if (objects.Count <= 0) return;
-            foreach (var asset in objects.Values.ToList())
+            foreach (T asset in objects.Values.ToList())
             {
-                var currentAsset = asset.ForceType<Asset>();
+                Asset currentAsset = asset.ForceType<Asset>();
                 ProjectAsserList.Nodes[lastNode].Nodes.Add(currentAsset.Name, currentAsset.Name);
                 ProjectAsserList.Nodes[lastNode].Nodes[^1].Tag = "element";
             }
@@ -236,7 +253,7 @@ namespace ArtCore_Editor
 
         public void RefreshListView(bool rememberStates = true)
         {
-            var savedExpansionState = new List<string>();
+            List<string> savedExpansionState = new List<string>();
             if (rememberStates)
             {
                 savedExpansionState = ProjectAsserList.Nodes.GetExpansionState();
@@ -334,7 +351,6 @@ namespace ArtCore_Editor
 
         private void DeleteAssetFilesFromProject<T>(T list, string name) where T : Dictionary<string, Asset>
         {
-            _filesToDeleteAtSave.Add(GameProject.ProjectPath + "\\" + list[name].FileName);
             list.Remove(name);
             RefreshListView();
             MakeChange();
@@ -372,14 +388,14 @@ namespace ArtCore_Editor
         {
             // if asset is clicked, nor category
             if (e.Node.Parent == null) return;
-            var category = e.Node.FullPath.Split('\\')[0];
-            var name = e.Node.FullPath.Split('\\').Last();
+            string category = e.Node.FullPath.Split('\\')[0];
+            string name = e.Node.FullPath.Split('\\').Last();
             OpenAssetFromList(category, name);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            var args = Environment.GetCommandLineArgs();
+            string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
                 OpenProject(args[1]);
@@ -391,7 +407,7 @@ namespace ArtCore_Editor
             }
             while (GlobalProject == null)
             {
-                var welcome = new Welcome();
+                Welcome welcome = new Welcome();
                 welcome.ShowDialog();
                 if (welcome.DialogResult == DialogResult.OK) // open recent
                 {
@@ -433,8 +449,8 @@ namespace ArtCore_Editor
                cms.Items.Add("Add new folder");
             */
             if (e.ClickedItem == null) return;
-            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
             switch (e.ClickedItem.Text)
             {
                 case "Expand All":
@@ -448,7 +464,7 @@ namespace ArtCore_Editor
                     break;
                 default:
                     //"New item '" + e.Node.Text + "'"
-                    var item = e.ClickedItem.Text.Split("'")[1];
+                    string item = e.ClickedItem.Text.Split("'")[1];
                     OpenAssetFromList(item, null);
                     break;
             }
@@ -458,8 +474,8 @@ namespace ArtCore_Editor
             if (e.ClickedItem == null) return;
             if (ProjectAsserList.SelectedNode == null) return;
 
-            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
             switch (e.ClickedItem.Text)
             {
                 case "Open":
@@ -477,8 +493,8 @@ namespace ArtCore_Editor
         private void listContext_folder(object sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem == null) return;
-            var category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
-            var name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
+            string category = ProjectAsserList.SelectedNode.FullPath.Split('\\')[0];
+            string name = ProjectAsserList.SelectedNode.FullPath.Split('\\').Last();
             switch (e.ClickedItem.Text)
             {
                 case "Open":
@@ -504,7 +520,7 @@ namespace ArtCore_Editor
 
                     if (e.Node.Tag.ToString() == "root")
                     {
-                        var cms = new ContextMenuStrip();
+                        ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_root;
 
                         cms.Items.Add("New item '" + e.Node.Text + "'");
@@ -517,7 +533,7 @@ namespace ArtCore_Editor
                     else if (e.Node.Tag.ToString() == "folder")
                     {
                         // TODO
-                        var cms = new ContextMenuStrip();
+                        ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_folder;
                         cms.Items.Add("Expand All");
                         cms.Items.Add("Coolapse All");
@@ -528,7 +544,7 @@ namespace ArtCore_Editor
                     }
                     else if (e.Node.Tag.ToString() == "element")
                     {
-                        var cms = new ContextMenuStrip();
+                        ContextMenuStrip cms = new ContextMenuStrip();
                         cms.ItemClicked += listContext_element;
                         cms.Items.Add("Open");
                         cms.Items.Add("Delete");
@@ -543,14 +559,14 @@ namespace ArtCore_Editor
         void RunGame(bool debugMode)
         {
             string binPath = debugMode ? "bin_Debug" : "bin_Release";
-            var fileNamePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Core\\{binPath}\\ArtCore.exe";
+            string fileNamePath = $"{AppDomain.CurrentDomain.BaseDirectory}\\Core\\{binPath}\\ArtCore.exe";
             if (!File.Exists(fileNamePath))
             {
                 MessageBox.Show("ArtCore not found, try to update application.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            var compiler = new Process();
+            Process compiler = new Process();
             compiler.StartInfo.FileName = fileNamePath;
             compiler.StartInfo.Arguments = (debugMode ? "-debug " : "") + "-assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
             compiler.StartInfo.UseShellExecute = false;
@@ -558,7 +574,7 @@ namespace ArtCore_Editor
             compiler.StartInfo.RedirectStandardOutput = debugMode;
             compiler.StartInfo.RedirectStandardError = debugMode;
 
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             listBox1.Items.Clear();
             listBox1.Items.Add(compiler.StartInfo.Arguments);
             if (debugMode)
@@ -579,10 +595,10 @@ namespace ArtCore_Editor
             if (!debugMode) return;
             {
                 listBox1.Items.Add("wait for console output...");
-                var bw = new BackgroundWorker();
+                BackgroundWorker bw = new BackgroundWorker();
                 bw.DoWork += (object sender, DoWorkEventArgs e) =>
                 {
-                    foreach (var line in ((StringBuilder)e.Argument).ToString().Split('\n'))
+                    foreach (string line in ((StringBuilder)e.Argument).ToString().Split('\n'))
                     {
                         listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
                     }
@@ -597,7 +613,7 @@ namespace ArtCore_Editor
             // run
             if (CheckCoreFiles())
             {
-                var gameCompiler = new GameCompiler(false, true);
+                GameCompiler gameCompiler = new GameCompiler(false, true);
                 if (gameCompiler.ShowDialog() != DialogResult.OK) return;
                 RunGame(false);
             }
@@ -608,7 +624,7 @@ namespace ArtCore_Editor
             // run debug
             if (CheckCoreFiles())
             {
-                var gameCompiler = new GameCompiler(true);
+                GameCompiler gameCompiler = new GameCompiler(true);
                 if (gameCompiler.ShowDialog() != DialogResult.OK) return;
             }
             RunGame(true);
@@ -616,46 +632,17 @@ namespace ArtCore_Editor
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var settings = new ArtCoreSettings();
+            ArtCoreSettings settings = new ArtCoreSettings();
             settings.ShowDialog();
             // Save settings is automatic
         }
 
-        // search for unsused assets
-        private int DeleteUnusedFiles<T>(string path, T container) where T : Dictionary<string, Asset>
-        {
-            var total = 0;
-
-            foreach (var item in Directory.GetFiles(GameProject.ProjectPath + "\\" + path))
-            {
-                if (GlobalProject.Textures.ContainsKey(Path.GetFileNameWithoutExtension(item))) continue;
-                _filesToDeleteAtSave.Add(item);
-                total++;
-            }
-
-            return total;
-        }
-
-        // clean up files in project directory, files not used in project
-        private void cleanupFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var total = 0;
-            total += DeleteUnusedFiles("\\assets\\texture", GlobalProject.Textures);
-            total += DeleteUnusedFiles("\\assets\\font", GlobalProject.Fonts);
-            total += DeleteUnusedFiles("\\assets\\music", GlobalProject.Music);
-            total += DeleteUnusedFiles("\\assets\\sound", GlobalProject.Sounds);
-            total += DeleteUnusedFiles("\\assets\\sprite", (GlobalProject.Sprites).ForceType< Dictionary<string, Asset> > ());
-            total += DeleteUnusedFiles("\\scene", (GlobalProject.Scenes).ForceType<Dictionary<string, Asset>>());
-            total += DeleteUnusedFiles("\\object", (GlobalProject.Instances).ForceType<Dictionary<string, Asset>>());
-            MessageBox.Show($"Cleanup complite, deleted {total.ToString()}  elements", "Cleanup");
-        }
-
         private void setStartSceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Functions.ErrorCheck(GlobalProject.Scenes.Count > 0, "There is no scenes!")) return;
-            var scene = PicFromList.Get(GlobalProject.Scenes.Keys.ToList());
+            if (Functions.Functions.ErrorCheck(GlobalProject.Scenes.Count > 0, "There is no scenes!")) return;
+            string scene = PicFromList.Get(GlobalProject.Scenes.Keys.ToList());
             if (scene == null) return;
-            GlobalProject.StartingScene = GlobalProject.Scenes[scene];
+            GlobalProject.StartingScene = GlobalProject.Scenes[scene].Name;
         }
 
         // move game files to output folder, prepare to release game
@@ -664,25 +651,25 @@ namespace ArtCore_Editor
             // run
             if (CheckCoreFiles())
             {
-                var gameCompiler = new GameCompiler(false,false,true);
+                GameCompiler gameCompiler = new GameCompiler(false,false,true);
                 if (gameCompiler.ShowDialog() != DialogResult.OK) return;
 
-                var output = GameProject.ProjectPath + "\\output\\" + GlobalProject.ProjectName;
+                string output = GameProject.ProjectPath + "\\output\\" + GlobalProject.ProjectName;
                 if (Directory.Exists(output))
                 {
                     Directory.Delete(output, true);
                 }
                 Directory.CreateDirectory(output);
 
-                var files = new List<string>();
+                List<string> files = new List<string>();
                 files.Add(GameProject.ProjectPath + "\\game.dat");
                 files.Add(GameProject.ProjectPath + "\\assets.pak");
-                foreach (var cfile in Directory.GetFiles("Core\\bin_Release\\"))
+                foreach (string cfile in Directory.GetFiles("Core\\bin_Release\\"))
                 {
                     files.Add(cfile);
                 }
 
-                foreach (var file in files)
+                foreach (string file in files)
                 {
                     if (File.Exists(file))
                     {
@@ -700,13 +687,13 @@ namespace ArtCore_Editor
         // split content in filelist.txt in core.tar to separate file names(path included)
         List<string> StripFileList(List<string> content)
         {
-            var output = new List<string>();
+            List<string> output = new List<string>();
 
-            var folder = "";
-            var readFolderName = true;
-            var readFileNames = false;
+            string folder = "";
+            bool readFolderName = true;
+            bool readFileNames = false;
 
-            foreach (var line in content)
+            foreach (string line in content)
             {
                 //folder separator
                 if (line.Length == 0)
@@ -749,8 +736,8 @@ namespace ArtCore_Editor
         {
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\FileList.txt"))
             {
-                var list = StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\FileList.txt").ToList());
-                foreach (var line in list)
+                List<string> list = StripFileList(File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\FileList.txt").ToList());
+                foreach (string line in list)
                 {
                     if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + line))
                     {
@@ -776,7 +763,7 @@ namespace ArtCore_Editor
             string fileName;
             if (file == null)
             {
-                var openFileDialog = new OpenFileDialog();
+                OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Core.tar|Core.tar";
                 openFileDialog.Multiselect = false;
                 openFileDialog.AddExtension = true;
@@ -789,7 +776,7 @@ namespace ArtCore_Editor
                 fileName = file;
             }
 
-            var tempDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp";
+            string tempDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\" + "temp";
             if (Directory.Exists(tempDirectory))
             {
                 Directory.Delete(tempDirectory, true);
@@ -815,9 +802,9 @@ namespace ArtCore_Editor
             {
                 Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core", true);
             }
-            foreach (var content in StripFileList(File.ReadAllLines(tempDirectory + "\\Core\\FileList.txt").ToList()))
+            foreach (string content in StripFileList(File.ReadAllLines(tempDirectory + "\\Core\\FileList.txt").ToList()))
             {
-                var path = AppDomain.CurrentDomain.BaseDirectory + "\\" + Path.GetDirectoryName(content);
+                string path = AppDomain.CurrentDomain.BaseDirectory + "\\" + Path.GetDirectoryName(content);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -858,7 +845,7 @@ namespace ArtCore_Editor
             MakeSaved();
             if (CheckCoreFiles())
             {
-                var gameCompiler = new GameCompiler(true, true);
+                GameCompiler gameCompiler = new GameCompiler(true, true);
                 gameCompiler.ShowDialog();
             }
         }
@@ -878,10 +865,9 @@ namespace ArtCore_Editor
             MakeSaved();
             if (CheckCoreFiles())
             {
-                var gameCompiler = new GameCompiler(false, true);
+                GameCompiler gameCompiler = new GameCompiler(false, true);
                 gameCompiler.ShowDialog();
             }
         }
-
     }
 }

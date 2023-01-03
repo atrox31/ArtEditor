@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Pick_forms
 {
     public partial class PicFromList : Form
     {
@@ -13,7 +13,7 @@ namespace ArtCore_Editor
             InitializeComponent(); Program.ApplyTheme(this);
             Selected = null;
             SelectedIndex = -1;
-            listBox1.Items.AddRange(vars.ToArray());
+            if (vars != null) listBox1.Items.AddRange(vars.ToArray());
         }
 
         private void button1_Click(object sender, EventArgs e)

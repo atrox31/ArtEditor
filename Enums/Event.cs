@@ -1,6 +1,6 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Enums
 {
-    public class Event
+    public static class Event
     {
         public enum EventType
         {
@@ -26,6 +26,11 @@
             EvStep,
             EvDraw,
 
+        }
+        public enum TriggerType
+        {
+            EvOnClick,
+            EvOnHover
         }
     }
 }

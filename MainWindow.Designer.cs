@@ -36,10 +36,8 @@
             this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.updateCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cleanupFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.testInDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +80,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 500);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 650);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
             this.statusStrip1.Size = new System.Drawing.Size(944, 22);
@@ -119,10 +117,8 @@
             this.newProjectToolStripMenuItem,
             this.saveProjectToolStripMenuItem,
             this.loadProjectToolStripMenuItem,
-            this.moveProjectToolStripMenuItem,
             this.toolStripSeparator5,
-            this.updateCoreToolStripMenuItem,
-            this.cleanupFilesToolStripMenuItem});
+            this.updateCoreToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -150,12 +146,6 @@
             this.loadProjectToolStripMenuItem.Text = "Load Project";
             this.loadProjectToolStripMenuItem.Click += new System.EventHandler(this.loadProjectToolStripMenuItem_Click);
             // 
-            // moveProjectToolStripMenuItem
-            // 
-            this.moveProjectToolStripMenuItem.Name = "moveProjectToolStripMenuItem";
-            this.moveProjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.moveProjectToolStripMenuItem.Text = "Move Project";
-            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
@@ -167,13 +157,6 @@
             this.updateCoreToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.updateCoreToolStripMenuItem.Text = "Update Core";
             this.updateCoreToolStripMenuItem.Click += new System.EventHandler(this.updateCoreToolStripMenuItem_Click);
-            // 
-            // cleanupFilesToolStripMenuItem
-            // 
-            this.cleanupFilesToolStripMenuItem.Name = "cleanupFilesToolStripMenuItem";
-            this.cleanupFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cleanupFilesToolStripMenuItem.Text = "Cleanup files";
-            this.cleanupFilesToolStripMenuItem.Click += new System.EventHandler(this.cleanupFilesToolStripMenuItem_Click);
             // 
             // toolStripDropDownButton2
             // 
@@ -378,7 +361,7 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(98, 22);
             this.toolStripMenuItem1.Text = "New";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
@@ -396,7 +379,7 @@
             // createToolStripMenuItem
             // 
             this.createToolStripMenuItem.Name = "createToolStripMenuItem";
-            this.createToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
             this.createToolStripMenuItem.Text = "Create";
             this.createToolStripMenuItem.Click += new System.EventHandler(this.createToolStripMenuItem_Click);
             // 
@@ -433,8 +416,8 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.93395F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85.06606F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.54237F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.45763F));
             this.tableLayoutPanel1.Controls.Add(this.ProjectAsserList, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.listBox1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -443,7 +426,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(944, 475);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(944, 625);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // ProjectAsserList
@@ -452,7 +435,7 @@
             this.ProjectAsserList.Location = new System.Drawing.Point(4, 3);
             this.ProjectAsserList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ProjectAsserList.Name = "ProjectAsserList";
-            this.ProjectAsserList.Size = new System.Drawing.Size(132, 469);
+            this.ProjectAsserList.Size = new System.Drawing.Size(251, 619);
             this.ProjectAsserList.TabIndex = 0;
             this.ProjectAsserList.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             this.ProjectAsserList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
@@ -461,9 +444,9 @@
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(143, 3);
+            this.listBox1.Location = new System.Drawing.Point(262, 3);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(798, 469);
+            this.listBox1.Size = new System.Drawing.Size(678, 619);
             this.listBox1.TabIndex = 1;
             // 
             // folderBrowserDialog1
@@ -480,7 +463,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(944, 522);
+            this.ClientSize = new System.Drawing.Size(944, 672);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
@@ -533,10 +516,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem updateCoreToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.ToolStripMenuItem moveProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
         private System.Windows.Forms.ImageList ProjectAssetList_imagelist;
-        private System.Windows.Forms.ToolStripMenuItem cleanupFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setStartSceneToolStripMenuItem;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;

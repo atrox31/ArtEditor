@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.etc
 {
     public partial class ArtCoreSettings : Form
     {
@@ -45,7 +45,7 @@ namespace ArtCore_Editor
             InitializeComponent(); Program.ApplyTheme(this);
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
-                var fName = property.Name;
+                string fName = property.Name;
                 int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
                 AddNewField(fName, value.ToString());
 
@@ -58,7 +58,7 @@ namespace ArtCore_Editor
         {
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
-                var fName = "value_" + property.Name;
+                string fName = "value_" + property.Name;
                 int value = Convert.ToInt32(((TextBox)flowLayoutPanel1.Controls.Find(fName, true)[0]).Text);
                 property.SetValue(GameProject.GetInstance().ArtCoreDefaultSettings, value);
             }

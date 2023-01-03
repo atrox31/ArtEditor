@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
+using ArtCore_Editor.Functions;
 
 namespace ArtCore_Editor.Assets
 {
@@ -19,11 +15,7 @@ namespace ArtCore_Editor.Assets
         public string ProjectPath { get; set; }
         [JsonProperty]
         public string FileName { get; set; }
-        
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
+
         public Asset()
         {
             Name = "";
@@ -32,5 +24,25 @@ namespace ArtCore_Editor.Assets
             FileName = "";
         }
         
+        // return Path.Combine(GameProject.ProjectPath, ProjectPath, FileName);
+        public string GetFilePath()
+        {
+            return StringExtensions.Combine(GameProject.ProjectPath, ProjectPath, FileName);
+        }
+
+        public string GetTypeName()
+        {
+            string[] ppath = ProjectPath.Split('\\');
+            if (ppath.Length > 1)
+            {
+                return ppath[1];
+            }
+            return "unknown";
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

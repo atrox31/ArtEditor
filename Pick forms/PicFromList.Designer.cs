@@ -1,4 +1,4 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Pick_forms
 {
     partial class PicFromList
 {

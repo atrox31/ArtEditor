@@ -5,34 +5,16 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Point = System.Drawing.Point;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Functions
 {
     public static class Functions
     {
-        // return if string is hex value
-        public static bool IsHex(this string text)
-        {
-            if ( !(text.Length == 7 || text.Length == 9)) return false;
-            if (text[0] != '#') return false;
-            return (System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{6}") || System.Text.RegularExpressions.Regex.IsMatch(text, @"#[0-9a-fA-F]{8}"));
-        }
-
-        // convert color value to hex code #RRGGBB
-        public static string ColorToHex(Color color)
-        {
-            return "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
-        }
-
-        // convert hex value to color
-        public static Color HexToColor(string hex)
-        {
-            return (Color)ColorTranslator.FromHtml(hex);
-        }
-
         public static void ButtonAlter_Paint(object sender, PaintEventArgs e)
         {
             dynamic btn = (Button)sender;
@@ -56,9 +38,9 @@ namespace ArtCore_Editor
             T res = Activator.CreateInstance<T>();
             Type x = obj.GetType();
             Type y = res.GetType();
-            foreach (var destinationProp in y.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            foreach (PropertyInfo destinationProp in y.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
             {
-                var sourceProp = x.GetProperty(destinationProp.Name);
+                PropertyInfo sourceProp = x.GetProperty(destinationProp.Name);
                 if (sourceProp != null)
                 {
                     destinationProp.SetValue(res, sourceProp.GetValue(obj));
@@ -76,42 +58,50 @@ namespace ArtCore_Editor
         /// <returns></returns>
         public static IEnumerable<Control> GetAllControls(Control root)
         {
-            var stack = new Stack<Control>();
+            Stack<Control> stack = new Stack<Control>();
             stack.Push(root);
 
             while (stack.Any())
             {
-                var next = stack.Pop();
+                Control next = stack.Pop();
                 foreach (Control child in next.Controls)
                     stack.Push(child);
 
                 yield return next;
             }
         }
+
         /// <summary>
-        /// Return MD5 checksum
+        /// Return Hash checksum of file content
         /// </summary>
-        /// <param name="filename">Filename</param>
+        /// <param name="filename">path to file</param>
         /// <returns></returns>
-        public static string CalculateMd5(string filename)
+        public static string CalculateHash(string filename)
         {
-            using var md5 = System.Security.Cryptography.MD5.Create();
-            var stream = File.ReadAllBytes(filename);
-            //var hash = md5.ComputeHash(stream);
-            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
+            if (File.Exists(filename))
+            {
+                using SHA1 sha = System.Security.Cryptography.SHA1.Create();
+                byte[] stream = File.ReadAllBytes(filename);
+                return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "");
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
+
         /// <summary>
         /// Get linear value convert
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
+        /// <param name="valueMin"></param>
+        /// <param name="valueMax"></param>
         /// <param name="minScale"></param>
         /// <param name="maxScale"></param>
         /// <returns></returns>
-        public static int Scale(int value, int valueMin, int ValueMax, int minScale, int maxScale)
+        public static int Scale(int value, int valueMin, int valueMax, int minScale, int maxScale)
         {
-            var scaled = (float)minScale + (float)(value - valueMin) / (float)(ValueMax - valueMin) * (float)(maxScale - minScale);
+            float scaled = (float)minScale + (float)(value - valueMin) / (float)(valueMax - valueMin) * (float)(maxScale - minScale);
             return (int)Math.Round(scaled);
         }
         /// <summary>
@@ -129,27 +119,9 @@ namespace ArtCore_Editor
             dic.Remove(fromKey);
             dic[toKey] = value;
         }
+        
         /// <summary>
-        /// Get max lenght of string and replace in middle with "..." defined by parametr
-        /// </summary>
-        /// <param name="text">string to short</param>
-        /// <param name="length">max lenght of string</param>
-        /// <returns></returns>
-        public static string ShortString(string text, int length)
-        {
-            if (text == null) return "";
-            if (length == 0) return text;
-            if (text.Length == 0) return text;
-            if (text.Length <= length) return text;
-            if (text.Length - 3 <= length) return text;
-            int strLen = (length - 3) / 2;
-            if (strLen <= 0) return text;
-            string left = text.Substring(0, strLen);
-            string right = text.Substring(text.Length - 1 - strLen, strLen);
-            return left + "..." + right;
-        }
-        /// <summary>
-        /// Get distance beetwen two points
+        /// Get distance between two points
         /// </summary>
         /// <param name="p1">Point A</param>
         /// <param name="p2">Point B</param>
@@ -168,12 +140,12 @@ namespace ArtCore_Editor
         /// <returns>The resized image.</returns>
         public static Image ResizeImage(Image image, int width, int height)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
+            Rectangle destRect = new Rectangle(0, 0, width, height);
+            Bitmap destImage = new Bitmap(width, height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -181,7 +153,7 @@ namespace ArtCore_Editor
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes())
+                using (ImageAttributes wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);

@@ -1,27 +1,36 @@
-﻿using ArtCore_Editor.Assets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using ArtCore_Editor.Assets.Sprite;
-using ArtCore_Editor.Instance_Manager;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager;
+using ArtCore_Editor.AdvancedAssets.SceneManager;
+using ArtCore_Editor.AdvancedAssets.SpriteManager;
+using ArtCore_Editor.Assets;
+using ArtCore_Editor.Enums;
+using ArtCore_Editor.etc;
+using ArtCore_Editor.Functions;
+using Newtonsoft.Json;
+
+#pragma warning disable IDE0090
 
 namespace ArtCore_Editor
 {
     public partial class GameCompiler : Form
     {
-        static GameCompiler _instance;
-        class Message
+        private static GameCompiler _instance;
+
+        // object that is pass by background worker to show messages in log
+        private class Message
         {
             public string Text { get; set; }
             public int ProgressBarValue { get; set; }
             public bool ReplaceLastLine { get; set; }
-            public Message() { }
+            
+
             public Message(string text, int progressBarValue, bool replaceLastLine)
             {
                 Text = text;
@@ -30,296 +39,248 @@ namespace ArtCore_Editor
             }
         }
 
-        public static void OutputWrite(string message, bool replaceLastLine = false)
+        // write to compiler console
+        private static void OutputWrite(string message, bool replaceLastLine = false)
         {
             if (replaceLastLine)
             {
-                _instance.OutputLog.Items[_instance.OutputLog.Items.Count - 1] = message;
+                _instance.OutputLog.Items[^1] = message;
             }
             else
             {
                 _instance.OutputLog.Items.Add(message);
             }
+            _instance.OutputLog.SelectedIndex = _instance.OutputLog.Items.Count - 1;
         }
-        bool _isDebug;
-        bool _runGame;
-        bool _closeAfterDone;
+
+        private readonly bool _isDebug;
+        private readonly bool _runGame;
+        private readonly bool _closeAfterDone;
+        private const string AssetPackFileName = "assets.pak";
+        private const string GameDataFileName = "game.dat"; 
+        private List<string> FileList = new List<string>();
+
         public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
         {
-            InitializeComponent(); Program.ApplyTheme(this);
+            InitializeComponent();
+            Program.ApplyTheme(this);
             _instance = this;
             _isDebug = debugMode;
             _runGame = runGame;
             _closeAfterDone = closeAfterDone;
-
-                if (File.Exists(GameProject.ProjectPath + "\\" + "assets.pak"))
+            /*
+                if (File.Exists(GameProject.ProjectPath + "\\" + AssetPackFileName))
                 {
-                    File.Delete(GameProject.ProjectPath + "\\" + "assets.pak");
+                    File.Delete(GameProject.ProjectPath + "\\" + AssetPackFileName);
                 }
-            
+            */
             if (!_isDebug)
             {
                 button2.Visible = false;
             }
         }
-        public void PrepareAssets<T>(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, T> asset, string assetName, int progressMin, int progressMax)
+
+
+        private bool PrepareAssets(BackgroundWorker sender, DoWorkEventArgs e, Dictionary<string, Asset> asset,
+            string assetName, int progressMin, int progressMax, bool alwaysReplace = false)
         {
-            string output = GameProject.ProjectPath + "\\" + "assets.pak";
+            string output = GameProject.ProjectPath + "\\" + AssetPackFileName;
 
             int maxCount = asset.Count();
             int currentItem = 0;
             int skipped = 0;
-            sender.ReportProgress(1, new Message(assetName + " (" + currentItem.ToString() + "/" + maxCount.ToString() + ")", progressMin, false));
-            foreach (var item in asset)
+            sender.ReportProgress(1,
+                new Message(assetName + " (" + currentItem.ToString() + "/" + maxCount.ToString() + ")", progressMin,
+                    false));
+            foreach (KeyValuePair<string, Asset> item in asset)
             {
-                int currentProgress = Functions.Scale(currentItem, 0, maxCount, progressMin, progressMax);
-                if (CancelRequest(sender, e)) return;
+                int currentProgress = Functions.Functions.Scale(currentItem, 0, maxCount, progressMin, progressMax);
+                if (CancelRequest(sender, e)) return false;
+               
+                sender.ReportProgress(1,
+                    new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") " + item.Value.Name,
+                        currentProgress, true));
 
-                string name = (string)(typeof(T).GetProperty("Name")?.GetValue(item.Value, null));
-                string fileMd5 = (string)(typeof(T).GetProperty("File_MD5")?.GetValue(item.Value, null));
-                string fileName = ((string)(typeof(T).GetProperty("FileName")?.GetValue(item.Value, null)))?.Split('\\').Last();
-                string projectPath = (string)(typeof(T).GetProperty("ProjectPath")?.GetValue(item.Value, null));
-
-                //Console.WriteLine($"Name: {Name}; File_MD5: {File_MD5}; FileName: {FileName}; ProjectPath: {ProjectPath} ");
-
-                sender.ReportProgress(1, new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") " + name, currentProgress, true));
-
-                if (!File.Exists(GameProject.ProjectPath + "\\" + projectPath + "\\" + fileName))
+                if (!File.Exists(item.Value.GetFilePath()))
                 {
-                    sender.ReportProgress(1, new Message("Asset type: '" + name + "' file not exists", currentProgress, false));
-                    return;
+                    sender.ReportProgress(1,
+                        new Message("Asset type: '" + item.Value.Name + "' file not exists", currentProgress, false));
+                    return false;
                 }
 
-                // check MD5 cheksum
-                using (FileStream zipToOpen = new FileStream(output, FileMode.OpenOrCreate))
+                // check MD5 checksum
+                string hashFile = $"DEBUG\\{item.Value.FileName}.MD5";
+                string hash = ZipIO.ReadFromZip(output, hashFile, false)?.RemoveWhitespace();
+                if (hash == null) return false; // zip file error
+                if (hash == String.Empty || hash != item.Value.FileMd5 || alwaysReplace)
                 {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                    {
-                        string md5 = null;
-                        if (_isDebug)
-                        {
-                            string md5File = $"DEBUG\\{(typeof(T)).FullName}.{fileName}.MD5";
-                            if (archive.GetEntry(md5File) != null)
-                            {
-                                md5 = new StreamReader(archive.GetEntry(md5File).Open()).ReadToEnd();
-                            }
-                            else
-                            {
-                                ZipArchiveEntry readmeEntry = archive.CreateEntry(md5File);
-                                using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                                {
-                                    writer.Write(fileMd5);
-                                }
-
-                            }
-                        }
-                        if (md5 == null || md5 != fileMd5)
-                        {
-                            string entryName = assetName + "\\" + fileName;
-                            ZipArchiveEntry fileEntry = archive.GetEntry(entryName);
-                            if (fileEntry != null)
-                            {
-                                fileEntry.Delete();
-                            }
-                            fileEntry = archive.CreateEntry(entryName);
-
-                            using (StreamWriter writer = new StreamWriter(fileEntry.Open()))
-                            {
-                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\" + projectPath + "\\" + fileName))
-                                {
-                                    file.BaseStream.CopyTo(writer.BaseStream);
-                                }
-                                //var t = typeof(T);
-                                if (typeof(T) == typeof(Sprite))
-                                {
-                                    int i = 0;
-                                    foreach (var f in Directory.GetFiles(GameProject.ProjectPath + "\\" + projectPath + "\\img\\"))
-                                    {
-                                        //foreach (var _f in Directory.GetFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
-                                        ZipArchiveEntry fileEntryImg = archive.CreateEntry(assetName + "\\" + name + "\\" + i.ToString() + ".png");
-                                        i++;
-                                        using (StreamWriter writerImg = new StreamWriter(fileEntryImg.Open()))
-                                        {
-                                            using (StreamReader file = new StreamReader(f))
-                                            {
-                                                file.BaseStream.CopyTo(writerImg.BaseStream);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            skipped++;
-                        }
-                        _fileList.Add(assetName + "\\" + fileName);
-
-                    }
+                    // write asset content
+                    if (!ZipIO.WriteFileToZipFile(
+                        output,
+                        assetName + "\\" + item.Value.FileName,
+                        item.Value.GetFilePath(),
+                        true
+                    )) return false;
+                    // write hash sum
+                    if (!ZipIO.WriteLineToArchive(
+                        output,
+                        hashFile,
+                        Functions.Functions.CalculateHash(item.Value.GetFilePath()),
+                        true)) return false;
                 }
-                sender.ReportProgress(1, new Message(assetName + " (" + (++currentItem).ToString() + "/" + maxCount.ToString() + ") " + name, currentProgress, true));
+                else
+                {
+                    skipped++;
+                }
+                // add to file list so engine can access by normal name
+                FileList.Add(assetName + "\\" + item.Value.FileName + ";" + item.Value.Name);
+                if (CancelRequest(sender, e)) return false;
+                
+                sender.ReportProgress(1,
+                    new Message(assetName + " (" + (++currentItem).ToString() + "/" + maxCount.ToString() + ") " + item.Value.Name,
+                        currentProgress, true));
             }
-            sender.ReportProgress(1, new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") ", progressMax, true));
+
+            sender.ReportProgress(1,
+                new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") ", progressMax,
+                    true));
             sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progressMax, false));
+            return true;
         }
 
-        public static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
+        private static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
         {
-            if (obj.CancellationPending == true)
-            {
-                e.Cancel = true;
-                return true;
-            }
-            return false;
+            if (obj.CancellationPending != true) return false;
+            e.Cancel = true;
+            return true;
         }
 
-        public static bool CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
+        private bool CreateSpriteDefinitions(BackgroundWorker sender, DoWorkEventArgs e, int progress, int progressMax)
         {
-            foreach (var ins in GameProject.GetInstance().Instances)
+            float progressStep = (float)(progressMax - progress) / (float)GameProject.GetInstance().Sprites.Count;
+            float cProgress = (float)(progress);
+
+            int currentItem = 0;
+            foreach (KeyValuePair<string, Sprite> sprite in GameProject.GetInstance().Sprites)
             {
-                ObjectManager obm = new ObjectManager(ins.Key);
-                obm.Save();
+                sender.ReportProgress(1,
+                    new Message(sprite.Key + " (" + (++currentItem).ToString() + "/" + GameProject.GetInstance().Sprites.Count.ToString() + ") ",
+                        (int)cProgress, false));
+
+                // save all sprite data to files
+                string buffer = JsonConvert.SerializeObject(sprite.Value);
+                if (!ZipIO.WriteLineToArchive(
+                        GameProject.ProjectPath + "\\" + AssetPackFileName,
+                        "Sprites\\" + sprite.Value.FileName,
+                        buffer, true)) return false;
+
+                foreach (string enumerateFile in Directory.EnumerateFiles( GameProject.ProjectPath + "\\" + sprite.Value.ProjectPath + "\\img\\" ))
+                {
+                    if (!ZipIO.WriteFileToZipFile(
+                            GameProject.ProjectPath + "\\" + AssetPackFileName,
+                            "Sprites\\" + sprite.Value.Name + "\\" + Path.GetFileName(enumerateFile),
+                            enumerateFile,
+                            true)) return false;
+                }
+
+                // add to file list so engine can access by normal name
+                FileList.Add("Sprites\\" + sprite.Value.FileName + ";" + sprite.Value.Name);
+                if (CancelRequest(sender, e)) return false;
+                cProgress += progressStep;
+                sender.ReportProgress(1,
+                    new Message(sprite.Key + " (" + (currentItem).ToString() + "/" + GameProject.GetInstance().Sprites.Count.ToString() + ") ...done",
+                        (int)cProgress, true));
             }
-            string inputs = "";
-            foreach (var obj in GameProject.GetInstance().Instances)
+            return true;
+        }
+
+        private static bool RunArtCompiler(BackgroundWorker sender, DoWorkEventArgs e, string outputFile, string inputs, bool quiet = false)
+        {
+            // check if compiler exists
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe"))
             {
-                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
+                sender.ReportProgress(1, new Message("\"Core\\ACompiler.exe\" - file not found", -1, false));
+                return false;
             }
-            string args = "-lib \"" + AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib\" -output \"" + GameProject.ProjectPath + "\\object_compile.acp\" " + inputs;
+
+            // check if library exists
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
+            {
+                sender.ReportProgress(1, new Message("\"Core\\AScript.lib\" - file not found", -1, false));
+                return false;
+            }
+            // write arguments
+            string args = "-lib \"" + AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib\" -output \"" + outputFile + "\" " + inputs;
 
             Process compiler = new Process();
             compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe";
-            compiler.StartInfo.Arguments = args;
+            compiler.StartInfo.Arguments = (quiet ? "-q " : "") + args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
             compiler.StartInfo.CreateNoWindow = true;
             //compiler.StartInfo.WorkingDirectory = GameProject.ProjectPath;
             compiler.Start();
+            if (CancelRequest(sender, e)) return false;
 
+            // ReSharper disable once MoveVariableDeclarationInsideLoopCondition
             string standardOutput;
             while ((standardOutput = compiler.StandardOutput.ReadLine()) != null)
             {
                 sender.ReportProgress(1, new Message(standardOutput, -1, false));
-            }
-
-            compiler.WaitForExit();
-            if (compiler.ExitCode == 0)
-            {
-                if (File.Exists(GameProject.ProjectPath + "\\object_compile.acp"))
+                if (CancelRequest(sender, e))
                 {
-
-                    using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
-                    {
-                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                        {
-                            if (CancelRequest(sender, e)) return false;
-
-                            string entryName = "object_compile.acp";
-                            ZipArchiveEntry readmeEntry = archive.GetEntry(entryName);
-                            if (readmeEntry != null)
-                            {
-                                readmeEntry.Delete();
-                            }
-                            readmeEntry = archive.CreateEntry(entryName);
-
-                            using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                            {
-                                using (StreamReader file = new StreamReader(GameProject.ProjectPath + "\\object_compile.acp"))
-                                {
-                                    file.BaseStream.CopyTo(writer.BaseStream);
-                                }
-
-
-                            }
-                        }
-                    }
-                    return true;
-                }
-                else
-                {
-                    //TODO: error file not found
+                    compiler.Kill();
                     return false;
                 }
             }
-            return false;
+            compiler.WaitForExit();
+
+            if (compiler.ExitCode != 0) return false;
+            return true;
+        }
+
+        private static bool CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
+        {
+            // make sure if every object have main.asc by save all
+            foreach (KeyValuePair<string, Instance> ins in GameProject.GetInstance().Instances)
+            {
+                ObjectManager obm = new ObjectManager(ins.Key);
+                obm.WriteObjectCode();
+                obm.Dispose();
+            }
+            if (CancelRequest(sender, e)) return false;
+
+            // get all objects input
+            string inputs = "";
+            foreach (KeyValuePair<string, Instance> obj in GameProject.GetInstance().Instances)
+            {
+                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
+            }
+
+            if (!RunArtCompiler(sender, e, GameProject.ProjectPath + "\\" + "object_compile.acp", inputs)) return false;
+
+            if (CancelRequest(sender, e)) return false;
+
+            if (!ZipIO.WriteFileToZipFile(
+                GameProject.ProjectPath + "\\" + GameDataFileName, 
+                "object_compile.acp", 
+                GameProject.ProjectPath + "\\object_compile.acp", 
+                true)) return false;
+            File.Delete(GameProject.ProjectPath + "\\" + "object_compile.acp");
+            return true;
         }
 
         void UpdateCoreFiles(string folder, string file, int c, int max)
         {
-            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
-            {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                {
-                    ZipArchiveEntry readmeEntry = archive.GetEntry("files\\" + file);
-                    if (readmeEntry == null)
-                    {
-                        readmeEntry = archive.CreateEntry("files\\" + file);
-                    }
-                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                    {
-                        using (StreamReader fileWriter = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\" + folder + "\\" + file))
-                        {
-                            fileWriter.BaseStream.CopyTo(writer.BaseStream);
-                        }
-                    }
 
-
-
-                }
-            }
-
+            if (!ZipIO.WriteFileToZipFile(
+                GameProject.ProjectPath + "\\" + GameDataFileName, 
+                "files\\" + file,
+                AppDomain.CurrentDomain.BaseDirectory + "\\" + folder + "\\" + file,
+                false)) return;
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
 
-        void WriteFileToGameDat(string fileDest, string fileSource)
-        {
-            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
-            {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                {
-                    ZipArchiveEntry readmeEntry = archive.GetEntry(fileSource);
-                    if (readmeEntry == null)
-                    {
-                        readmeEntry = archive.CreateEntry(fileSource);
-                    }
-                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                    {
-                        using (StreamReader file = new StreamReader(fileDest))
-                        {
-                            file.BaseStream.CopyTo(writer.BaseStream);
-                        }
-                    }
-
-
-
-                }
-            }
-        }
-
-        void WriteListToArchive(string archive, string entry, List<string> content)
-        {
-            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + archive, FileMode.OpenOrCreate))
-            {
-                using (ZipArchive arch = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                {
-                    ZipArchiveEntry readmeEntry = arch.GetEntry(entry);
-                    if (readmeEntry == null)
-                    {
-                        readmeEntry = arch.CreateEntry(entry);
-                    }
-                    using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                    {
-                        foreach (string property in content)
-                        {
-                            writer.WriteLine(property);
-                        }
-                    }
-
-
-                }
-            }
-        }
-        static List<string> _fileList = new List<string>();
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.Version.ToString(), 1, false));
@@ -330,157 +291,247 @@ namespace ArtCore_Editor
             Bgw.ReportProgress(1, new Message("Saving project ..done", 3, true));
             if (CancelRequest(Bgw, e)) return;
 
-
-            _fileList.Clear();
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20);
+            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sprites, "Sprites", 20, 30);
+            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 30, 40);
+            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 40, 50);
+            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
             if (CancelRequest(Bgw, e)) return;
 
-            PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 50, 55);
+            if (!CreateSpriteDefinitions(Bgw, e, 50, 60)) return;
             if (CancelRequest(Bgw, e)) return;
 
-            WriteListToArchive("assets.pak", "filelist.txt", _fileList);
-            Bgw.ReportProgress(1, new Message("Asset prepare complite", -1, false));
-            
+            // write all assets to list in assets.pak
+            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + AssetPackFileName, "filelist.txt", FileList,
+                    true)) return;
+
+            Bgw.ReportProgress(1, new Message("Asset prepare done", -1, false));
 
             Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
-
             {
-                List<string[]> coreFiles = new List<string[]>()
+                for(int i = 0; i < Program.coreFiles.Count; i++)
                 {
-                    new string[]{ "pack", "gamecontrollerdb.txt" },
-                    new string[]{ "pack", "TitilliumWeb-Light.ttf" },
-                    new string[]{ "shaders", "bloom.frag" },
-                    new string[]{ "shaders", "common.vert" },
-                    new string[]{ "", "AScript.lib" },
-                };
-                int c = 1;
-                foreach (var item in coreFiles)
-                {
-                    UpdateCoreFiles(item[0], item[1], c++, coreFiles.Count());
+                    UpdateCoreFiles("Core\\" + Program.coreFiles[i][0], Program.coreFiles[i][1], i, Program.coreFiles.Count);
                     if (CancelRequest(Bgw, e)) return;
                 }
                 if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
                 {
-                    WriteFileToGameDat(GameProject.ProjectPath + "\\bg_img.png", "bg_img.png");
+                    if (!ZipIO.WriteFileToZipFile(
+                        GameProject.ProjectPath + "\\" + GameDataFileName,
+                        "bg_img.png", 
+                        GameProject.ProjectPath + "\\bg_img.png",
+                        true )) return;
                 }
             }
-            Bgw.ReportProgress(1, new Message("Prepare game file ..done", 60, true));
+            Bgw.ReportProgress(1, new Message("Prepare game file ..done", 61, true));
+            if (CancelRequest(Bgw, e)) return;
 
             // setup.ini
-
-            Bgw.ReportProgress(1, new Message("Game settings", 60, false));
+            Bgw.ReportProgress(1, new Message("Game settings", 61, false));
             {
                 List<string> content = new List<string>();
                 foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
                 {
-                    var fName = property.Name;
-                    int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
-                    content.Add(fName + "=" + value);
+                    int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null)!;
+                    content.Add(property.Name + "=" + value);
                 }
-                WriteListToArchive("game.dat", "setup.ini", content);
-            }
 
+                if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "setup.ini", content,
+                        true)) return;
+            }
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
 
 
             // object definitions
             if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Objects", 70, false));
-
-            if (!CreateObjectDefinitions(Bgw, e))
+            Bgw.ReportProgress(1, new Message("Objects", 65, false));
+            if (!CreateObjectDefinitions(Bgw, e)) return;
+            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile.acp"))
             {
-                return;
+                File.Delete(GameProject.ProjectPath + "\\" + "object_compile.acp");
             }
-            Bgw.ReportProgress(1, new Message("Objects ..done", 90, false));
-
+            Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
 
 
             // scene definitions
             if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Scenes ", 91, false));
+            Bgw.ReportProgress(1, new Message("Scenes ", 75, false));
+            if (!CreateSceneDefinitions(Bgw, e, 75, 98)) return;
 
-            CreateSceneDefinitions(Bgw, e);
-            WriteListToArchive("game.dat", "scene\\list.txt", GameProject.GetInstance().Scenes.Keys.ToList());
-            WriteListToArchive("game.dat", "scene\\StartingScene.txt", new List<string>() { GameProject.GetInstance().StartingScene?.Name });
+            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\list.txt",
+                    GameProject.GetInstance().Scenes.Keys.ToList(), true)) return;
 
+            if (!ZipIO.WriteLineToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\StartingScene.txt",
+                    GameProject.GetInstance().StartingScene, true)) return;
 
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
  
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game ready", 100, false));
-            
         }
 
-        private void CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e)
+        private bool CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e, int currentProgress, int progressMax)
         {
-            using (FileStream zipToOpen = new FileStream(GameProject.ProjectPath + "\\" + "game.dat", FileMode.OpenOrCreate))
+            if (GameProject.GetInstance().Scenes.Count == 0) return false;
+            float stepProgress = (float)(progressMax - currentProgress) / GameProject.GetInstance().Scenes.Count;
+            float progress = (float)(currentProgress);
+
+            foreach (KeyValuePair<string, Scene> scene in GameProject.GetInstance().Scenes)
             {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                bgw.ReportProgress(1, new Message("Scene: " + scene.Key, (int)progress, false));
+                List<string> content = new List<string>
                 {
-                    var garbage = archive.Entries.Where(item => item.FullName.StartsWith("scene")).ToArray();
-                    foreach (var garbageItem in garbage)
-                    {
-                        garbageItem.Delete();
-                    }
-                    foreach (var scene in GameProject.GetInstance().Scenes)
-                    {
-                        string entryName = "scene\\" + scene.Key + "\\" + scene.Key + ".asd";
-                        ZipArchiveEntry readmeEntry = archive.GetEntry(entryName);
-                        if (readmeEntry != null)
-                        {
-                            readmeEntry.Delete();
-                        }
-                        readmeEntry = archive.CreateEntry(entryName);
-                        using (StreamWriter writer = new StreamWriter(readmeEntry.Open()))
-                        {
+                    "[setup]",
+                    "Width=" + scene.Value.Width,
+                    "Height=" + scene.Value.Height,
+                    "BackGroundTexture=" + scene.Value.BackGroundTexture.Name,
+                    "BackGroundType=" + scene.Value.BackGroundType.ToString(),
+                    "BackGroundWrapMode=" + scene.Value.BackGroundWrapMode,
+                    "BackGroundColor=" + scene.Value.BackGroundColor.ColorToHex(),
+                    "SceneStartingTrigger=" + scene.Value.SceneStartingTrigger,
+                    "[regions]"
+                };
 
-                            writer.WriteLine("[setup]");
-                            writer.WriteLine("GuiFile=" + scene.Value.GuiFile);
-                            writer.WriteLine("Width=" + scene.Value.Width);
-                            writer.WriteLine("Height=" + scene.Value.Height);
-                            writer.WriteLine("BackGroundTexture=" + scene.Value.BackGroundTexture.Name);
-                            writer.WriteLine("BackGroundType=" + scene.Value.BackGroundType.ToString());
-                            writer.WriteLine("BackGroundWrapMode=" + scene.Value.BackGroundWrapMode);
-                            writer.WriteLine("BackGroundColor=" + Functions.ColorToHex(scene.Value.BackGroundColor));
-                            
-                            writer.WriteLine("[regions]");
-                            foreach (var regions in scene.Value.Regions)
-                            {
-                                writer.WriteLine(regions.ToString());
-                            }
-
-                            writer.WriteLine("[triggers]");
-                            foreach (var triggers in scene.Value.SceneTriggers)
-                            {
-                                writer.WriteLine(triggers);
-                            }
-
-                            writer.WriteLine("[instance]");
-                            foreach (var sIns in scene.Value.SceneInstances)
-                            {
-                                writer.WriteLine(sIns.Instance.Name + "|" + sIns.X + "|" + sIns.Y);
-                            }
-                        }
-
-
-                    }
+                foreach (Scene.Region regions in scene.Value.Regions)
+                {
+                    content.Add(regions.ToString());
                 }
+
+                content.Add("[triggers]");
+                foreach (string triggers in scene.Value.SceneTriggers)
+                {
+                    content.Add(triggers);
+                }
+
+                content.Add("[instance]");
+                foreach (SceneManager.SceneInstance sIns in scene.Value.SceneInstances)
+                {
+                    content.Add(sIns.Instance.Name + "|" + sIns.X + "|" + sIns.Y);
+                }
+                
+                // gui events
+                bool haveGuiTriggers = false;
+                string guiTriggersContent = "object scene_"+scene.Value.Name + "\n";
+                foreach (string enumerateFile in Directory.EnumerateFiles(
+                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\", "*.asc"))
+                {
+                    haveGuiTriggers = true;
+                    guiTriggersContent += "define " + Path.GetFileNameWithoutExtension(enumerateFile) + "\n";
+                }
+                foreach (Variable item in scene.Value.SceneVariables)
+                {
+                    guiTriggersContent += "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n";
+                }
+                guiTriggersContent += "@end\n";
+
+                if (haveGuiTriggers || scene.Value.SceneVariables.Count > 0)
+                {
+                    if (scene.Value.SceneVariables.Count > 0)
+                    {
+                        guiTriggersContent += "function scene_" + scene.Value.Name + ":" + "DEF_VALUES" + "\n";
+                        foreach (Variable item in scene.Value.SceneVariables.Where(item => item.Default is
+                                 {
+                                     Length: > 0
+                                 }))
+                        {
+                            switch (item.Type)
+                            {
+                                case Variable.VariableType.VTypeObject:
+                                case Variable.VariableType.VTypeScene:
+                                    // can not
+                                    break;
+                                case Variable.VariableType.VTypeSprite:
+                                    guiTriggersContent += $"{item.Name} := get_sprite(\"{item.Default}\")\n";
+                                    break;
+                                case Variable.VariableType.VTypeTexture:
+                                    guiTriggersContent += $"{item.Name} := get_texture(\"{item.Default}\")\n";
+                                    break;
+                                case Variable.VariableType.VTypeSound:
+                                    guiTriggersContent += $"{item.Name} := get_sound(\"{item.Default}\")\n";
+                                    break;
+                                case Variable.VariableType.VTypeMusic:
+                                    guiTriggersContent += $"{item.Name} := get_music(\"{item.Default}\")\n";
+                                    break;
+                                case Variable.VariableType.VTypeFont:
+                                    guiTriggersContent += $"{item.Name} := get_font(\"{item.Default}\")\n";
+                                    break;
+                                case Variable.VariableType.VTypePoint:
+                                    string[] pt = item.Default.Split(':');
+                                    guiTriggersContent += $"{item.Name} := new_point( {pt[0]}, {pt[1]})\n";
+                                    break;
+                                case Variable.VariableType.VTypeRectangle:
+                                    break;
+                                default:
+                                    guiTriggersContent += item.Name + " := " + item.Default + "\n";
+                                    break;
+                            }
+                        }
+                        guiTriggersContent += "@end\n";
+                    }
+                    foreach (string enumerateFile in Directory.EnumerateFiles(
+                                 GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\",
+                                 "*.asc"))
+                    {
+                        guiTriggersContent += "function scene_" + scene.Value.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n"; ;
+                        guiTriggersContent += File.ReadAllText(enumerateFile);
+                        guiTriggersContent += "\n";
+                        guiTriggersContent += "@end\n";
+                    }
+
+                    string tmpFilePath = GameProject.ProjectPath + "\\" + "tmp_scene_triggers.asc";
+                    File.WriteAllText(tmpFilePath, guiTriggersContent);
+                    if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers.acp",
+                            "-obj " + tmpFilePath, true)) return false;
+                    File.Delete(tmpFilePath);
+
+                    if (CancelRequest(bgw, e)) return false;
+
+                    if (!ZipIO.WriteFileToZipFile(
+                        GameProject.ProjectPath + "\\" + GameDataFileName,
+                        "scene\\" + scene.Key + "\\" + "scene_triggers.acp",
+                        GameProject.ProjectPath + "\\" + "scene_triggers.acp",
+                        true
+                    )) return false;
+                    File.Delete(GameProject.ProjectPath + "\\" + "scene_triggers.acp");
+                }
+
+                if (CancelRequest(bgw, e)) return false;
+                if (!ZipIO.WriteListToArchive(
+                        GameProject.ProjectPath + "\\" + GameDataFileName,
+                        "scene\\" + scene.Key + "\\" + scene.Key + ".asd",
+                        content,
+                        true
+                    )) return false;
+
+                if (CancelRequest(bgw, e)) return false;
+                if (File.Exists(GameProject.ProjectPath + "\\" + "scene\\" + scene.Key + "\\" + "GuiSchema.json"))
+                {
+                    if (!ZipIO.WriteFileToZipFile(
+                            GameProject.ProjectPath + "\\" + GameDataFileName,
+                            "scene\\" + scene.Key + "\\GuiSchema.json",
+                            GameProject.ProjectPath + "\\" + "scene\\" + scene.Key + "\\" + "GuiSchema.json",
+                            true
+                        )) return false;
+                }
+
+                if (CancelRequest(bgw, e)) return false;
+                
+                progress += stepProgress;
+                bgw.ReportProgress(1, new Message("Scene: " + scene.Key + "... done", (int)progress, true));
             }
+
+            return true;
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (((Message)e.UserState).ProgressBarValue > 1)
+            if ((((Message)e.UserState)!).ProgressBarValue > 1)
             {
                 progressBar1.Value = ((Message)e.UserState).ProgressBarValue;
             }
@@ -489,20 +540,21 @@ namespace ArtCore_Editor
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (progressBar1.Value == 100 && e.Cancelled == false)
+            if (progressBar1.Value != 100 || e.Cancelled)
             {
-
-                button2.Enabled = true;
-                if (_runGame)
-                {
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                if (_closeAfterDone)
-                {
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
+                OutputWrite("Error while preparing game files.", false);
+                return;
+            }
+            button2.Enabled = true;
+            if (_runGame)
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            if (_closeAfterDone)
+            {
+                DialogResult = DialogResult.OK;
+                Close();
             }
 
         }
@@ -520,7 +572,7 @@ namespace ArtCore_Editor
 
         private void GameCompiler_Shown(object sender, EventArgs e)
         {
-            Bgw.RunWorkerAsync(new Message());
+            Bgw.RunWorkerAsync();
         }
 
         private void OutputLog_MouseDoubleClick(object sender, MouseEventArgs e)

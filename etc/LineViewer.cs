@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.etc
 {
     public partial class LineViewer : Form
     {

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace ArtCore_Editor.Enums
 {
-    [Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Variable
     {
         public enum VariableType
@@ -16,14 +17,16 @@ namespace ArtCore_Editor.Enums
             // structs                                           as string
             VTypePoint, VTypeRectangle, VTypeString, VTypeColor, VTypeEnum
         }
-        public VariableType Type { get; set; }
-        public string Name { get; set; }
-        public string Default { get; set; }
-        public Variable(VariableType type, string name, string @default)
+        [JsonProperty] public VariableType Type { get; set; }
+        [JsonProperty] public string Name { get; set; }
+        [JsonProperty] public string Default { get; set; }
+        [JsonProperty]   public List<string> EnumValues { get; set; }
+        public Variable(VariableType type, string name, string @default, List<string> enumValues = null)
         {
             Type = type;
             Name = name;
             Default = @default;
+            EnumValues = enumValues;
         }
     }
 }

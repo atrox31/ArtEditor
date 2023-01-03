@@ -1,3 +1,1 @@
-# Spite przy zmianie nazwy dubluje się na liście
-# sypport do plików ogg w muzyce
-# dodać obśługe elementu object w script edytorze
+scene change name not working

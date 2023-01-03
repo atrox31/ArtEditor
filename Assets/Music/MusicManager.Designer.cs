@@ -1,6 +1,6 @@
-﻿namespace ArtCore_Editor
+﻿namespace ArtCore_Editor.Assets.Music
 {
-    partial class MusicManager
+    partial class MusicManager : AssetManagerTemplate
     {
         /// <summary>
         /// Required designer variable.
@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.buttonAddFile = new System.Windows.Forms.Button();
+            this.fileBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.nameInputBox = new System.Windows.Forms.TextBox();
+            this.CancelButton = new System.Windows.Forms.Button();
+            this.ApplyButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.infoBoxLabel = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button3 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -49,96 +49,109 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Controls.Add(this.textBox2);
-            this.groupBox2.Location = new System.Drawing.Point(12, 65);
+            this.groupBox2.Controls.Add(this.buttonAddFile);
+            this.groupBox2.Controls.Add(this.fileBox);
+            this.groupBox2.Location = new System.Drawing.Point(14, 75);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(172, 47);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(201, 54);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "File";
             // 
-            // button1
+            // buttonAddFile
             // 
-            this.button1.Location = new System.Drawing.Point(143, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(23, 20);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "+";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonAddFile.Location = new System.Drawing.Point(167, 21);
+            this.buttonAddFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonAddFile.Name = "buttonAddFile";
+            this.buttonAddFile.Size = new System.Drawing.Size(27, 23);
+            this.buttonAddFile.TabIndex = 1;
+            this.buttonAddFile.Text = "+";
+            this.buttonAddFile.UseVisualStyleBackColor = true;
+            this.buttonAddFile.Click += new System.EventHandler(this.ButtonAddFile_click);
             // 
-            // textBox2
+            // fileBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(6, 19);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(131, 20);
-            this.textBox2.TabIndex = 0;
+            this.fileBox.Location = new System.Drawing.Point(7, 22);
+            this.fileBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.fileBox.Name = "fileBox";
+            this.fileBox.ReadOnly = true;
+            this.fileBox.Size = new System.Drawing.Size(152, 23);
+            this.fileBox.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Controls.Add(this.nameInputBox);
+            this.groupBox1.Location = new System.Drawing.Point(14, 14);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(172, 47);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Size = new System.Drawing.Size(201, 54);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Name";
             // 
-            // textBox1
+            // nameInputBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(6, 19);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(160, 20);
-            this.textBox1.TabIndex = 0;
+            this.nameInputBox.Location = new System.Drawing.Point(7, 22);
+            this.nameInputBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.nameInputBox.Name = "nameInputBox";
+            this.nameInputBox.Size = new System.Drawing.Size(186, 23);
+            this.nameInputBox.TabIndex = 0;
             // 
-            // button4
+            // CancelButton
             // 
-            this.button4.Location = new System.Drawing.Point(12, 266);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Cancel";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.CancelButton.Location = new System.Drawing.Point(14, 307);
+            this.CancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.CancelButton.Name = "CancelButton";
+            this.CancelButton.Size = new System.Drawing.Size(88, 27);
+            this.CancelButton.TabIndex = 9;
+            this.CancelButton.Text = "Cancel";
+            this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.ButtonCancel_click);
             // 
-            // button2
+            // ApplyButton
             // 
-            this.button2.Location = new System.Drawing.Point(109, 266);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "Apply";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.ApplyButton.Location = new System.Drawing.Point(127, 307);
+            this.ApplyButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ApplyButton.Name = "ApplyButton";
+            this.ApplyButton.Size = new System.Drawing.Size(88, 27);
+            this.ApplyButton.TabIndex = 8;
+            this.ApplyButton.Text = "Apply";
+            this.ApplyButton.UseVisualStyleBackColor = true;
+            this.ApplyButton.Click += new System.EventHandler(this.ButtonAccept_click);
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Location = new System.Drawing.Point(12, 118);
+            this.groupBox3.Controls.Add(this.infoBoxLabel);
+            this.groupBox3.Location = new System.Drawing.Point(14, 136);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(172, 69);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox3.Size = new System.Drawing.Size(201, 80);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Info";
             // 
-            // label1
+            // infoBoxLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 0;
+            this.infoBoxLabel.AutoSize = true;
+            this.infoBoxLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.infoBoxLabel.Location = new System.Drawing.Point(4, 19);
+            this.infoBoxLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.infoBoxLabel.Name = "infoBoxLabel";
+            this.infoBoxLabel.Size = new System.Drawing.Size(0, 15);
+            this.infoBoxLabel.TabIndex = 0;
             // 
             // trackBar1
             // 
             this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(12, 193);
+            this.trackBar1.Location = new System.Drawing.Point(14, 223);
+            this.trackBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.trackBar1.Maximum = 100;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(166, 45);
+            this.trackBar1.Size = new System.Drawing.Size(194, 45);
             this.trackBar1.TabIndex = 11;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
             // 
@@ -146,9 +159,10 @@
             // 
             this.button3.BackgroundImage = global::ArtCore_Editor.Properties.Resources.L1_R1_C1_Tlo_visible_normal_255;
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button3.Location = new System.Drawing.Point(18, 214);
+            this.button3.Location = new System.Drawing.Point(21, 247);
+            this.button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(24, 24);
+            this.button3.Size = new System.Drawing.Size(28, 28);
             this.button3.TabIndex = 12;
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -157,10 +171,10 @@
             // 
             this.button5.BackgroundImage = global::ArtCore_Editor.Properties.Resources.L2_R1_C1_Warstwa_2_visible_normal_255;
             this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(48, 214);
+            this.button5.Location = new System.Drawing.Point(56, 247);
+            this.button5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(24, 24);
+            this.button5.Size = new System.Drawing.Size(28, 28);
             this.button5.TabIndex = 13;
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -169,32 +183,34 @@
             // 
             this.button6.BackgroundImage = global::ArtCore_Editor.Properties.Resources.L3_R1_C1_Warstwa_3_visible_normal_255;
             this.button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button6.Location = new System.Drawing.Point(78, 214);
+            this.button6.Location = new System.Drawing.Point(91, 247);
+            this.button6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(24, 24);
+            this.button6.Size = new System.Drawing.Size(28, 28);
             this.button6.TabIndex = 13;
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // MusicManager
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AcceptButton = this.ApplyButton;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(196, 301);
+            this.ClientSize = new System.Drawing.Size(229, 347);
             this.ControlBox = false;
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MusicManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MusicManager";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MusicManager_FormClosing);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -210,14 +226,14 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Button buttonAddFile;
+        private System.Windows.Forms.TextBox fileBox;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox nameInputBox;
+        private new System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label infoBoxLabel;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button5;

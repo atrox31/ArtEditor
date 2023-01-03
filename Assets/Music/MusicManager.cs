@@ -1,167 +1,111 @@
-﻿using ArtCore_Editor.Assets;
+﻿using LibVLCSharp.Shared;
 using System;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Media;
-using System.Windows.Forms;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Assets.Music
 {
-    public partial class MusicManager : Form
+    public partial class MusicManager : AssetManagerTemplate
     {
-        private string _aid;
-        private bool _canPlay = false;
-        private readonly SoundPlayer _soundPlayer = new SoundPlayer();
-        private string _fileName;
-        private const string ProjectPath = "\\assets\\music\\";
-
-
-        string GetDuration()
-        {
-            return SoundInfo.GetSoundLength(GameProject.ProjectPath + "\\" + textBox2.Text).ToString();
-        }
-        private void SetInfoBox()
-        {
-            _soundPlayer.Stop();
-            _soundPlayer.SoundLocation = GameProject.ProjectPath + "\\" + textBox2.Text;
-            _canPlay = false;
-            _soundPlayer.LoadAsync();
-            label1.Text = "Duration: " + GetDuration() + " \n" +
-                "In project location:\n" + ProjectPath + textBox1.Text;
-        }
-
-        private void player_LoadCompleted(object sender,
-                AsyncCompletedEventArgs e)
-        {
-            if (e.Error == null)
-                _canPlay = true;
-            else
-                MessageBox.Show(e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        private void player_LocationChanged(object sender, EventArgs e)
-        {
-            _canPlay = true;
-        }
-
         public MusicManager(string assetId = null)
         {
-            _soundPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
-            _soundPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);
+            RefToGameProjectDictionary = GameProject.GetInstance().Music;
+            AssetFileExtensionsFilter = "OGG (preferred) (*.ogg)|*.ogg|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3";
             InitializeComponent(); Program.ApplyTheme(this);
-            _aid = assetId;
-            if (assetId != null)
-            {
-                textBox1.Text = MainWindow.GetInstance().GlobalProject.Music[assetId].Name;
-                _fileName = MainWindow.GetInstance().GlobalProject.Music[assetId].FileName;
-
-                textBox2.Text = ProjectPath + "\\" + _fileName;
-                if (!File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
-                {
-                    textBox2.Text = "FILE NOT FOUND";
-                }
-                else
-                {
-                    //soundPlayer.
-                    SetInfoBox();
-                }
-            }
+            PrepareManager(assetId, typeof(MusicManager));
         }
 
-
-
-        private void button3_Click(object sender, EventArgs e)
+        // prepare asset to preview in editor
+        protected override void SetAssetPreview()
         {
-            // paly
-            if (!_canPlay) return;
-            try
+            if (!File.Exists(CurrentAsset.GetFilePath())) return;
+
+            // setup track bar to change music position
+            trackBar1.Value = 0;
+
+            _mediaPlayer.Media?.Dispose();
+
+            _mediaPlayer.Media = new Media(_libVlc, CurrentAsset.GetFilePath() );
+            _mediaPlayer.Media.AddOption(":no-video");
+            // .wait is for load music, else we have not can get duration
+            _mediaPlayer.Media.Parse(MediaParseOptions.FetchLocal).Wait();
+        }
+
+        // fill info box with information about this assets
+        protected override void SetInfoBox()
+        {
+            long? duration = _mediaPlayer.Media?.Duration;
+            
+            infoBoxLabel.Text = $"Duration: {(duration ?? 0)}ms" +
+                                $" ({TimeSpan.FromMilliseconds((double)(duration ?? 0)).ToString(@"hh\:mm\:ss")})" +
+                                $" \n" +
+                                $"In project location:\n{CurrentAsset?.ProjectPath}{CurrentAsset?.FileName}";
+        }
+        // custom asset manager members
+
+        // player to listen target sound
+        private LibVLC _libVlc;
+        private MediaPlayer _mediaPlayer;
+        protected override void OnLoad()
+        {
+            _libVlc = new LibVLC();
+            _mediaPlayer = new MediaPlayer(_libVlc);
+            
+            _mediaPlayer.LengthChanged += (object sender, MediaPlayerLengthChangedEventArgs e) =>
             {
-                _soundPlayer.Play();
-            }
-            catch (Exception ee)
+                trackBar1.Invoke(delegate { trackBar1.Maximum = (int)(_mediaPlayer.Media.Duration / 1000); });
+                Invoke(SetInfoBox);
+            };
+
+            _mediaPlayer.TimeChanged += (object sender, MediaPlayerTimeChangedEventArgs e) =>
             {
-                MessageBox.Show("ArtEditor can not play this file but in game its all good...\n" + ee.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                // try because  sometimes throws error, not important to handle
+                try
+                {
+                    trackBar1.Invoke(delegate { trackBar1.Value = (int)(e.Time / 1000); });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            };
+
+            trackBar1.MouseClick += (sender, args) =>
+            {
+                // try because  sometimes throws error, not important to handle
+                try
+                {
+                    _mediaPlayer.SeekTo(TimeSpan.FromMilliseconds(trackBar1.Value * 1000));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            };
+        }
+
+        protected override void OnExit()
+        {
+            _mediaPlayer.Stop();
+            _mediaPlayer.Dispose();
+            _libVlc.Dispose();
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {// play button
+
+            _mediaPlayer.Play();
         }
 
         private void button5_Click(object sender, EventArgs e)
-        {
-            // TODO pause
+        { // pause button
 
+            _mediaPlayer.Pause();
         }
 
         private void button6_Click(object sender, EventArgs e)
-        {
-            // stop
-            _soundPlayer.Stop();
-        }
+        { // stop button
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            // apply
-            if ((textBox1.Text.Length > 0)
-                && (textBox2.Text.Length > 0)
-                && File.Exists(GameProject.ProjectPath + "\\" + textBox2.Text))
-            {
-                if (_aid == null)
-                {
-                    // add new
-                    _aid = textBox1.Text;
-                    MainWindow.GetInstance().GlobalProject.Music.Add(textBox1.Text, new Asset());
-                }
-                MainWindow.GetInstance().GlobalProject.Music[_aid].Name = textBox1.Text;
-                MainWindow.GetInstance().GlobalProject.Music[_aid].FileName = _fileName;
-                MainWindow.GetInstance().GlobalProject.Music[_aid].ProjectPath = ProjectPath;
-
-                if (_aid != MainWindow.GetInstance().GlobalProject.Music[_aid].Name)
-                {
-                    MainWindow.GetInstance().GlobalProject.Music.RenameKey(_aid, textBox1.Text);
-                }
-                if (GameProject.ProjectPath + "\\" + textBox2.Text != GameProject.ProjectPath + "\\assets\\music\\" + _fileName)
-                {
-                    _soundPlayer.Dispose();
-                    File.Copy(GameProject.ProjectPath + "\\" + textBox2.Text, GameProject.ProjectPath + "\\assets\\music\\" + _fileName);
-                    File.Delete(GameProject.ProjectPath + "\\" + textBox2.Text);
-                    MainWindow.GetInstance().GlobalProject.Textures[_aid].FileName = "\\assets\\music\\" + textBox1.Text + ".png";
-                }
-                DialogResult = DialogResult.OK;
-                Close();
-
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            // cancel
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // open
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "WAV|*.wav|OGG|*.ogg";
-            openFileDialog.Title = "Select file";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string ofile = openFileDialog.FileName;
-                if (textBox1.TextLength == 0)
-                {
-                    textBox1.Text = ofile.Split('\\').Last().Split('.').First();
-                    _fileName = textBox1.Text + "." + ofile.Split('\\').Last().Split('.').Last();
-                }
-                File.Copy(ofile, GameProject.ProjectPath + "\\assets\\music\\" + _fileName, true);
-                textBox2.Text = ProjectPath + "\\" + _fileName;
-
-                SetInfoBox();
-            }
-        }
-
-        private void MusicManager_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            _soundPlayer.Stop();
-            _soundPlayer.Dispose();
+            _mediaPlayer.Stop();
         }
     }
 }

@@ -579,6 +579,39 @@ namespace ArtCore_Editor
         {
             if (OutputLog.SelectedIndex != -1)
             {
+                string message = OutputLog.SelectedItem.ToString();
+                if (message.StartsWith("Error at "))
+                {
+                    // art compiler error
+                    string[] parms = message.Split('\'');
+                    //Error at line: '1' in Object: 'obj_wall' Function: 'EvOnCreate' - Message: Unexpected token vertival[745]
+                    // 0              1 2            3        4           5          6    
+                    //Error at line: |1| in Object: |obj_wall| Function: |EvOnCreate| - Message: Unexpected token vertival[745]
+                    if (parms.Length >= 7)
+                    {
+                        int Line = Convert.ToInt32(parms[1]);
+                        string Object = parms[3];
+                        string Function = parms[5];
+                        if (Object.StartsWith("scene_"))
+                        {
+                            // scene error
+                            return;
+                        }
+                        else 
+                        { // instance object
+                            ObjectManager objmng = new ObjectManager(Object, Line, Function);
+                            if (objmng.ShowDialog() == DialogResult.OK)
+                            {
+                                // restart compiler
+                                OutputLog.ClearSelected();
+                                Bgw.RunWorkerAsync();
+                                return;
+                            }
+                        }
+
+                    }
+                }
+
                 LineViewer lv = new LineViewer(OutputLog.SelectedItem.ToString());
                 lv.ShowDialog();
             }

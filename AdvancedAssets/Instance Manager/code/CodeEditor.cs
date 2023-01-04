@@ -20,7 +20,7 @@ public partial class CodeEditor : Form
     // static ArtCode.lib content
     private static List<Function> _functionsList = null;
 
-    public CodeEditor(string text = null)
+    public CodeEditor(string text = null, int selected_line = -1)
     {
         InitializeComponent(); Program.ApplyTheme(this);
         if (text == null) return;
@@ -41,6 +41,12 @@ public partial class CodeEditor : Form
         }
 
         ColorTheCode();
+        if (selected_line > -1)
+        {
+            int start = richTextBox1.GetFirstCharIndexFromLine(selected_line);
+            int length = richTextBox1.Lines[selected_line].Length;
+            richTextBox1.Select(start, length);
+        }
     }
 
     private void richTextBox1_TextChanged(object sender, EventArgs e)

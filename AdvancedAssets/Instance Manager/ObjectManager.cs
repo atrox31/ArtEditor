@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior.pickers;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.code;
@@ -13,6 +14,7 @@ using ArtCore_Editor.Functions;
 using ArtCore_Editor.Pick_forms;
 using Newtonsoft.Json;
 using static ArtCore_Editor.GameProject;
+using Path = System.IO.Path;
 
 namespace ArtCore_Editor.AdvancedAssets.Instance_Manager;
 
@@ -24,7 +26,8 @@ public partial class ObjectManager : Form
     private readonly Instance _currentObject;
     private readonly Dictionary<Event.EventType, string> _eventsData;
 
-    public ObjectManager(string assetId = null)
+
+    public ObjectManager(string assetId = null, int line = -1, string function = null)
     {
         InitializeComponent(); Program.ApplyTheme(this);
 
@@ -94,6 +97,23 @@ public partial class ObjectManager : Form
                         File.CreateText(path).WriteLine("// file not found");
                     }
                 }
+            }
+
+            if (line >= 0 && function != null)
+            {
+                // caller is game compiler, open wrong code
+                Event_listobx.SelectedIndex = Event_listobx.Items.IndexOf(function);
+                string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)];
+
+                CodeEditor codeEditor = new CodeEditor(code, line);
+                if (codeEditor.ShowDialog() != DialogResult.OK) return;
+                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)] = String.Join("\n", codeEditor.Code);
+                Event_treeview.Nodes.Clear();
+                foreach (string new_line in codeEditor.Code)
+                {
+                    Event_treeview.Nodes.Add(new_line);
+                }
+
             }
         }
         else

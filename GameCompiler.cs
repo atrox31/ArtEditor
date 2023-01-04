@@ -603,7 +603,7 @@ namespace ArtCore_Editor
                             if (objmng.ShowDialog() == DialogResult.OK)
                             {
                                 // restart compiler
-                                OutputLog.ClearSelected();
+                                OutputLog.Items.Clear();
                                 Bgw.RunWorkerAsync();
                                 return;
                             }

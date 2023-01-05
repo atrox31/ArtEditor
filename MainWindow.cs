@@ -40,7 +40,7 @@ namespace ArtCore_Editor
             Text = GetTitleString()+" *";
         }
 
-        private void MakeSaved()
+        public void MakeSaved()
         {
             _projectSaved = true;
             Text = GetTitleString();

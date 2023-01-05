@@ -108,7 +108,8 @@ namespace ArtCore_Editor
                 createStream.Write(buffer);
                 
             }
-            
+
+            MainWindow.GetInstance().MakeSaved();
             // md5 hash is use to skip asset in pack to asset.pak file
             CalculateHashForAllAssets(Music);
             CalculateHashForAllAssets(Fonts);

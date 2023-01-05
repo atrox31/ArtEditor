@@ -69,7 +69,6 @@
             this.s_collision_have_mask = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.s_col_mask_value = new System.Windows.Forms.TrackBar();
-            this.s_col_mask_perpixel = new System.Windows.Forms.RadioButton();
             this.s_col_mask_rect = new System.Windows.Forms.RadioButton();
             this.s_col_mask_circle = new System.Windows.Forms.RadioButton();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -494,7 +493,6 @@
             this.groupBox6.Controls.Add(this.s_collision_have_mask);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.s_col_mask_value);
-            this.groupBox6.Controls.Add(this.s_col_mask_perpixel);
             this.groupBox6.Controls.Add(this.s_col_mask_rect);
             this.groupBox6.Controls.Add(this.s_col_mask_circle);
             this.groupBox6.Location = new System.Drawing.Point(3, 385);
@@ -548,19 +546,6 @@
             this.s_col_mask_value.TabIndex = 4;
             this.s_col_mask_value.Value = 1;
             this.s_col_mask_value.Scroll += new System.EventHandler(this.s_col_mask_value_Scroll);
-            // 
-            // s_col_mask_perpixel
-            // 
-            this.s_col_mask_perpixel.AutoSize = true;
-            this.s_col_mask_perpixel.Enabled = false;
-            this.s_col_mask_perpixel.Location = new System.Drawing.Point(6, 65);
-            this.s_col_mask_perpixel.Name = "s_col_mask_perpixel";
-            this.s_col_mask_perpixel.Size = new System.Drawing.Size(67, 19);
-            this.s_col_mask_perpixel.TabIndex = 3;
-            this.s_col_mask_perpixel.TabStop = true;
-            this.s_col_mask_perpixel.Text = "PerPixel";
-            this.s_col_mask_perpixel.UseVisualStyleBackColor = true;
-            this.s_col_mask_perpixel.CheckedChanged += new System.EventHandler(this.s_col_mask_perpixel_CheckedChanged);
             // 
             // s_col_mask_rect
             // 
@@ -696,7 +681,6 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TrackBar s_col_mask_value;
-        private System.Windows.Forms.RadioButton s_col_mask_perpixel;
         private System.Windows.Forms.RadioButton s_col_mask_rect;
         private System.Windows.Forms.RadioButton s_col_mask_circle;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;

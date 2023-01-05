@@ -16,9 +16,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         private bool _saved = true;
         private Sprite _globalSprite;
         private int _pFirstFrame, _pLastFrame, _pCurrentFrame;
-
-        private PointF[] _spritePerPixelPolygon;
-        private const int SpritePerPixelMaxPrecision = 64;
+        
         private string _aid;
 
         private void CreateNewSprite()
@@ -45,8 +43,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             {
                 CreateNewSprite();
             }
-
-            _spritePerPixelPolygon = null;
+            
             UpdateForm();
         }
 
@@ -62,7 +59,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                     $"Asset name must have more that 3 chars ({s_spritename.Text.Length} current)")) return;
 
             _globalSprite.CollisionMask =
-                (Sprite.CollisionMaskEnum)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : s_col_mask_perpixel.Checked ? 3 : 0) : 0);
+                (Sprite.CollisionMaskEnum)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : 0) : 0);
             _globalSprite.CollisionMaskValue = s_col_mask_value.Value;
             _globalSprite.SpriteCenter = (s_sprite_center_center.Checked ? Sprite.SpriteCenterEnum.Center : s_sprite_center_left.Checked ? Sprite.SpriteCenterEnum.LeftCorner : Sprite.SpriteCenterEnum.Custom);
             _globalSprite.SpriteCenterX = (int)s_sprite_center_x.Value;
@@ -118,10 +115,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                     s_col_mask_value.Value = Math.Max(1, _globalSprite.CollisionMaskValue);
                     s_col_mask_value.Maximum = Math.Max(_globalSprite.SpriteHeight, _globalSprite.SpriteWidth) / 2;
                     break;
-                case Sprite.CollisionMaskEnum.PerPixel:
-                    s_col_mask_value.Value = Math.Max(SpritePerPixelMaxPrecision, _globalSprite.CollisionMaskValue);
-                    s_col_mask_value.Maximum = SpritePerPixelMaxPrecision;
-                    break;
             }
         }
 
@@ -148,10 +141,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                         break;
                     case Sprite.CollisionMaskEnum.Rectangle:
                         s_col_mask_rect.Checked = true;
-                        break;
-                    case Sprite.CollisionMaskEnum.PerPixel:
-                        GenerateSpritePerPixelPolygon();
-                        s_col_mask_perpixel.Checked = true;
                         break;
                 }
             }
@@ -231,70 +220,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             SetCollisionMaskSliderValues();
             _saved = false;
         }
-
-        private void GenerateSpritePerPixelPolygon()
-        {
-            if (_globalSprite == null) return;
-            if (s_preview.Image == null) return;
-
-            //_spritePerPixelPolygon
-            Bitmap tempBitmap = new Bitmap(s_preview.Image);
-
-            int pointPrecision = s_col_mask_value.Value; // 1 - 64(const _spritePerPixelMaxPrecision)
-            int pointStampWidth = tempBitmap.Width / (pointPrecision + 1);
-            int pointStampHeight = tempBitmap.Height / (pointPrecision + 1);
-
-            _spritePerPixelPolygon = new PointF[pointPrecision * 4];
-
-            for (int i = 1; i < pointPrecision-1; i++)
-            {
-                int xLeft = tempBitmap.Width;
-                int xRight = 0;
-                int yUp = tempBitmap.Height;
-                int yDown = 0;
-
-                for (int x = 0; x < tempBitmap.Width; x++)
-                {
-                    if (tempBitmap.GetPixel(x, pointStampHeight * i).A == 0) continue;
-                    xLeft = x;
-                    break;
-                }
-                for (int x = tempBitmap.Width-1; x > 0; x--)
-                {
-                    if (tempBitmap.GetPixel(x, pointStampHeight * i).A == 0) continue;
-                    xRight = x;
-                    break;
-                }
-                for (int y = 0; y < tempBitmap.Height; y++)
-                {
-                    if (tempBitmap.GetPixel(pointStampWidth * i, y).A == 0) continue;
-                    yUp = y;
-                    break;
-                }
-                for (int y = tempBitmap.Height-1; y > 0; y--)
-                {
-                    if (tempBitmap.GetPixel(pointStampWidth * i, y).A == 0) continue;
-                    yDown = y;
-                    break;
-                }
-                
-                _spritePerPixelPolygon[i-1 + 0 * pointPrecision] = new PointF((float)xLeft, (float)pointStampHeight * i);
-                _spritePerPixelPolygon[i-1 + 1 * pointPrecision] = new PointF((float)pointStampWidth * i, (float)yUp); ;
-                _spritePerPixelPolygon[i-1 + 2 * pointPrecision] = new PointF((float)xRight, (float)pointStampHeight * i); ;
-                _spritePerPixelPolygon[i-1 + 3 * pointPrecision] = new PointF((float)pointStampWidth * i, (float)yDown); ;
-
-            }
-            tempBitmap.Dispose();
-            // some points not found so copy previous point
-            for (int i = 1; i<_spritePerPixelPolygon.Length; i++)
-            {
-                if (_spritePerPixelPolygon[i].X == 0 && _spritePerPixelPolygon[i].Y == 0)
-                {
-                    _spritePerPixelPolygon[i] = _spritePerPixelPolygon[i - 1];
-                }
-            }
-        }
-
         private void button2_Click_1(object sender, EventArgs e)
         {
             // import textures
@@ -506,16 +431,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                             redPen.Dispose();
                         }
                         break;
-                    case Sprite.CollisionMaskEnum.PerPixel:
-                        {
-                            // simulation, not actual drawing from core
-                            if (_spritePerPixelPolygon != null)
-                            {
-                                using Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
-                                e.Graphics.DrawPolygon(redPen, _spritePerPixelPolygon);
-                            }
-                        }
-                        break;
                     default:
                         break;
                 }
@@ -566,7 +481,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         private void s_collision_have_mask_CheckedChanged(object sender, EventArgs e)
         {
             s_col_mask_circle.Enabled = s_collision_have_mask.Checked;
-            s_col_mask_perpixel.Enabled = s_collision_have_mask.Checked;
             s_col_mask_rect.Enabled = s_collision_have_mask.Checked;
             s_col_mask_show.Enabled = s_collision_have_mask.Checked;
             s_col_mask_value.Enabled = s_collision_have_mask.Checked;
@@ -588,29 +502,16 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             s_preview.Refresh();
         }
 
-        private void s_col_mask_perpixel_CheckedChanged(object sender, EventArgs e)
-        {
-            _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.PerPixel;
-            SetCollisionMaskSliderValues();
-            if (_globalSprite.CollisionMask == Sprite.CollisionMaskEnum.PerPixel)
-                GenerateSpritePerPixelPolygon();
-            s_preview.Refresh();
-        }
-
         private void s_col_mask_show_CheckedChanged(object sender, EventArgs e)
         {
             _globalSprite.EditorShowMask = s_col_mask_show.Checked;
             SetCollisionMaskSliderValues();
-            if(_globalSprite.CollisionMask == Sprite.CollisionMaskEnum.PerPixel) 
-                GenerateSpritePerPixelPolygon();
             s_preview.Refresh();
         }
 
         private void s_col_mask_value_Scroll(object sender, EventArgs e)
         {
             _globalSprite.CollisionMaskValue = s_col_mask_value.Value;
-            if (_globalSprite.CollisionMask == Sprite.CollisionMaskEnum.PerPixel) 
-                GenerateSpritePerPixelPolygon();
             label3.Text = "Value ( " + _globalSprite.CollisionMaskValue + " )";
             s_preview.Refresh();
         }

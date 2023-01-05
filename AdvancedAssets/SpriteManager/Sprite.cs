@@ -16,7 +16,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         // enums
         public enum CollisionMaskEnum
         {
-            None, Circle, Rectangle, PerPixel
+            None, Circle, Rectangle//, PerPixel
         }
         public enum SpriteCenterEnum
         {

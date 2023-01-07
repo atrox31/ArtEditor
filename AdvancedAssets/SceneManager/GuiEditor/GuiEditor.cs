@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.variable;
 using ArtCore_Editor.Enums;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Pick_forms;
 using Newtonsoft.Json;
 
 namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
@@ -104,6 +105,25 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
                     GuiElementProperties.Rows.Clear();
                     UpdateTreeView();
                 });
+                contextMenu.Items.Add("Copy from...", null, (o, args) =>
+                {
+                    GuiElement target = _rootElement.FindGuiElement(GuiElementList.SelectedNode.FullPath);
+                    if (target == null) return;
+
+                    PicFromList picFrom = new PicFromList(_rootElement.GetAllChildrenNamesList());
+                    if (picFrom.ShowDialog() == DialogResult.OK)
+                    {
+                        GuiElement copy_from = _rootElement.FindGuiElementByName(picFrom.Selected);
+                        if(copy_from == null) return;
+                        foreach (Variable allProperty in copy_from.GetAllProperties())
+                        {
+                            if (allProperty.Name != "Tag")
+                                target.SetValue(allProperty.Name, allProperty.Default);
+                        }
+                        // refresh view
+                        GuiElementList_AfterSelect(null, null);
+                    }
+                });
             }
 
             contextMenu.Show(MousePosition);
@@ -163,6 +183,6 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
             DialogResult = DialogResult.OK;
             Close();
         }
-
+        
     }
 }

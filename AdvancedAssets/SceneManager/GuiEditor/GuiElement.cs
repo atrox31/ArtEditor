@@ -65,6 +65,32 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
                 }
             },
             {
+                "CheckButton",
+                new List<Variable>()
+                {
+                    new Variable(Variable.VariableType.VTypeString, "Text", "check button")
+                }
+            },
+            {
+                "Slider",
+                new List<Variable>()
+                {
+                    new Variable(Variable.VariableType.VTypeString, "Text", "slider"),
+                    new Variable(Variable.VariableType.VTypeInt, "Minimum", "0"),
+                    new Variable(Variable.VariableType.VTypeInt, "Maximum", "100"),
+                    new Variable(Variable.VariableType.VTypeInt, "Step", "10"),
+                    new Variable(Variable.VariableType.VTypeBool, "ShowValue", "true"),
+                }
+            },
+            {
+                "DropDownList",
+                new List<Variable>()
+                {
+                    new Variable(Variable.VariableType.VTypeString, "Text", "button"),
+                    new Variable(Variable.VariableType.VTypeString, "Values", "option 1|option 2|option 3")
+                }
+            },
+            {
                 "Grid",
                 new List<Variable>()
                 {
@@ -212,6 +238,20 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
                 returnList.AddRange(guiElement.GetAllChildrenPaths());
             }
             return returnList;
+        }
+
+        // get element by tag name
+        public GuiElement FindGuiElementByName(string name)
+        {
+            foreach (GuiElement guiElement in GetAllChildren())
+            {
+                if (guiElement.GetFullName() == name)
+                {
+                    return guiElement;
+                }
+            }
+
+            return null;
         }
 
         // get element at target path

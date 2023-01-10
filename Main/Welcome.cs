@@ -37,7 +37,7 @@ namespace ArtCore_Editor.etc
                     listBox1.Items.Add(line.Split('\\').Last() + " (" + line.ShortString(30) + ")");
                     projects.Add(line);
                 }
-                File.Delete(Program.ProgramDirectory + "\\" + Program.LastFilename);
+                Functions.Functions.FileDelete((Program.ProgramDirectory + "\\" + Program.LastFilename));
                 File.WriteAllLines(Program.ProgramDirectory + "\\" + Program.LastFilename, projects);
             }   
             else

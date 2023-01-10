@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArtCore_Editor.Main;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -30,6 +31,17 @@ namespace ArtCore_Editor.Functions
             drawBrush.Dispose();
             sf.Dispose();
 
+        }
+        /// <summary>
+        /// Delete file if exists
+        /// </summary>
+        /// <param name="path_to_file">Path to file</param>
+        public static void FileDelete(string path_to_file)
+        {
+            if (File.Exists(path_to_file))
+            {
+                File.Delete(path_to_file);
+            }
         }
 
         // Convert object to target type <T>

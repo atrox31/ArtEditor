@@ -775,10 +775,9 @@ namespace ArtCore_Editor
             {
                 Directory.Delete(tempDirectory, true);
             }
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+
+            Functions.Functions.FileDelete(fileName);
+            
             if (file == null) // silent
             {
                 MessageBox.Show("Core files update!", "Complite", MessageBoxButtons.OK, MessageBoxIcon.Information);

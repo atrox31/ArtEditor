@@ -256,12 +256,8 @@ namespace ArtCore_Editor.Main
                 GameProject.ProjectPath + "\\object_compile" + Program.FileExtensions_CompiledArtCode, 
                 true)) return false;
             // cleanup
-            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile" +
-                            Program.FileExtensions_CompiledArtCode))
-            {
-                File.Delete(GameProject.ProjectPath + "\\" + "object_compile" +
-                            Program.FileExtensions_CompiledArtCode);
-            }
+            Functions.Functions.FileDelete(GameProject.ProjectPath + "\\" + "object_compile" +
+                                           Program.FileExtensions_CompiledArtCode);
             return true;
         }
 
@@ -490,7 +486,7 @@ namespace ArtCore_Editor.Main
                     File.WriteAllText(tmpFilePath, guiTriggersContent);
                     if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                             "-obj " + tmpFilePath, true)) return false;
-                    File.Delete(tmpFilePath);
+                    Functions.Functions.FileDelete(tmpFilePath);
 
                     if (CancelRequest(bgw, e)) return false;
 
@@ -500,7 +496,7 @@ namespace ArtCore_Editor.Main
                         GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                         true
                     )) return false;
-                    File.Delete(GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
+                    Functions.Functions.FileDelete((GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
                 }
 
                 if (CancelRequest(bgw, e)) return false;

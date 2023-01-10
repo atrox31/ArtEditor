@@ -13,12 +13,11 @@ using ArtCore_Editor.Assets;
 using ArtCore_Editor.Enums;
 using ArtCore_Editor.etc;
 using ArtCore_Editor.Functions;
-using ArtCore_Editor.Main;
 using Newtonsoft.Json;
 
 #pragma warning disable IDE0090
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Main
 {
     public partial class GameCompiler : Form
     {
@@ -54,31 +53,20 @@ namespace ArtCore_Editor
             _instance.OutputLog.SelectedIndex = _instance.OutputLog.Items.Count - 1;
         }
 
-        private readonly bool _isDebug;
         private readonly bool _runGame;
         private readonly bool _closeAfterDone;
         private const string AssetPackFileName = "assets" + Program.FileExtensions_AssetPack;
         private const string GameDataFileName = "game" + Program.FileExtensions_GameDataPack; 
-        private List<string> FileList = new List<string>();
+        private readonly List<string> _fileList = new List<string>();
 
         public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
         {
             InitializeComponent();
             Program.ApplyTheme(this);
             _instance = this;
-            _isDebug = debugMode;
             _runGame = runGame;
             _closeAfterDone = closeAfterDone;
-            /*
-                if (File.Exists(GameProject.ProjectPath + "\\" + AssetPackFileName))
-                {
-                    File.Delete(GameProject.ProjectPath + "\\" + AssetPackFileName);
-                }
-            */
-            if (!_isDebug)
-            {
-                button2.Visible = false;
-            }
+            button2.Visible = debugMode;
         }
 
 
@@ -134,7 +122,7 @@ namespace ArtCore_Editor
                     skipped++;
                 }
                 // add to file list so engine can access by normal name
-                FileList.Add(assetName + "\\" + item.Value.FileName + ";" + item.Value.Name);
+                _fileList.Add(assetName + "\\" + item.Value.FileName + ";" + item.Value.Name);
                 if (CancelRequest(sender, e)) return false;
                 
                 sender.ReportProgress(1,
@@ -185,7 +173,7 @@ namespace ArtCore_Editor
                 }
 
                 // add to file list so engine can access by normal name
-                FileList.Add("Sprites\\" + sprite.Value.FileName + ";" + sprite.Value.Name);
+                _fileList.Add("Sprites\\" + sprite.Value.FileName + ";" + sprite.Value.Name);
                 if (CancelRequest(sender, e)) return false;
                 cProgress += progressStep;
                 sender.ReportProgress(1,
@@ -267,7 +255,13 @@ namespace ArtCore_Editor
                 "object_compile" + Program.FileExtensions_CompiledArtCode, 
                 GameProject.ProjectPath + "\\object_compile" + Program.FileExtensions_CompiledArtCode, 
                 true)) return false;
-            File.Delete(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode);
+            // cleanup
+            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile" +
+                            Program.FileExtensions_CompiledArtCode))
+            {
+                File.Delete(GameProject.ProjectPath + "\\" + "object_compile" +
+                            Program.FileExtensions_CompiledArtCode);
+            }
             return true;
         }
 
@@ -286,95 +280,102 @@ namespace ArtCore_Editor
         {
             Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.Version.ToString(), 1, false));
 
-            // saving project
-            Bgw.ReportProgress(1, new Message("Saving project", 2, false));
-            GameProject.GetInstance().SaveToFile();
-            Bgw.ReportProgress(1, new Message("Saving project ..done", 3, true));
-            if (CancelRequest(Bgw, e)) return;
-
-            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
-            if (CancelRequest(Bgw, e)) return;
-
-            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
-            if (CancelRequest(Bgw, e)) return;
-
-            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
-            if (CancelRequest(Bgw, e)) return;
-
-            if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
-            if (CancelRequest(Bgw, e)) return;
-
-            if (!CreateSpriteDefinitions(Bgw, e, 50, 60)) return;
-            if (CancelRequest(Bgw, e)) return;
-
-            // write all assets to list in assets.pak
-            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + AssetPackFileName, "filelist.txt", FileList,
-                    true)) return;
-
-            Bgw.ReportProgress(1, new Message("Asset prepare done", -1, false));
-
-            Bgw.ReportProgress(1, new Message("Prepare game file", -1, false));
-            {
-                for(int i = 0; i < Program.coreFiles.Count; i++)
-                {
-                    UpdateCoreFiles("Core\\" + Program.coreFiles[i][0], Program.coreFiles[i][1], i, Program.coreFiles.Count);
-                    if (CancelRequest(Bgw, e)) return;
-                }
-                if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
-                {
-                    if (!ZipIO.WriteFileToZipFile(
-                        GameProject.ProjectPath + "\\" + GameDataFileName,
-                        "bg_img.png", 
-                        GameProject.ProjectPath + "\\bg_img.png",
-                        true )) return;
-                }
+            {   // saving project
+                Bgw.ReportProgress(1, new Message("Saving project", 2, false));
+                GameProject.GetInstance().SaveToFile();
+                Bgw.ReportProgress(1, new Message("Saving project ..done", 3, true));
+                if (CancelRequest(Bgw, e)) return;
             }
-            Bgw.ReportProgress(1, new Message("Prepare game file ..done", 61, true));
-            if (CancelRequest(Bgw, e)) return;
+            {   // assets
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
+                if (CancelRequest(Bgw, e)) return;
 
-            // setup.ini
-            Bgw.ReportProgress(1, new Message("Game settings", 61, false));
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!CreateSpriteDefinitions(Bgw, e, 50, 60)) return;
+                if (CancelRequest(Bgw, e)) return;
+            }
             {
-                List<string> content = new List<string>();
-                foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
-                {
-                    int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null)!;
-                    content.Add(property.Name + "=" + value);
-                }
-
-                if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "setup.ini", content,
+                // write all assets to list in assets.pak
+                if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + AssetPackFileName, "filelist.txt",
+                        _fileList,
                         true)) return;
+                Bgw.ReportProgress(1, new Message("Asset prepare done", -1, false));
+                if (CancelRequest(Bgw, e)) return;
             }
-            if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Game settings ..done", 65, true));
-
-
-            // object definitions
-            if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Objects", 65, false));
-            if (!CreateObjectDefinitions(Bgw, e)) return;
-            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode))
             {
-                File.Delete(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode);
+                // game core files like default font, shaders etc.
+                Bgw.ReportProgress(1, new Message("Prepare game file", 61, false));
+                PrepareGameCoreFiles(Bgw, e);
+                Bgw.ReportProgress(1, new Message("Prepare game file ..done", 62, true));
+                if (CancelRequest(Bgw, e)) return;
             }
-            Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
+            {
+                // write platform files to Platform.dat
+                Bgw.ReportProgress(1, new Message("Platform settings", 63, false));
+                PreparePlatformSettings();
+                if (CancelRequest(Bgw, e)) return;
+                Bgw.ReportProgress(1, new Message("Platform settings ..done", 64, true));
+            }
+            {
+                // object definitions
+                if (CancelRequest(Bgw, e)) return;
+                Bgw.ReportProgress(1, new Message("Objects", 65, false));
+                if (!CreateObjectDefinitions(Bgw, e)) return;
+                
 
+                Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
+            }
 
             // scene definitions
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Scenes ", 75, false));
             if (!CreateSceneDefinitions(Bgw, e, 75, 98)) return;
 
-            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\list.txt",
-                    GameProject.GetInstance().Scenes.Keys.ToList(), true)) return;
-
-            if (!ZipIO.WriteLineToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\StartingScene.txt",
-                    GameProject.GetInstance().StartingScene, true)) return;
-
             Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
  
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Game ready", 100, false));
+        }
+
+        private void PrepareGameCoreFiles(BackgroundWorker obj, DoWorkEventArgs e)
+        {
+            {
+                for (int i = 0; i < Program.coreFiles.Count; i++)
+                {
+                    UpdateCoreFiles("Core\\" + Program.coreFiles[i][0], Program.coreFiles[i][1], i, Program.coreFiles.Count);
+                    if (CancelRequest(obj, e)) return;
+                }
+                if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
+                {
+                    if (!ZipIO.WriteFileToZipFile(
+                            GameProject.ProjectPath + "\\" + GameDataFileName,
+                            "bg_img.png",
+                            GameProject.ProjectPath + "\\bg_img.png",
+                            true)) return;
+                    if (CancelRequest(obj, e)) return;
+                }
+            }
+        }
+
+        private void PreparePlatformSettings()
+        {
+            List<string> content = new List<string>();
+            foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
+            {
+                int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null)!;
+                content.Add(property.Name + "=" + value);
+            }
+
+            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + "Platform.dat", "setup.ini", content,
+                    true)) return;
         }
 
         private bool CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e, int currentProgress, int progressMax)
@@ -526,6 +527,16 @@ namespace ArtCore_Editor
                 progress += stepProgress;
                 bgw.ReportProgress(1, new Message("Scene: " + scene.Key + "... done", (int)progress, true));
             }
+            // all scenes prepared, now make list and write first scene
+            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\list.txt",
+                    GameProject.GetInstance().Scenes.Keys.ToList(), true)) return false;
+
+            // write first scene, if not set get first
+            if (!ZipIO.WriteLineToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\StartingScene.txt",
+                     (GameProject.GetInstance().StartingScene.Length > 0 ?
+                         GameProject.GetInstance().StartingScene :
+                         GameProject.GetInstance().Scenes.Values.First().Name)
+                     , true)) return false;
 
             return true;
         }

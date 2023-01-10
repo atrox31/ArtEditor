@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor;
@@ -15,7 +16,7 @@ internal static class Program
     // global program version
     public const float Version = 0.60f;
     // list of filet that is packed to game release archive
-    public static List<string[]> coreFiles = new List<string[]>()
+    public static readonly List<string[]> coreFiles = new List<string[]>()
     {
         new string[]{ "pack", "gamecontrollerdb.txt" },
         new string[]{ "pack", "TitilliumWeb-Light.ttf" },
@@ -23,10 +24,19 @@ internal static class Program
         new string[]{ "shaders", "common.vert" },
         new string[]{ "", "AScript.lib" },
     };
+
+    // used project directory
+    public static string ProjectPath;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [STAThread]
     private static void Main()
     {
+        // change number separator to .
+        CultureInfo customCulture =
+            (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+        customCulture.NumberFormat.NumberDecimalSeparator = ".";
+        System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
         Application.EnableVisualStyles();
         //Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
@@ -38,14 +48,15 @@ internal static class Program
     {
         foreach (Control control in Functions.Functions.GetAllControls(type))
         {
-            control.BackColor = Color.FromArgb(57, 91, 100);
-            control.ForeColor = Color.FromArgb(165, 201, 202);
+            control.BackColor = Color.FromArgb(32, 44, 57);
+            
+            control.ForeColor = Color.FromArgb(184, 176, 141);
             if (control.GetType() == typeof(Button)) control.Paint += Functions.Functions.ButtonAlter_Paint;
             if (control.GetType() == typeof(LinkLabel))
             {
                 LinkLabel linkLabel = (LinkLabel)control;
-                linkLabel.VisitedLinkColor = Color.FromArgb(175, 211, 212);
-                linkLabel.LinkColor = Color.FromArgb(185, 221, 222);
+                linkLabel.VisitedLinkColor = Color.FromArgb(184, 176, 141);
+                linkLabel.LinkColor = Color.FromArgb(184, 176, 141);
             }
         }
     }

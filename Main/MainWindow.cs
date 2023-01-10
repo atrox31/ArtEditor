@@ -22,6 +22,7 @@ using ArtCore_Editor.Functions;
 using ArtCore_Editor.Pick_forms;
 using File = System.IO.File;
 using Path = System.IO.Path;
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor
 {
@@ -48,12 +49,7 @@ namespace ArtCore_Editor
 
         public MainWindow()
         {
-            // change number separator to .
-            CultureInfo customCulture =
-                (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
-            customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-
+            
             InitializeComponent();
             Program.ApplyTheme(this);
 
@@ -99,68 +95,16 @@ namespace ArtCore_Editor
         {
             if (!_projectSaved)
             {
-                if (MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?", "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
+                if (MessageBox.Show("Project is unsaved, if You start new all changes are deleted. Are You sure?",
+                        "Starting new Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                    DialogResult.No) return;
             }
-
-            //folderBrowserDialog1.Reset();
-            while (true)
+            NewProjectWindow npw = new NewProjectWindow();
+            if (npw.ShowDialog() == DialogResult.OK)
             {
-                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    if (Directory.GetFiles(folderBrowserDialog1.SelectedPath).Length > 0)
-                    {
-                        MessageBox.Show("Directory must be empty!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    else
-                    {
-                        LoadScreen loadScreen = new LoadScreen(false);
-                        loadScreen.Show();
-
-                        string path = folderBrowserDialog1.SelectedPath;
-                        GlobalProject = new GameProject();
-                        GlobalProject.Prepare_new();
-                        GlobalProject.ProjectName = path.Split('\\').Last();
-                        GameProject.ProjectPath = path;
-
-                        loadScreen.SetProgress(20);
-
-                        Directory.CreateDirectory(path + "\\assets");
-                        Directory.CreateDirectory(path + "\\assets\\texture");
-                        Directory.CreateDirectory(path + "\\assets\\sprite");
-                        Directory.CreateDirectory(path + "\\assets\\music");
-                        Directory.CreateDirectory(path + "\\assets\\sound");
-                        Directory.CreateDirectory(path + "\\assets\\font");
-                        Directory.CreateDirectory(path + "\\database");
-                        Directory.CreateDirectory(path + "\\object");
-                        Directory.CreateDirectory(path + "\\scene");
-                        Directory.CreateDirectory(path + "\\levels");
-                        Directory.CreateDirectory(path + "\\output");
-
-                        GlobalProject.SaveToFile();
-                        MakeSaved();
-
-                        loadScreen.SetProgress(80);
-                        List<string> lines = new List<string>();
-                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
-                        {
-                            lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
-                        }
-                        lines.Insert(0, path);
-                        File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, lines);
-
-                        RefreshListView(false);
-
-                        loadScreen.SetProgress(100);
-                        loadScreen.Close();
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
-                }
+                MakeSaved();
+                RefreshListView(false);
             }
-
         }
 
         private void OpenProject(string pathname = null)
@@ -213,7 +157,7 @@ namespace ArtCore_Editor
                 }
 
             }
-            
+            // update last.txt
             List<string> lines = new List<string>();
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
             {
@@ -425,7 +369,12 @@ namespace ArtCore_Editor
                 }
                 else if (welcome.DialogResult == DialogResult.Yes) // create
                 {
-                    newProjectToolStripMenuItem_Click(null, null);
+
+                    NewProjectWindow npw = new NewProjectWindow();
+                    if (npw.ShowDialog() == DialogResult.OK)
+                    {
+                        OpenProject(npw.NewProjectFile);
+                    }
 
                 }
                 else if (welcome.DialogResult == DialogResult.Cancel) // open from file
@@ -656,43 +605,39 @@ namespace ArtCore_Editor
         }
 
         // move game files to output folder, prepare to release game
-        private void releaseToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ReleaseGame(string platform)
         {
             // run
             if (CheckCoreFiles())
             {
-                GameCompiler gameCompiler = new GameCompiler(false,false,true);
+                GameCompiler gameCompiler = new GameCompiler(false, false, true);
                 if (gameCompiler.ShowDialog() != DialogResult.OK) return;
 
-                string output = GameProject.ProjectPath + "\\output\\" + GlobalProject.ProjectName;
+                string output = GameProject.ProjectPath + "\\output_" + platform + "\\" + GlobalProject.ProjectName;
                 if (Directory.Exists(output))
                 {
                     Directory.Delete(output, true);
                 }
                 Directory.CreateDirectory(output);
 
-                List<string> files = new List<string>();
-                files.Add(GameProject.ProjectPath + "\\game.dat");
-                files.Add(GameProject.ProjectPath + "\\assets.pak");
-                foreach (string cfile in Directory.GetFiles("Core\\bin_Release\\"))
+                List<string> files = new List<string>
                 {
-                    files.Add(cfile);
+                    // standard assets multi-platform
+                    GameProject.ProjectPath + "\\game.dat",
+                    GameProject.ProjectPath + "\\assets.pak"
+                };
+                files.AddRange(Directory.GetFiles("Core\\bin_Release_" + platform + "+\\"));
+
+                foreach (string file in files.Where(File.Exists))
+                {
+                    File.Copy(file, output + "\\" + Path.GetFileName(file), true);
                 }
 
-                foreach (string file in files)
-                {
-                    if (File.Exists(file))
-                    {
-                        File.Copy(file, output + "\\" + Path.GetFileName(file), true);
-                    }
-                }
-
-                MessageBox.Show("Game files are prepared for release", "Operation complite");
+                MessageBox.Show("Game files are prepared for release", "Operation complete");
                 Process.Start("explorer.exe", output);
 
             }
         }
-
 
         // split content in filelist.txt in core.tar to separate file names(path included)
         List<string> StripFileList(List<string> content)
@@ -878,6 +823,11 @@ namespace ArtCore_Editor
                 GameCompiler gameCompiler = new GameCompiler(false, true);
                 gameCompiler.ShowDialog();
             }
+        }
+
+        private void llToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ReleaseGame(platform)
         }
     }
 }

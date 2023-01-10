@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor.etc
 {

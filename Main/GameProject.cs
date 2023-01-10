@@ -10,7 +10,7 @@ using ArtCore_Editor.etc;
 using ArtCore_Editor.AdvancedAssets.SceneManager;
 using ArtCore_Editor.AdvancedAssets.SpriteManager;
 
-namespace ArtCore_Editor
+namespace ArtCore_Editor.Main
 {
     [JsonObject(MemberSerialization.OptIn)]
     public partial class GameProject : IDisposable
@@ -106,7 +106,7 @@ namespace ArtCore_Editor
             {
                 byte[] buffer = JsonConvert.SerializeObject(this, Formatting.Indented).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
-                
+
             }
 
             MainWindow.GetInstance().MakeSaved();
@@ -127,7 +127,7 @@ namespace ArtCore_Editor
                 {
                     Name = Path.GetFileName(file).Split('.')[0],
                     FileMd5 = "",
-                    ProjectPath = "\\assets\\"+ assetKind,
+                    ProjectPath = "\\assets\\" + assetKind,
                     FileName = Path.GetFileName(file),
                 });
             }
@@ -179,7 +179,7 @@ namespace ArtCore_Editor
                         }
                     }
                 }
-                
+
                 if (Directory.Exists(projectPath + "\\object"))
                 {
                     foreach (string file in Directory.GetDirectories(projectPath + "\\object", "*", SearchOption.TopDirectoryOnly))
@@ -188,7 +188,7 @@ namespace ArtCore_Editor
                         using StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open));
                         fileContents = reader.ReadToEnd();
                         Instance instance = JsonConvert.DeserializeObject<Instance>(fileContents);
-                        if(instance != null)
+                        if (instance != null)
                         {
                             gameProject.Instances.Add(Path.GetFileName(file).Split('.')[0], instance);
                         }

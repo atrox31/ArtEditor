@@ -13,9 +13,10 @@ namespace ArtCore_Editor.etc
         {
             InitializeComponent(); Program.ApplyTheme(this);
         }
-        bool _haveLast = false;
+
+        private bool _haveLast = false;
         public string OpenProject = null;
-        public List<string> LastProjects = new List<string>();
+        private readonly List<string> LastProjects = new List<string>();
 
         private void Welcome_Load(object sender, EventArgs e)
         {

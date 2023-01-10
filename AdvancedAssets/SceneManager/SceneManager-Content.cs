@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager;
+using ArtCore_Editor.Main;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
 using Point = System.Drawing.Point;
 
 namespace ArtCore_Editor.AdvancedAssets.SceneManager
 {    /// <summary>
-    /// scene content, entire drawing area
-    /// </summary>
+     /// scene content, entire drawing area
+     /// </summary>
     public partial class SceneManager
     {
         private bool _mouseDrag;

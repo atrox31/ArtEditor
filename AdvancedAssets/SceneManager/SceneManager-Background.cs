@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 using ArtCore_Editor.Pick_forms;
-using static ArtCore_Editor.GameProject;
+using static ArtCore_Editor.Main.GameProject;
 
 namespace ArtCore_Editor.AdvancedAssets.SceneManager
 {

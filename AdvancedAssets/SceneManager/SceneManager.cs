@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -8,10 +7,10 @@ using System.Linq;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager;
 using ArtCore_Editor.Assets;
-using ArtCore_Editor.Enums;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 using Newtonsoft.Json;
-using static ArtCore_Editor.GameProject;
+using static ArtCore_Editor.Main.GameProject;
 
 namespace ArtCore_Editor.AdvancedAssets.SceneManager
 {

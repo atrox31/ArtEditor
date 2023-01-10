@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor;
 using ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor.pickers;
 using ArtCore_Editor.Pick_forms;
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
 {

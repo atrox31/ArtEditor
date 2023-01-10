@@ -23,13 +23,30 @@ namespace ArtCore_Editor.Main
     {
         private static GameCompiler _instance;
 
+
+        private readonly bool _runGame;
+        private readonly bool _closeAfterDone;
+        private const string AssetPackFileName = "assets" + Program.FileExtensions_AssetPack;
+        private const string GameDataFileName = "game" + Program.FileExtensions_GameDataPack; 
+        private readonly List<string> _fileList = new List<string>();
+
+        public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
+        {
+            InitializeComponent();
+            Program.ApplyTheme(this);
+            _instance = this;
+            _runGame = runGame;
+            _closeAfterDone = closeAfterDone;
+            button2.Visible = debugMode;
+        }
+
         // object that is pass by background worker to show messages in log
         private class Message
         {
             public string Text { get; set; }
             public int ProgressBarValue { get; set; }
             public bool ReplaceLastLine { get; set; }
-            
+
 
             public Message(string text, int progressBarValue, bool replaceLastLine)
             {
@@ -52,21 +69,74 @@ namespace ArtCore_Editor.Main
             }
             _instance.OutputLog.SelectedIndex = _instance.OutputLog.Items.Count - 1;
         }
-
-        private readonly bool _runGame;
-        private readonly bool _closeAfterDone;
-        private const string AssetPackFileName = "assets" + Program.FileExtensions_AssetPack;
-        private const string GameDataFileName = "game" + Program.FileExtensions_GameDataPack; 
-        private readonly List<string> _fileList = new List<string>();
-
-        public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
+        private static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
         {
-            InitializeComponent();
-            Program.ApplyTheme(this);
-            _instance = this;
-            _runGame = runGame;
-            _closeAfterDone = closeAfterDone;
-            button2.Visible = debugMode;
+            if (obj.CancellationPending != true) return false;
+            e.Cancel = true;
+            return true;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.Version.ToString(), 1, false));
+
+            {   // saving project
+                Bgw.ReportProgress(1, new Message("Saving project", 2, false));
+                GameProject.GetInstance().SaveToFile();
+                Bgw.ReportProgress(1, new Message("Saving project ..done", -1, true));
+                if (CancelRequest(Bgw, e)) return;
+
+                // write platform files to Platform.dat
+                Bgw.ReportProgress(1, new Message("Platform settings", 3, false));
+                PreparePlatformSettings();
+                Bgw.ReportProgress(1, new Message("Platform settings ..done", -1, true));
+                if (CancelRequest(Bgw, e)) return;
+
+                // game core files like default font, shaders etc.
+                Bgw.ReportProgress(1, new Message("Prepare game file", 4, false));
+                PrepareGameCoreFiles(Bgw, e);
+                Bgw.ReportProgress(1, new Message("Prepare game file ..done", -1, true));
+                if (CancelRequest(Bgw, e)) return;
+            }
+            {   // assets
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                if (!CreateSpriteDefinitions(Bgw, e, 50, 65)) return;
+                if (CancelRequest(Bgw, e)) return;
+
+                // write all assets to list in assets.pak
+                if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + AssetPackFileName, "filelist.txt",
+                        _fileList,
+                        true)) return;
+                Bgw.ReportProgress(1, new Message("Asset prepare done", -1, false));
+                if (CancelRequest(Bgw, e)) return;
+            }
+            {
+                // object definitions
+                Bgw.ReportProgress(1, new Message("Objects", 65, false));
+                if (!CreateObjectDefinitions(Bgw, e)) return;
+                Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
+                if (CancelRequest(Bgw, e)) return;
+            }
+            {
+                // scene definitions
+                Bgw.ReportProgress(1, new Message("Scenes ", 75, false));
+                if (!CreateSceneDefinitions(Bgw, e, 75, 99)) return;
+                if (CancelRequest(Bgw, e)) return;
+                Bgw.ReportProgress(1, new Message("Scenes ..done", -1, true));
+            }
+
+            Bgw.ReportProgress(1, new Message("Game ready", 100, false));
         }
 
 
@@ -134,13 +204,6 @@ namespace ArtCore_Editor.Main
                 new Message(assetName + " (" + (currentItem).ToString() + "/" + maxCount.ToString() + ") ", progressMax,
                     true));
             sender.ReportProgress(1, new Message(skipped.ToString() + " skipped", progressMax, false));
-            return true;
-        }
-
-        private static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
-        {
-            if (obj.CancellationPending != true) return false;
-            e.Cancel = true;
             return true;
         }
 
@@ -270,75 +333,6 @@ namespace ArtCore_Editor.Main
                 Program.ProgramDirectory + "\\" + folder + "\\" + file,
                 false)) return;
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
-        }
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Bgw.ReportProgress(1, new Message("ArtCore Editor version " + Program.Version.ToString(), 1, false));
-
-            {   // saving project
-                Bgw.ReportProgress(1, new Message("Saving project", 2, false));
-                GameProject.GetInstance().SaveToFile();
-                Bgw.ReportProgress(1, new Message("Saving project ..done", 3, true));
-                if (CancelRequest(Bgw, e)) return;
-            }
-            {   // assets
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
-                if (CancelRequest(Bgw, e)) return;
-
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
-                if (CancelRequest(Bgw, e)) return;
-
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
-                if (CancelRequest(Bgw, e)) return;
-
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
-                if (CancelRequest(Bgw, e)) return;
-
-                if (!CreateSpriteDefinitions(Bgw, e, 50, 60)) return;
-                if (CancelRequest(Bgw, e)) return;
-            }
-            {
-                // write all assets to list in assets.pak
-                if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + AssetPackFileName, "filelist.txt",
-                        _fileList,
-                        true)) return;
-                Bgw.ReportProgress(1, new Message("Asset prepare done", -1, false));
-                if (CancelRequest(Bgw, e)) return;
-            }
-            {
-                // game core files like default font, shaders etc.
-                Bgw.ReportProgress(1, new Message("Prepare game file", 61, false));
-                PrepareGameCoreFiles(Bgw, e);
-                Bgw.ReportProgress(1, new Message("Prepare game file ..done", 62, true));
-                if (CancelRequest(Bgw, e)) return;
-            }
-            {
-                // write platform files to Platform.dat
-                Bgw.ReportProgress(1, new Message("Platform settings", 63, false));
-                PreparePlatformSettings();
-                if (CancelRequest(Bgw, e)) return;
-                Bgw.ReportProgress(1, new Message("Platform settings ..done", 64, true));
-            }
-            {
-                // object definitions
-                if (CancelRequest(Bgw, e)) return;
-                Bgw.ReportProgress(1, new Message("Objects", 65, false));
-                if (!CreateObjectDefinitions(Bgw, e)) return;
-                
-
-                Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
-            }
-
-            // scene definitions
-            if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Scenes ", 75, false));
-            if (!CreateSceneDefinitions(Bgw, e, 75, 98)) return;
-
-            Bgw.ReportProgress(1, new Message("Scenes ..done", 99, true));
- 
-            if (CancelRequest(Bgw, e)) return;
-            Bgw.ReportProgress(1, new Message("Game ready", 100, false));
         }
 
         private void PrepareGameCoreFiles(BackgroundWorker obj, DoWorkEventArgs e)
@@ -486,6 +480,7 @@ namespace ArtCore_Editor.Main
                     File.WriteAllText(tmpFilePath, guiTriggersContent);
                     if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                             "-obj " + tmpFilePath, true)) return false;
+
                     Functions.Functions.FileDelete(tmpFilePath);
 
                     if (CancelRequest(bgw, e)) return false;
@@ -496,7 +491,7 @@ namespace ArtCore_Editor.Main
                         GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                         true
                     )) return false;
-                    Functions.Functions.FileDelete((GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
+                    Functions.Functions.FileDelete(GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
                 }
 
                 if (CancelRequest(bgw, e)) return false;

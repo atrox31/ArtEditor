@@ -32,29 +32,24 @@
             this.brn_project_path = new System.Windows.Forms.Button();
             this.tbx_project_path = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.chl_project_target_platform = new System.Windows.Forms.CheckedListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tbx_project_name = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.chb_import_standard_main_menu = new System.Windows.Forms.CheckBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.nud_default_font_size = new System.Windows.Forms.NumericUpDown();
-            this.chb_use_default_font = new System.Windows.Forms.CheckBox();
-            this.btn_default_font = new System.Windows.Forms.Button();
-            this.txb_default_font_path = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.cbl_standard_behaviour = new System.Windows.Forms.CheckedListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btn_accept = new System.Windows.Forms.Button();
             this.btn_cancel = new System.Windows.Forms.Button();
+            this.chb_target_1 = new System.Windows.Forms.CheckBox();
+            this.chb_target_2 = new System.Windows.Forms.CheckBox();
+            this.chb_target_3 = new System.Windows.Forms.CheckBox();
+            this.chb_target_4 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_default_font_size)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,31 +79,22 @@
             // 
             this.tbx_project_path.Location = new System.Drawing.Point(6, 22);
             this.tbx_project_path.Name = "tbx_project_path";
+            this.tbx_project_path.ReadOnly = true;
             this.tbx_project_path.Size = new System.Drawing.Size(191, 23);
             this.tbx_project_path.TabIndex = 0;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.chl_project_target_platform);
+            this.groupBox2.Controls.Add(this.chb_target_4);
+            this.groupBox2.Controls.Add(this.chb_target_3);
+            this.groupBox2.Controls.Add(this.chb_target_2);
+            this.groupBox2.Controls.Add(this.chb_target_1);
             this.groupBox2.Location = new System.Drawing.Point(259, 15);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(257, 125);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Target platform\'s";
-            // 
-            // chl_project_target_platform
-            // 
-            this.chl_project_target_platform.FormattingEnabled = true;
-            this.chl_project_target_platform.Items.AddRange(new object[] {
-            "Windows (x64) 7, 8, 8.1, 10, 11",
-            "Linux (x64)",
-            "MacOs (x64) 10 minimum",
-            "Android (x64) Android 9 (API level 28)"});
-            this.chl_project_target_platform.Location = new System.Drawing.Point(6, 22);
-            this.chl_project_target_platform.Name = "chl_project_target_platform";
-            this.chl_project_target_platform.Size = new System.Drawing.Size(245, 94);
-            this.chl_project_target_platform.TabIndex = 0;
             // 
             // groupBox3
             // 
@@ -124,6 +110,7 @@
             // 
             this.tbx_project_name.Location = new System.Drawing.Point(6, 22);
             this.tbx_project_name.Name = "tbx_project_name";
+            this.tbx_project_name.ReadOnly = true;
             this.tbx_project_name.Size = new System.Drawing.Size(229, 23);
             this.tbx_project_name.TabIndex = 0;
             // 
@@ -131,7 +118,6 @@
             // 
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.chb_import_standard_main_menu);
-            this.groupBox4.Controls.Add(this.groupBox5);
             this.groupBox4.Location = new System.Drawing.Point(12, 146);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(241, 269);
@@ -144,7 +130,7 @@
             this.label3.AutoSize = true;
             this.label3.Enabled = false;
             this.label3.ForeColor = System.Drawing.SystemColors.AppWorkspace;
-            this.label3.Location = new System.Drawing.Point(53, 189);
+            this.label3.Location = new System.Drawing.Point(58, 141);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(123, 15);
             this.label3.TabIndex = 2;
@@ -153,70 +139,12 @@
             // chb_import_standard_main_menu
             // 
             this.chb_import_standard_main_menu.AutoSize = true;
-            this.chb_import_standard_main_menu.Location = new System.Drawing.Point(6, 112);
+            this.chb_import_standard_main_menu.Location = new System.Drawing.Point(6, 22);
             this.chb_import_standard_main_menu.Name = "chb_import_standard_main_menu";
             this.chb_import_standard_main_menu.Size = new System.Drawing.Size(175, 19);
             this.chb_import_standard_main_menu.TabIndex = 0;
             this.chb_import_standard_main_menu.Text = "Import standard main menu";
             this.chb_import_standard_main_menu.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.label1);
-            this.groupBox5.Controls.Add(this.nud_default_font_size);
-            this.groupBox5.Controls.Add(this.chb_use_default_font);
-            this.groupBox5.Controls.Add(this.btn_default_font);
-            this.groupBox5.Controls.Add(this.txb_default_font_path);
-            this.groupBox5.Location = new System.Drawing.Point(6, 22);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(229, 84);
-            this.groupBox5.TabIndex = 1;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Default font";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(117, 55);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Font size";
-            // 
-            // nud_default_font_size
-            // 
-            this.nud_default_font_size.Location = new System.Drawing.Point(176, 54);
-            this.nud_default_font_size.Name = "nud_default_font_size";
-            this.nud_default_font_size.Size = new System.Drawing.Size(47, 23);
-            this.nud_default_font_size.TabIndex = 3;
-            // 
-            // chb_use_default_font
-            // 
-            this.chb_use_default_font.AutoSize = true;
-            this.chb_use_default_font.Location = new System.Drawing.Point(6, 55);
-            this.chb_use_default_font.Name = "chb_use_default_font";
-            this.chb_use_default_font.Size = new System.Drawing.Size(119, 19);
-            this.chb_use_default_font.TabIndex = 2;
-            this.chb_use_default_font.Text = "Use standard font";
-            this.chb_use_default_font.UseVisualStyleBackColor = true;
-            this.chb_use_default_font.CheckedChanged += new System.EventHandler(this.chb_use_default_font_CheckedChanged);
-            // 
-            // btn_default_font
-            // 
-            this.btn_default_font.BackgroundImage = global::ArtCore_Editor.Properties.Resources.folder;
-            this.btn_default_font.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btn_default_font.Location = new System.Drawing.Point(191, 16);
-            this.btn_default_font.Name = "btn_default_font";
-            this.btn_default_font.Size = new System.Drawing.Size(32, 32);
-            this.btn_default_font.TabIndex = 1;
-            this.btn_default_font.UseVisualStyleBackColor = true;
-            // 
-            // txb_default_font_path
-            // 
-            this.txb_default_font_path.Location = new System.Drawing.Point(6, 22);
-            this.txb_default_font_path.Name = "txb_default_font_path";
-            this.txb_default_font_path.Size = new System.Drawing.Size(179, 23);
-            this.txb_default_font_path.TabIndex = 0;
             // 
             // groupBox6
             // 
@@ -264,6 +192,47 @@
             this.btn_cancel.TabIndex = 6;
             this.btn_cancel.Text = "Cancel";
             this.btn_cancel.UseVisualStyleBackColor = true;
+            this.btn_cancel.Click += new System.EventHandler(this.btn_cancel_Click);
+            // 
+            // chb_target_1
+            // 
+            this.chb_target_1.AutoSize = true;
+            this.chb_target_1.Location = new System.Drawing.Point(6, 26);
+            this.chb_target_1.Name = "chb_target_1";
+            this.chb_target_1.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_1.TabIndex = 0;
+            this.chb_target_1.Text = "checkBox1";
+            this.chb_target_1.UseVisualStyleBackColor = true;
+            // 
+            // chb_target_2
+            // 
+            this.chb_target_2.AutoSize = true;
+            this.chb_target_2.Location = new System.Drawing.Point(6, 51);
+            this.chb_target_2.Name = "chb_target_2";
+            this.chb_target_2.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_2.TabIndex = 1;
+            this.chb_target_2.Text = "checkBox2";
+            this.chb_target_2.UseVisualStyleBackColor = true;
+            // 
+            // chb_target_3
+            // 
+            this.chb_target_3.AutoSize = true;
+            this.chb_target_3.Location = new System.Drawing.Point(6, 76);
+            this.chb_target_3.Name = "chb_target_3";
+            this.chb_target_3.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_3.TabIndex = 2;
+            this.chb_target_3.Text = "checkBox3";
+            this.chb_target_3.UseVisualStyleBackColor = true;
+            // 
+            // chb_target_4
+            // 
+            this.chb_target_4.AutoSize = true;
+            this.chb_target_4.Location = new System.Drawing.Point(6, 100);
+            this.chb_target_4.Name = "chb_target_4";
+            this.chb_target_4.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_4.TabIndex = 3;
+            this.chb_target_4.Text = "checkBox4";
+            this.chb_target_4.UseVisualStyleBackColor = true;
             // 
             // NewProjectWindow
             // 
@@ -286,13 +255,11 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_default_font_size)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
@@ -305,16 +272,9 @@
         private System.Windows.Forms.Button brn_project_path;
         private System.Windows.Forms.TextBox tbx_project_path;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckedListBox chl_project_target_platform;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox tbx_project_name;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown nud_default_font_size;
-        private System.Windows.Forms.CheckBox chb_use_default_font;
-        private System.Windows.Forms.Button btn_default_font;
-        private System.Windows.Forms.TextBox txb_default_font_path;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckedListBox cbl_standard_behaviour;
         private System.Windows.Forms.Label label2;
@@ -322,5 +282,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btn_accept;
         private System.Windows.Forms.Button btn_cancel;
+        private System.Windows.Forms.CheckBox chb_target_4;
+        private System.Windows.Forms.CheckBox chb_target_3;
+        private System.Windows.Forms.CheckBox chb_target_2;
+        private System.Windows.Forms.CheckBox chb_target_1;
     }
 }

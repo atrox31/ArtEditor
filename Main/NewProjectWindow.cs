@@ -1,15 +1,21 @@
 ﻿using ArtCore_Editor.etc;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel.Design;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
+using Path = System.IO.Path;
+using ArtCore_Editor.AdvancedAssets.SceneManager;
+using System.Xml.Linq;
+using ArtCore_Editor.Assets;
+using Newtonsoft.Json;
 
 namespace ArtCore_Editor.Main
 {
     public partial class NewProjectWindow : Form
     {
-        public string NewProjectFile;
         public NewProjectWindow()
         {
             InitializeComponent();Program.ApplyTheme(this);
@@ -22,97 +28,122 @@ namespace ArtCore_Editor.Main
                 cbl_standard_behaviour.Items.Add(Path.GetFileNameWithoutExtension(enumerateFile));
             }
 
-            foreach (CheckBox item in chl_project_target_platform.Items)
+            chb_target_1.Text = "Windows (x64) 7, 8, 8.1, 10, 11";
+            chb_target_2.Text = "Linux (x64)    --IN VERSION 1.0"; chb_target_2.Enabled = false;
+            chb_target_3.Text = "MacOs (x64)    --IN VERSION 1.0"; chb_target_3.Enabled = false;
+            chb_target_4.Text = "Android (x64)  --IN VERSION 1.0"; chb_target_4.Enabled = false;
+
+
+            foreach (string enumerateFile in Directory.EnumerateFiles(
+                         Program.ProgramDirectory + "\\" + "Core" + "\\" + "StandardBehaviourTemplates" + "\\"))
             {
-                if (!item.Text.Contains("Windows"))
-                {
-                    item.Enabled = false;
-                    item.Text += " --IN VERSION 1.0";
-                }
+                cbl_standard_behaviour.Items.Add(Path.GetFileNameWithoutExtension(enumerateFile));
             }
         }
-
-        private void chb_use_default_font_CheckedChanged(object sender, System.EventArgs e)
+        
+        private bool CreateNewProject()
         {
-            txb_default_font_path.Enabled = !chb_use_default_font.Checked;
-            btn_default_font.Enabled = !chb_use_default_font.Checked;
-            nud_default_font_size.Enabled = !chb_use_default_font.Checked;
-        }
+            // standard check
+            if(Functions.Functions.ErrorCheck(tbx_project_path.Text.Length > 0, "Select project path!")) return false;
+            if(Functions.Functions.ErrorCheck(tbx_project_name.Text.Length > 0, "Select project path, to get project name.")) return false;
+            if(Functions.Functions.ErrorCheck(
+                   chb_target_1.Checked || chb_target_2.Checked || chb_target_3.Checked || chb_target_4.Checked 
+                   , "Select at least one target platform")) return false;
 
-        private void CreateNewProject()
-        {
+            // all ok, create project
+            LoadScreen loadScreen = new LoadScreen(true);
+            loadScreen.Show();
+            
+            Directory.CreateDirectory(GameProject.ProjectPath);
 
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            GameProject globalProject = new GameProject();
+            globalProject.Prepare_new();
+            globalProject.ProjectName = tbx_project_name.Text;
+            GameProject.ProjectPath = tbx_project_path.Text;
+
+            if (chb_target_1.Checked) globalProject.TargetPlatforms.Add(chb_target_1.Text.Split(' ').First());
+            if (chb_target_2.Checked) globalProject.TargetPlatforms.Add(chb_target_2.Text.Split(' ').First());
+            if (chb_target_3.Checked) globalProject.TargetPlatforms.Add(chb_target_3.Text.Split(' ').First());
+            if (chb_target_4.Checked) globalProject.TargetPlatforms.Add(chb_target_4.Text.Split(' ').First());
+            
+
+            foreach (string standardBehaviour in cbl_standard_behaviour.CheckedItems)
             {
-                if (Directory.GetFiles(folderBrowserDialog1.SelectedPath).Length > 0)
+                string target = Program.ProgramDirectory + "\\" +"Core" + "\\" + "StandardBehaviourTemplates" + "\\" +
+                                standardBehaviour + Program.FileExtensions_ArtCode;
+                if (File.Exists(target))
                 {
-                    MessageBox.Show("Directory must be empty!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    File.Copy(target,
+                        GameProject.ProjectPath + "\\" + "object" + "\\" + "StandardBehaviour" + "\\" +
+                        standardBehaviour + Program.FileExtensions_ArtCode
+                    );
                 }
-                else
+            }
+
+            // project properties checkboxes
+            if (chb_import_standard_main_menu.Checked)
+            {
+                string target = Program.ProgramDirectory + "\\" + "Core" + "\\" + "SceneTemplates" + "\\" +
+                                "scn_main_menu" + ".zip";
+                if (Functions.Functions.ErrorCheck(File.Exists(target), "Can not find '" + target + "'"))
                 {
-                    LoadScreen loadScreen = new LoadScreen(false);
-                    loadScreen.Show();
+                    // do nothing
+                }else
+                {
+                    ZipFile.ExtractToDirectory(target, 
+                        GameProject.ProjectPath + "\\" + "scene" + "\\");
 
-                    string path = folderBrowserDialog1.SelectedPath;
-                    GlobalProject = new GameProject();
-                    GlobalProject.Prepare_new();
-                    GlobalProject.ProjectName = path.Split('\\').Last();
-                    GameProject.ProjectPath = path;
+                    using StreamReader reader = new StreamReader(
+                        File.Open(
+                            GameProject.ProjectPath + "\\" + "scene" + "\\" + 
+                            "scn_main_menu" + "\\" + "scn_main_menu" + Program.FileExtensions_SceneObject, 
+                            FileMode.Open));
 
-                    loadScreen.SetProgress(20);
-
-                    Directory.CreateDirectory(path + "\\assets");
-                    Directory.CreateDirectory(path + "\\assets\\texture");
-                    Directory.CreateDirectory(path + "\\assets\\sprite");
-                    Directory.CreateDirectory(path + "\\assets\\music");
-                    Directory.CreateDirectory(path + "\\assets\\sound");
-                    Directory.CreateDirectory(path + "\\assets\\font");
-                    Directory.CreateDirectory(path + "\\database");
-                    Directory.CreateDirectory(path + "\\object");
-                    Directory.CreateDirectory(path + "\\scene");
-                    Directory.CreateDirectory(path + "\\levels");
-                    Directory.CreateDirectory(path + "\\output");
-
-                    GlobalProject.SaveToFile();
-
-                    // update last.txt
-                    loadScreen.SetProgress(80);
-                    List<string> lines = new List<string>();
-                    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
+                    Scene scnMainMenu = JsonConvert.DeserializeObject<Scene>(reader.ReadToEnd());
+                    if (scnMainMenu != null)
                     {
-                        lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
+                        globalProject.Scenes.Add("scn_main_menu", scnMainMenu);
                     }
-                    lines.Insert(0, path);
-                    File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, lines);
 
-
-                    loadScreen.SetProgress(100);
-                    loadScreen.Close();
-                    return;
                 }
             }
-            else
-            {
-                return;
-            }
+
+            // adjust standard options for core, sdl and opengl
+            ArtCoreSettings settings = new ArtCoreSettings();
+            settings.ShowDialog();
+
+            globalProject.SaveToFile();
+            loadScreen.Close();
+            return true;
         }
 
         private void btn_accept_Click(object sender, EventArgs e)
         {
-            if (true)
+            if (CreateNewProject())
             {
                 DialogResult = DialogResult.OK;
-            }
-            else
-            {
-
-
+                Close();
             }
         }
 
         private void brn_project_path_Click(object sender, EventArgs e)
         {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK) return;
 
+            if(Functions.Functions.ErrorCheck(
+                Directory.GetFiles(folderBrowserDialog1.SelectedPath).Length == 0,
+                "Directory must be empty!"))
+                return;
+
+            tbx_project_path.Text = folderBrowserDialog1.SelectedPath;
+            tbx_project_name.Text = folderBrowserDialog1.SelectedPath.Split('\\').Last();
+        }
+
+        private void btn_cancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

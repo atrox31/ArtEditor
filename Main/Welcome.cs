@@ -20,13 +20,13 @@ namespace ArtCore_Editor.etc
 
         private void Welcome_Load(object sender, EventArgs e)
         {
-            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename))
+            if (!File.Exists(Program.ProgramDirectory + "\\" + Program.LastFilename))
             {
                 listBox1.Items.Add("<no last projects>");
                 return;
             }
             List<string> projects = new List<string>();
-            List<string> list = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename).ToList();
+            List<string> list = File.ReadAllLines(Program.ProgramDirectory + "\\" + Program.LastFilename).ToList();
             if (list.Count > 0)
             {
                 _haveLast = true;
@@ -37,8 +37,8 @@ namespace ArtCore_Editor.etc
                     listBox1.Items.Add(line.Split('\\').Last() + " (" + line.ShortString(30) + ")");
                     projects.Add(line);
                 }
-                File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename);
-                File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + Program.LastFilename, projects);
+                File.Delete(Program.ProgramDirectory + "\\" + Program.LastFilename);
+                File.WriteAllLines(Program.ProgramDirectory + "\\" + Program.LastFilename, projects);
             }   
             else
             {

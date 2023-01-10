@@ -57,8 +57,8 @@ namespace ArtCore_Editor
         private readonly bool _isDebug;
         private readonly bool _runGame;
         private readonly bool _closeAfterDone;
-        private const string AssetPackFileName = "assets.pak";
-        private const string GameDataFileName = "game.dat"; 
+        private const string AssetPackFileName = "assets" + Program.FileExtensions_AssetPack;
+        private const string GameDataFileName = "game" + Program.FileExtensions_GameDataPack; 
         private List<string> FileList = new List<string>();
 
         public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
@@ -198,23 +198,23 @@ namespace ArtCore_Editor
         private static bool RunArtCompiler(BackgroundWorker sender, DoWorkEventArgs e, string outputFile, string inputs, bool quiet = false)
         {
             // check if compiler exists
-            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe"))
+            if (!File.Exists(Program.ProgramDirectory + "\\" + "Core\\ACompiler.exe"))
             {
                 sender.ReportProgress(1, new Message("\"Core\\ACompiler.exe\" - file not found", -1, false));
                 return false;
             }
 
             // check if library exists
-            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
+            if (!File.Exists(Program.ProgramDirectory + "\\" + "Core\\AScript.lib"))
             {
                 sender.ReportProgress(1, new Message("\"Core\\AScript.lib\" - file not found", -1, false));
                 return false;
             }
             // write arguments
-            string args = "-lib \"" + AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib\" -output \"" + outputFile + "\" " + inputs;
+            string args = "-lib \"" + Program.ProgramDirectory + "\\" + "Core\\AScript.lib\" -output \"" + outputFile + "\" " + inputs;
 
             Process compiler = new Process();
-            compiler.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\ACompiler.exe";
+            compiler.StartInfo.FileName = Program.ProgramDirectory + "\\" + "Core\\ACompiler.exe";
             compiler.StartInfo.Arguments = (quiet ? "-q " : "") + args;
             compiler.StartInfo.RedirectStandardOutput = true;
             compiler.StartInfo.UseShellExecute = false;
@@ -255,19 +255,19 @@ namespace ArtCore_Editor
             string inputs = "";
             foreach (KeyValuePair<string, Instance> obj in GameProject.GetInstance().Instances)
             {
-                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main.asc\" ";
+                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main" + Program.FileExtensions_ArtCode + "\" ";
             }
 
-            if (!RunArtCompiler(sender, e, GameProject.ProjectPath + "\\" + "object_compile.acp", inputs)) return false;
+            if (!RunArtCompiler(sender, e, GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode, inputs)) return false;
 
             if (CancelRequest(sender, e)) return false;
 
             if (!ZipIO.WriteFileToZipFile(
                 GameProject.ProjectPath + "\\" + GameDataFileName, 
-                "object_compile.acp", 
-                GameProject.ProjectPath + "\\object_compile.acp", 
+                "object_compile" + Program.FileExtensions_CompiledArtCode, 
+                GameProject.ProjectPath + "\\object_compile" + Program.FileExtensions_CompiledArtCode, 
                 true)) return false;
-            File.Delete(GameProject.ProjectPath + "\\" + "object_compile.acp");
+            File.Delete(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode);
             return true;
         }
 
@@ -277,7 +277,7 @@ namespace ArtCore_Editor
             if (!ZipIO.WriteFileToZipFile(
                 GameProject.ProjectPath + "\\" + GameDataFileName, 
                 "files\\" + file,
-                AppDomain.CurrentDomain.BaseDirectory + "\\" + folder + "\\" + file,
+                Program.ProgramDirectory + "\\" + folder + "\\" + file,
                 false)) return;
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
@@ -353,9 +353,9 @@ namespace ArtCore_Editor
             if (CancelRequest(Bgw, e)) return;
             Bgw.ReportProgress(1, new Message("Objects", 65, false));
             if (!CreateObjectDefinitions(Bgw, e)) return;
-            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile.acp"))
+            if (File.Exists(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode))
             {
-                File.Delete(GameProject.ProjectPath + "\\" + "object_compile.acp");
+                File.Delete(GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode);
             }
             Bgw.ReportProgress(1, new Message("Objects ..done", 75, false));
 
@@ -420,7 +420,7 @@ namespace ArtCore_Editor
                 bool haveGuiTriggers = false;
                 string guiTriggersContent = "object scene_"+scene.Value.Name + "\n";
                 foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\", "*.asc"))
+                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\", "*" + Program.FileExtensions_ArtCode))
                 {
                     haveGuiTriggers = true;
                     guiTriggersContent += "define " + Path.GetFileNameWithoutExtension(enumerateFile) + "\n";
@@ -477,7 +477,7 @@ namespace ArtCore_Editor
                     }
                     foreach (string enumerateFile in Directory.EnumerateFiles(
                                  GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\",
-                                 "*.asc"))
+                                 "*" + Program.FileExtensions_ArtCode))
                     {
                         guiTriggersContent += "function scene_" + scene.Value.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n"; ;
                         guiTriggersContent += File.ReadAllText(enumerateFile);
@@ -485,9 +485,9 @@ namespace ArtCore_Editor
                         guiTriggersContent += "@end\n";
                     }
 
-                    string tmpFilePath = GameProject.ProjectPath + "\\" + "tmp_scene_triggers.asc";
+                    string tmpFilePath = GameProject.ProjectPath + "\\" + "tmp_scene_triggers" + Program.FileExtensions_ArtCode;
                     File.WriteAllText(tmpFilePath, guiTriggersContent);
-                    if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers.acp",
+                    if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                             "-obj " + tmpFilePath, true)) return false;
                     File.Delete(tmpFilePath);
 
@@ -495,17 +495,17 @@ namespace ArtCore_Editor
 
                     if (!ZipIO.WriteFileToZipFile(
                         GameProject.ProjectPath + "\\" + GameDataFileName,
-                        "scene\\" + scene.Key + "\\" + "scene_triggers.acp",
-                        GameProject.ProjectPath + "\\" + "scene_triggers.acp",
+                        "scene\\" + scene.Key + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
+                        GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                         true
                     )) return false;
-                    File.Delete(GameProject.ProjectPath + "\\" + "scene_triggers.acp");
+                    File.Delete(GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
                 }
 
                 if (CancelRequest(bgw, e)) return false;
                 if (!ZipIO.WriteListToArchive(
                         GameProject.ProjectPath + "\\" + GameDataFileName,
-                        "scene\\" + scene.Key + "\\" + scene.Key + ".asd",
+                        "scene\\" + scene.Key + "\\" + scene.Key + "" + Program.FileExtensions_SceneObject,
                         content,
                         true
                     )) return false;

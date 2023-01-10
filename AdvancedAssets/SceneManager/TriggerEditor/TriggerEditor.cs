@@ -28,7 +28,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             {
                 // gui triggers
                 foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "gui_*.asc"))
+                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "gui_*" + Program.FileExtensions_ArtCode))
                 {
                     if (!Path.GetFileNameWithoutExtension(enumerateFile).StartsWith("gui_")) continue;
                     string[] evName = Path.GetFileNameWithoutExtension(enumerateFile).Substring("gui_".Length)
@@ -47,7 +47,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             {
                 // scene triggers
                 foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "scene&*.asc"))
+                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "scene&*" + Program.FileExtensions_ArtCode))
                 {
                     if (!Path.GetFileNameWithoutExtension(enumerateFile).StartsWith("scene&")) continue;
                     string evName = Path.GetFileNameWithoutExtension(enumerateFile);
@@ -155,9 +155,9 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
                 string prefix = Event_listobx.SelectedItem.ToString()!.Contains('#') ? "gui_" : "";
 
                 string oldFile = GameProject.ProjectPath + _scene.ProjectPath + "\\" + prefix +
-                                 Event_listobx.SelectedItem + ".asc";
+                                 Event_listobx.SelectedItem + "" + Program.FileExtensions_ArtCode;
                 string newFile = GameProject.ProjectPath + _scene.ProjectPath + "\\!" + prefix +
-                                 Event_listobx.SelectedItem + ".asc";
+                                 Event_listobx.SelectedItem + "" + Program.FileExtensions_ArtCode;
                 if (File.Exists(oldFile))
                 {
                     File.Move(oldFile, newFile);
@@ -226,7 +226,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
         {
             // restore all files that is marked to delete
             foreach (string enumerateFile in Directory.EnumerateFiles(
-                         GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\", "!*.asc"))
+                         GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\", "!*" + Program.FileExtensions_ArtCode))
             {
                 File.Move(enumerateFile, enumerateFile.Replace("!", ""));
             }
@@ -242,7 +242,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
                 if (eventData.Key.Contains("scene&"))
                 { // scene trigger
                     fileToSave.Add(GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\" +
-                                   eventData.Key + ".asc");
+                                   eventData.Key + "" + Program.FileExtensions_ArtCode);
                     File.WriteAllText(
                         fileToSave.Last(),
                         eventData.Value
@@ -252,7 +252,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
                 else
                 { // gui trigger
                     fileToSave.Add(GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\" + "gui_" +
-                                   eventData.Key + ".asc");
+                                   eventData.Key + "" + Program.FileExtensions_ArtCode);
                     File.WriteAllText(
                         fileToSave.Last(),
                         eventData.Value
@@ -262,7 +262,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             }
             // delete unused files
             foreach (string enumerateFile in Directory.EnumerateFiles(
-                         GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\", "*.asc"))
+                         GameProject.ProjectPath + "\\" + "scene" + "\\" + _scene.Name + "\\", "*" + Program.FileExtensions_ArtCode))
             {
                 if (Path.GetFileName(enumerateFile).StartsWith('!'))
                 {

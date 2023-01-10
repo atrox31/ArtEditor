@@ -77,7 +77,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
         private void setStartupTriggerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _cScene.SceneStartingTrigger =
-                PicFromList.Get(Directory.GetFiles(GameProject.ProjectPath + _cScene.ProjectPath, "scene&*.asc")
+                PicFromList.Get(Directory.GetFiles(GameProject.ProjectPath + _cScene.ProjectPath, "scene&*" + Program.FileExtensions_ArtCode)
                     .Select(Path.GetFileNameWithoutExtension).ToList());
 
         }

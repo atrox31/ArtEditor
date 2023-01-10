@@ -96,6 +96,9 @@ namespace ArtCore_Editor.Main
             }
         }
 
+        [JsonProperty] 
+        public List<string> TargetPlatforms;
+
         public void SaveToFile()
         {
             Version = Program.Version;
@@ -163,7 +166,7 @@ namespace ArtCore_Editor.Main
                         foreach (string file in Directory.GetDirectories(projectPath + "\\assets\\sprite", "*", SearchOption.TopDirectoryOnly))
                         {
                             string fileName = projectPath + "\\assets\\sprite\\" + file.Split("\\").Last() + "\\" +
-                                              file.Split("\\").Last() + ".spr";
+                                              file.Split("\\").Last() + "" + Program.FileExtensions_Sprite;
                             if (File.Exists(fileName))
                             {
                                 using (StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open)))
@@ -184,7 +187,7 @@ namespace ArtCore_Editor.Main
                 {
                     foreach (string file in Directory.GetDirectories(projectPath + "\\object", "*", SearchOption.TopDirectoryOnly))
                     {
-                        string fileName = file + "\\" + file.Split('\\').Last() + ".obj";
+                        string fileName = file + "\\" + file.Split('\\').Last() + "" + Program.FileExtensions_InstanceObject;
                         using StreamReader reader = new StreamReader(File.Open(fileName, FileMode.Open));
                         fileContents = reader.ReadToEnd();
                         Instance instance = JsonConvert.DeserializeObject<Instance>(fileContents);
@@ -233,7 +236,7 @@ namespace ArtCore_Editor.Main
             {
                 // update needed
                 System.Windows.Forms.MessageBox.Show(
-                    "Project have been created in older verion of ArtCore Editor.\nTry to save it to update?", "Older verion",
+                    "Project have been created in older version of ArtCore Editor.\nTry to save it to update?", "Older version",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Warning);
             }
@@ -251,6 +254,10 @@ namespace ArtCore_Editor.Main
             Textures = new Dictionary<string, Asset>();
             Instances = new Dictionary<string, Instance>();
             Scenes = new Dictionary<string, Scene>();
+            foreach (string directory in Program.ProjectDirectoryStructure)
+            {
+                Directory.CreateDirectory(GameProject.ProjectPath + directory);
+            }
         }
 
     }

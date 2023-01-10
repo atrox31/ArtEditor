@@ -31,7 +31,7 @@ public partial class CodeEditor : Form
         if (_functionsList == null)
         {
             _functionsList = new List<Function>();
-            foreach (string line in System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
+            foreach (string line in System.IO.File.ReadAllLines(Program.ProgramDirectory + "\\" + "Core\\AScript.lib"))
             {
                 if (line.Length == 0) continue;
                 if (line.StartsWith("//")) continue;

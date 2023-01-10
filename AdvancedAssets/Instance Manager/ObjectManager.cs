@@ -83,7 +83,7 @@ public partial class ObjectManager : Form
                 foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
                 {
                     string path = ProjectPath + "\\object\\" + _currentObject.Name + "\\" + item.Value +
-                                  ".asc";
+                                  "" + Program.FileExtensions_ArtCode;
                     if (File.Exists(path))
                     {
                         Event_listobx.Items.Add(item.Key);
@@ -91,7 +91,7 @@ public partial class ObjectManager : Form
                     }
                     else
                     {
-                        MessageBox.Show("File '" + _currentObject.Name + "\\" + item.Value + ".asc" +
+                        MessageBox.Show("File '" + _currentObject.Name + "\\" + item.Value + "" + Program.FileExtensions_ArtCode +
                                         "' not found");
                         File.CreateText(path).WriteLine("// file not found");
                     }
@@ -173,8 +173,8 @@ public partial class ObjectManager : Form
         {
             if (MessageBox.Show("Are You sure to delete event '" + Event_listobx.SelectedItem.ToString() + "'", "Delete event", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                _currentObject.Events.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()));
-                _eventsData.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()));
+                _currentObject.Events.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!));
+                _eventsData.Remove((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!));
                 Event_listobx.Items.Remove(Event_listobx.SelectedItem);
             }
         }
@@ -184,7 +184,7 @@ public partial class ObjectManager : Form
     {
         if (Event_listobx.SelectedItem != null)
         {
-            if (_eventsData[((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()))] != null)
+            if (_eventsData[((Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!))] != null)
             {
                 Event_treeview.Nodes.Clear();
                 foreach (
@@ -193,7 +193,7 @@ public partial class ObjectManager : Form
                         (Event.EventType)
                         Enum.Parse(
                             typeof(Event.EventType),
-                            Event_listobx.SelectedItem.ToString()
+                            Event_listobx.SelectedItem.ToString()!
                         )
                     ].Split('\n'))
                 {
@@ -231,17 +231,17 @@ public partial class ObjectManager : Form
             if (selectedNode == -1)
             {
                 Event_treeview.Nodes.Clear();
-                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] += "\n" + scriptEditor.ReturnValue;
-                foreach (string item in _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split("\n"))
+                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)] += "\n" + scriptEditor.ReturnValue;
+                foreach (string item in _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)].Split("\n"))
                 {
                     Event_treeview.Nodes.Add(item);
                 }
             }
             else
             {
-                List<string> code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split('\n').ToList();
+                List<string> code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)].Split('\n').ToList();
                 code.Insert(selectedNode + 1, scriptEditor.ReturnValue);
-                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join('\n', code);
+                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)] = String.Join('\n', code);
                 Event_treeview.Nodes.Insert(selectedNode + 1, scriptEditor.ReturnValue);
             }
         }
@@ -287,10 +287,10 @@ public partial class ObjectManager : Form
             if (Event_listobx.Items.Count >= 1) Event_listobx.SelectedItem = Event_listobx.Items[^1];
             else return;
         }
-        string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())];
+        string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)];
         CodeEditor codeEditor = new CodeEditor( code);
         if (codeEditor.ShowDialog() != DialogResult.OK) return;
-        _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
+        _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)] = String.Join("\n", codeEditor.Code);
         Event_treeview.Nodes.Clear();
         foreach (string line in codeEditor.Code)
         {
@@ -338,7 +338,7 @@ public partial class ObjectManager : Form
         }
         Directory.CreateDirectory(pathToObjectData);
 
-        _currentObject.FileName = _currentObject.Name + ".obj";
+        _currentObject.FileName = _currentObject.Name + "" + Program.FileExtensions_InstanceObject;
         _currentObject.ProjectPath = "\\object\\" + _currentObject.Name + "\\";
 
         if (bodyType_IsSolid.Checked)
@@ -367,7 +367,7 @@ public partial class ObjectManager : Form
             {
                 if (_eventsData[item.Key] != null)
                 {
-                    File.WriteAllText(pathToObjectData + "\\" + item.Value + ".asc", _eventsData[item.Key]);
+                    File.WriteAllText(pathToObjectData + "\\" + item.Value + "" + Program.FileExtensions_ArtCode, _eventsData[item.Key]);
 
                 }// else error
             }
@@ -444,7 +444,7 @@ public partial class ObjectManager : Form
                 instanceMain += _eventsData[item.Key] + "\n";
                 instanceMain += "@end\n";
             }
-            File.WriteAllText(ProjectPath + "\\object\\" + _currentObject.Name + "\\main.asc", instanceMain);
+            File.WriteAllText(ProjectPath + "\\object\\" + _currentObject.Name + "\\main" + Program.FileExtensions_ArtCode, instanceMain);
         }
     }
 

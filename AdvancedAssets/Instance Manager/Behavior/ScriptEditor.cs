@@ -16,15 +16,23 @@ public partial class ScriptEditor : Form
     // what this form need to get
     private readonly Variable.VariableType _requiredType;
     
-    private List<Variable> _variables = new List<Variable>();
+    private readonly List<Variable> _variables;
     // static ArtCode.lib content
     private static List<Function> _functionsList = null;
     // what is this form returning (include child returns)
     public string ReturnValue = "";
 
-    public static void ClearFunctionList()
+    public static void UpdateFunctionList()
     {
         _functionsList?.Clear();
+        _functionsList = new List<Function>();
+        foreach (string line in System.IO.File.ReadAllLines(Program.ProgramDirectory + "\\" + "Core\\AScript.lib"))
+        {
+            if (line.Length == 0) continue;
+            if (line.StartsWith("//")) continue;
+            if (string.Concat(line.Where(c => !char.IsWhiteSpace(c))).Length == 0) continue;
+            _functionsList.Add(new Function(line));
+        }
     }
 
     public ScriptEditor(Variable.VariableType requiredType, List<Variable> variables)
@@ -36,23 +44,18 @@ public partial class ScriptEditor : Form
 
         if (_functionsList == null)
         {
-            _functionsList = new List<Function>();
-            foreach (string line in System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Core\\AScript.lib"))
-            {
-                if (line.Length == 0) continue;
-                if (line.StartsWith("//")) continue;
-                if (string.Concat(line.Where(c => !char.IsWhiteSpace(c))).Length == 0) continue;
-                _functionsList.Add(new Function(line));
-            }
+            UpdateFunctionList();
         }
 
-        foreach (Function fun in _functionsList)
+        if (_functionsList != null)
         {
-            if (fun.ReturnType == requiredType)
+            foreach (Function fun in _functionsList)
             {
-                _functions.Add(fun);
+                if (fun.ReturnType == requiredType)
+                {
+                    _functions.Add(fun);
+                }
             }
-
         }
 
         if (requiredType != Variable.VariableType.VTypeNull)

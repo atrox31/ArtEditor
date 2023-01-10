@@ -1,5 +1,4 @@
-﻿using ArtCore_Editor.Main;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace ArtCore_Editor.etc
 {

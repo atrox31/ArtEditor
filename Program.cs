@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ArtCore_Editor;
 
 internal static class Program
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////   Program const variables, used to have standard names across editor   ////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // name for last open projects storage
     public const string LastFilename = "last.txt";
@@ -24,10 +27,42 @@ internal static class Program
         new string[]{ "shaders", "common.vert" },
         new string[]{ "", "AScript.lib" },
     };
+    // project folder structure
+    public static readonly List<string> ProjectDirectoryStructure = new List<string>()
+    {
+        "\\assets",
+        "\\assets\\texture",
+        "\\assets\\sprite",
+        "\\assets\\music",
+        "\\assets\\sound",
+        "\\assets\\font",
+            
+        "\\object",
+        "\\object\\StandardBehaviour",
+        "\\scene",
 
-    // used project directory
-    public static string ProjectPath;
+        "\\output",
+    };
+
+    // ReSharper disable InconsistentNaming CommentTypo
+    // Art   [S][p][r]ite  Definition - conflict with scene so ase, not asd 
+    public const string FileExtensions_Sprite = ".spr";             
+    // Art   [O][b][j]ect  [Definition 
+    public const string FileExtensions_InstanceObject = ".obj";     
+    // [A]rt [S]cene       [D]efinition
+    public const string FileExtensions_SceneObject = ".asd";        
+    // [A]rt [S]cript      [C]ode
+    public const string FileExtensions_ArtCode = ".asc";            
+    // [A]rt [C]om[p]iled  Code
+    public const string FileExtensions_CompiledArtCode = ".acp";    
+    // Art   [P][a]c[k]ed  Data 
+    public const string FileExtensions_AssetPack = ".pak";          
+    // Art   [D][a][t]a    File
+    public const string FileExtensions_GameDataPack = ".dat";       
+    // ReSharper restore InconsistentNaming CommentTypo
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Program exe directory
+    public static string ProgramDirectory;
     [STAThread]
     private static void Main()
     {
@@ -37,12 +72,14 @@ internal static class Program
         customCulture.NumberFormat.NumberDecimalSeparator = ".";
         System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
+        ProgramDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
         Application.EnableVisualStyles();
         //Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new MainWindow());
     }
-
+    
     // change colors of all elements 
     public static void ApplyTheme(Control type)
     {

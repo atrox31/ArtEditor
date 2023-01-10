@@ -259,7 +259,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
                     return;
                 }
                 GameProject.GetInstance().Scenes.RenameKey(_aid, _cScene.Name);
-                foreach (string enumerateFile in Directory.EnumerateFiles(GameProject.ProjectPath + "\\scene\\" + _aid, "*.asc"))
+                foreach (string enumerateFile in Directory.EnumerateFiles(GameProject.ProjectPath + "\\scene\\" + _aid, "*" + Program.FileExtensions_ArtCode))
                 {// move all scene triggers
                     File.Move(enumerateFile, 
                         pathToObjectData + "\\" + Path.GetFileName(enumerateFile)

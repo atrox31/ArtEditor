@@ -69,7 +69,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
             _globalSprite.Name = s_spritename.Text;
             _globalSprite.ProjectPath = $"\\assets\\sprite\\{_globalSprite.Name}";
-            _globalSprite.FileName = $"{_globalSprite.Name}.spr";
+            _globalSprite.FileName = $"{_globalSprite.Name}" + Program.FileExtensions_Sprite;
 
             // fresh sprite
             if (_aid == null)

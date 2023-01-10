@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 using ArtCore_Editor.Pick_forms;
-using Bitmap = System.Drawing.Bitmap;
 
 namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 {

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Media;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor.Assets.Sound
 {

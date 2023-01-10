@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor.Assets.Texture
 {

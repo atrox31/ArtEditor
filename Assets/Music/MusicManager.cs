@@ -1,4 +1,5 @@
-﻿using LibVLCSharp.Shared;
+﻿using ArtCore_Editor.Main;
+using LibVLCSharp.Shared;
 using System;
 using System.IO;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;

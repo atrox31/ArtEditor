@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 
 namespace ArtCore_Editor.Assets
 {

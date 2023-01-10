@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Shapes;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior.pickers;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.code;
@@ -13,7 +12,7 @@ using ArtCore_Editor.Enums;
 using ArtCore_Editor.Functions;
 using ArtCore_Editor.Pick_forms;
 using Newtonsoft.Json;
-using static ArtCore_Editor.GameProject;
+using static ArtCore_Editor.Main.GameProject;
 using Path = System.IO.Path;
 
 namespace ArtCore_Editor.AdvancedAssets.Instance_Manager;

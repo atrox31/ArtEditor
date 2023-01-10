@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ArtCore_Editor.Enums;
 using ArtCore_Editor.Functions;
+using ArtCore_Editor.Main;
 using ArtCore_Editor.Pick_forms;
 
 namespace ArtCore_Editor.AdvancedAssets.Instance_Manager.variable;

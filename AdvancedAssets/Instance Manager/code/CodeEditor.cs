@@ -14,7 +14,11 @@ public partial class CodeEditor : Form
 {
     [DllImport("user32", CharSet = CharSet.Auto)]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
-
+    // for event messages, draw colors 
+    private const int WM_SETREDRAW = 0x000B;
+    private const int WM_USER = 0x400;
+    private const int EM_GETEVENTMASK = (WM_USER + 59);
+    private const int EM_SETEVENTMASK = (WM_USER + 69);
 
     public List<string> Code = new();
     private bool _changes;
@@ -73,10 +77,7 @@ public partial class CodeEditor : Form
 
     private void ColorTheCode()
     {
-        const int WM_SETREDRAW = 0x000B;
-        const int WM_USER = 0x400;
-        const int EM_GETEVENTMASK = (WM_USER + 59);
-        const int EM_SETEVENTMASK = (WM_USER + 69);
+       
         IntPtr eventMask = IntPtr.Zero;
         try
         {
@@ -113,7 +114,9 @@ public partial class CodeEditor : Form
 
                 if (text.Last() == ' ' || text.Last() == ')' 
                 ||  text.Last() == '(' || text.Last() == '\n' 
-                || text.Last() == '\"'|| text.Last() == ',')
+                || text.Last() == '\"'|| text.Last() == ','
+                || text.Last() == '\t'
+                )
                 {
                     bool found = false;
                     // text

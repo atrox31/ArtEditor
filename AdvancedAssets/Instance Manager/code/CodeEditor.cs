@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
+using ArtCore_Editor.Enums;
 using ArtCore_Editor.Functions;
 
 namespace ArtCore_Editor.AdvancedAssets.Instance_Manager.code;
@@ -19,14 +20,30 @@ public partial class CodeEditor : Form
     private bool _changes;
     // static ArtCode.lib content
     private static List<Function> _functionsList = null;
+    private readonly List<Variable> _variablesList = null;
 
-    public CodeEditor(string text = null, int selected_line = -1)
+    // color pallet
+    private static class ColorPallet
+    {
+        public static readonly Color Error    = Color.OrangeRed;
+        public static readonly Color Comment  = Color.GreenYellow;
+        public static readonly Color Function = Color.Yellow;
+        public static readonly Color Variable = Color.DodgerBlue;
+        public static readonly Color Numeric  = Color.DeepSkyBlue;
+        public static readonly Color Token    = Color.PapayaWhip;
+        public static readonly Color Neutral  = Color.GhostWhite;
+        public static readonly Color Text     = Color.Orange;
+        public static readonly Color Boolean  = Color.CornflowerBlue;
+    }
+    public CodeEditor(string text = null, List<Variable> variables = null, int selectedLine = -1)
     {
         InitializeComponent(); Program.ApplyTheme(this);
         if (text == null) return;
         Code = text.Split('\n').ToList();
         richTextBox1.Text = text;
         _changes = false;
+
+        _variablesList = variables;
 
         if (_functionsList == null)
         {
@@ -41,10 +58,10 @@ public partial class CodeEditor : Form
         }
 
         ColorTheCode();
-        if (selected_line > -1)
+        if (selectedLine > -1)
         {
-            int start = richTextBox1.GetFirstCharIndexFromLine(selected_line);
-            int length = richTextBox1.Lines[selected_line].Length;
+            int start = richTextBox1.GetFirstCharIndexFromLine(selectedLine);
+            int length = richTextBox1.Lines[selectedLine].Length;
             richTextBox1.Select(start, length);
         }
     }
@@ -70,7 +87,12 @@ public partial class CodeEditor : Form
 
             // change colors and stuff in the RichTextBox
             _changes = true;
-            string[] tokens = { "if", "end", "+=", "==", "-=", "*=", "/=", "!=", "<>", "other" };
+            string[] tokens =
+            {
+                "if", "end", "other", "else",
+                "+=", "-=", "*=", "/=", "!=", 
+                "<>", "==", "<=", ">=", ":="
+            };
 
             int oldSelectionStart = richTextBox1.SelectionStart;
             int oldSelectionLength = richTextBox1.SelectionLength;
@@ -80,7 +102,7 @@ public partial class CodeEditor : Form
             int len = 0;
             richTextBox1.SelectionStart = 0;
             richTextBox1.SelectionLength = richTextBox1.Text.Length;
-            richTextBox1.SelectionColor = Color.Black;
+            richTextBox1.SelectionColor = ColorPallet.Neutral;
             string text = "";
 
             while (pos < richTextBox1.Text.Length - 1)
@@ -89,33 +111,40 @@ public partial class CodeEditor : Form
                 pos++;
                 len++;
 
-                if (richTextBox1.Text[pos] == ' ' || richTextBox1.Text[pos] == ')' || richTextBox1.Text[pos] == '(' ||
-                    richTextBox1.Text[pos] == '\n')
+                if (text.Last() == ' ' || text.Last() == ')' 
+                ||  text.Last() == '(' || text.Last() == '\n' 
+                || text.Last() == '\"'|| text.Last() == ',')
                 {
-                    // token
-                    if (tokens.Contains(text.RemoveWhitespace()))
+                    bool found = false;
+                    // text
+                    if (!found && (text.Length > 0 && text.Last() == '\"'))
                     {
-
-                        richTextBox1.SelectionLength = len;
-                        richTextBox1.SelectionColor = Color.DarkSlateGray;
-
-                    }
-
-                    // function
-                    if (_functionsList.Any(f => f.Name == text))
-                    {
-                        richTextBox1.SelectionLength = len;
-                        richTextBox1.SelectionColor = Color.AntiqueWhite;
-
+                        found = true;
+                        int altPos = text.IndexOf('\"', StringComparison.Ordinal);
+                        if (pos >= richTextBox1.Text.Length - 1) break;
+                        // seek to end of line
+                        while (pos < richTextBox1.Text.Length)
+                        {
+                            text += richTextBox1.Text[pos];
+                            pos++;
+                            len++;
+                            if (text.Last() == '\"')
+                            {
+                                richTextBox1.SelectionStart = pos + altPos - len;
+                                richTextBox1.SelectionLength = len - altPos;
+                                richTextBox1.SelectionColor = ColorPallet.Text;
+                                break;
+                            }
+                        }
                     }
 
                     // comment
-                    if (text.Contains("//"))
+                    if (!found && (text.Contains("//")))
                     {
+                        found = true;
                         int altPos = text.IndexOf("//", StringComparison.Ordinal);
-                        int endPos;
                         // seek to end of line
-                        while((endPos = text.IndexOf('\n', StringComparison.Ordinal)) < 0)
+                        while(text.IndexOf('\n', StringComparison.Ordinal) < 0)
                         {
                             if (pos >= richTextBox1.Text.Length - 1) break;
                             text += richTextBox1.Text[pos];
@@ -124,7 +153,56 @@ public partial class CodeEditor : Form
                         }
                         richTextBox1.SelectionStart = pos + altPos - len;
                         richTextBox1.SelectionLength = len - altPos;
-                        richTextBox1.SelectionColor = Color.GreenYellow;
+                        richTextBox1.SelectionColor = ColorPallet.Comment;
+                    }
+
+                    // last char is special, delete it
+                    text = text.Remove(text.Length - 1);
+                    // token
+                    if (!found && (tokens.Contains(text.RemoveWhitespace())))
+                    {
+                        found = true;
+                        richTextBox1.SelectionLength = len;
+                        richTextBox1.SelectionColor = ColorPallet.Token;
+                    }
+
+                    if (!found && (text.ToLower() == "true" || text.ToLower() == "false"))
+                    {
+                        found = true;
+                        richTextBox1.SelectionLength = len - 1;
+                        richTextBox1.SelectionColor = ColorPallet.Boolean;
+                    }
+
+                    // function
+                    if (!found && (_functionsList.Any(f => f.Name == text)))
+                    {
+                        found = true;
+                        richTextBox1.SelectionLength = len -1;
+                        richTextBox1.SelectionColor = ColorPallet.Function;
+
+                    }
+
+                    if (!found && (_variablesList != null && _variablesList.Count > 0))
+                    {
+                        if (_variablesList.Any(v => v.Name == text))
+                        {
+                            found = true;
+                            richTextBox1.SelectionLength = len - 1;
+                            richTextBox1.SelectionColor = ColorPallet.Variable;
+                        }
+                    }
+
+                    if (!found && (text.Length > 0 && decimal.TryParse(text, out _)))
+                    {
+                        found = true;
+                        richTextBox1.SelectionLength = len - 1;
+                        richTextBox1.SelectionColor = ColorPallet.Numeric;
+                    }
+
+                    if (text.Length > 0 && !found)
+                    {
+                        richTextBox1.SelectionLength = len - 1;
+                        richTextBox1.SelectionColor = ColorPallet.Error;
                     }
 
                     // restart parameters

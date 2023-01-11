@@ -128,7 +128,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             }
 
             string code = _eventsData[Event_listobx.SelectedItem.ToString()!];
-            CodeEditor codeEditor = new CodeEditor(code);
+            CodeEditor codeEditor = new CodeEditor(code, _scene.SceneVariables);
 
             if (codeEditor.ShowDialog() != DialogResult.OK) return;
             _eventsData[Event_listobx.SelectedItem.ToString()!] = String.Join("\n", codeEditor.Code);

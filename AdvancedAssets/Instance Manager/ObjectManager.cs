@@ -104,7 +104,7 @@ public partial class ObjectManager : Form
                 Event_listobx.SelectedIndex = Event_listobx.Items.IndexOf(function);
                 string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)];
 
-                CodeEditor codeEditor = new CodeEditor(code, line);
+                CodeEditor codeEditor = new CodeEditor(code,_currentObject.Variables, line);
                 if (codeEditor.ShowDialog() != DialogResult.OK) return;
                 _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)] = String.Join("\n", codeEditor.Code);
                 Event_treeview.Nodes.Clear();
@@ -288,7 +288,7 @@ public partial class ObjectManager : Form
             else return;
         }
         string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)];
-        CodeEditor codeEditor = new CodeEditor( code);
+        CodeEditor codeEditor = new CodeEditor( code, _currentObject.Variables);
         if (codeEditor.ShowDialog() != DialogResult.OK) return;
         _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString()!)] = String.Join("\n", codeEditor.Code);
         Event_treeview.Nodes.Clear();

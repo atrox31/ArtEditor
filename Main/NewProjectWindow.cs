@@ -54,12 +54,12 @@ namespace ArtCore_Editor.Main
             LoadScreen loadScreen = new LoadScreen(true);
             loadScreen.Show();
             
+            GameProject.ProjectPath = tbx_project_path.Text;
             Directory.CreateDirectory(GameProject.ProjectPath);
 
             GameProject globalProject = new GameProject();
             globalProject.Prepare_new();
             globalProject.ProjectName = tbx_project_name.Text;
-            GameProject.ProjectPath = tbx_project_path.Text;
 
             if (chb_target_1.Checked) globalProject.TargetPlatforms.Add(chb_target_1.Text.Split(' ').First());
             if (chb_target_2.Checked) globalProject.TargetPlatforms.Add(chb_target_2.Text.Split(' ').First());
@@ -108,11 +108,12 @@ namespace ArtCore_Editor.Main
                 }
             }
 
+            MainWindow.GetInstance().GlobalProject = globalProject;
+
             // adjust standard options for core, sdl and opengl
             ArtCoreSettings settings = new ArtCoreSettings();
             settings.ShowDialog();
 
-            globalProject.SaveToFile();
             loadScreen.Close();
             return true;
         }

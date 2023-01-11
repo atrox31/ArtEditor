@@ -132,12 +132,13 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             LoadScreen load = new LoadScreen(true);
             load.Show();
             {
-                if (Directory.Exists(GameProject.ProjectPath + ProjectPath) && ProjectPath.Length > 0)
+                if (ProjectPath.Length == 0)
                 {
-                    Directory.Delete(GameProject.ProjectPath + ProjectPath, true);
+                    load.Close();
+                    return;
                 }
 
-                Directory.CreateDirectory(GameProject.ProjectPath + ProjectPath + "\\img");
+                Functions.Functions.CleanDirectory(GameProject.ProjectPath + ProjectPath + "\\img");
 
                 using FileStream createStream =
                     File.Create(GameProject.ProjectPath + ProjectPath + "\\" + FileName);
@@ -145,7 +146,12 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 byte[] buffer = JsonConvert.SerializeObject(this).Select(c => (byte)c).ToArray();
                 createStream.Write(buffer);
 
-                if (Textures.Count <= 0) return;
+                if (Textures.Count <= 0)
+                {
+                    load.Close();
+                    return;
+                }
+
                 int i = 0;
                 foreach (Image texture in Textures)
                 {

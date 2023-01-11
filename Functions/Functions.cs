@@ -35,13 +35,25 @@ namespace ArtCore_Editor.Functions
         /// <summary>
         /// Delete file if exists
         /// </summary>
-        /// <param name="path_to_file">Path to file</param>
-        public static void FileDelete(string path_to_file)
+        /// <param name="pathToFile">Path to file</param>
+        public static void FileDelete(string pathToFile)
         {
-            if (File.Exists(path_to_file))
+            if (File.Exists(pathToFile))
             {
-                File.Delete(path_to_file);
+                File.Delete(pathToFile);
             }
+        }
+        /// <summary>
+        /// Prepare new directory, delete files if exists
+        /// </summary>
+        /// <param name="pathToDirectory">Path to directory</param>
+        public static void CleanDirectory(string pathToDirectory)
+        {
+            if (Directory.Exists(pathToDirectory))
+            {
+                Directory.Delete(pathToDirectory, true);
+            }
+            Directory.CreateDirectory(pathToDirectory);
         }
 
         // Convert object to target type <T>

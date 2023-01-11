@@ -50,6 +50,11 @@
             this.setStartSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.releaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_release_all = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_release_windows = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_release_linux = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_release_macos = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_release_android = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +79,6 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.ProjectAssetList_imagelist = new System.Windows.Forms.ImageList(this.components);
-            this.llToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -188,14 +192,14 @@
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.runToolStripMenuItem.Text = "Run";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
             // compileRunToolStripMenuItem
             // 
             this.compileRunToolStripMenuItem.Name = "compileRunToolStripMenuItem";
-            this.compileRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compileRunToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.compileRunToolStripMenuItem.Text = "Compile and Run";
             this.compileRunToolStripMenuItem.Click += new System.EventHandler(this.compileRunToolStripMenuItem_Click);
             // 
@@ -211,14 +215,14 @@
             // runToolStripMenuItem1
             // 
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(166, 22);
             this.runToolStripMenuItem1.Text = "Run";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
             // 
             // compileAndRunToolStripMenuItem
             // 
             this.compileAndRunToolStripMenuItem.Name = "compileAndRunToolStripMenuItem";
-            this.compileAndRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compileAndRunToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.compileAndRunToolStripMenuItem.Text = "Compile and Run";
             this.compileAndRunToolStripMenuItem.Click += new System.EventHandler(this.compileAndRunToolStripMenuItem_Click);
             // 
@@ -249,11 +253,50 @@
             // releaseToolStripMenuItem
             // 
             this.releaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.llToolStripMenuItem});
+            this.tsm_release_all,
+            this.tsm_release_windows,
+            this.tsm_release_linux,
+            this.tsm_release_macos,
+            this.tsm_release_android});
             this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
             this.releaseToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.releaseToolStripMenuItem.Text = "Release";
-             // 
+            // 
+            // tsm_release_all
+            // 
+            this.tsm_release_all.Name = "tsm_release_all";
+            this.tsm_release_all.Size = new System.Drawing.Size(180, 22);
+            this.tsm_release_all.Text = "All";
+            this.tsm_release_all.Click += new System.EventHandler(this.llToolStripMenuItem_Click);
+            // 
+            // tsm_release_windows
+            // 
+            this.tsm_release_windows.Name = "tsm_release_windows";
+            this.tsm_release_windows.Size = new System.Drawing.Size(180, 22);
+            this.tsm_release_windows.Text = "Windows";
+            this.tsm_release_windows.Click += new System.EventHandler(this.windowsToolStripMenuItem_Click);
+            // 
+            // tsm_release_linux
+            // 
+            this.tsm_release_linux.Name = "tsm_release_linux";
+            this.tsm_release_linux.Size = new System.Drawing.Size(180, 22);
+            this.tsm_release_linux.Text = "Linux";
+            this.tsm_release_linux.Click += new System.EventHandler(this.linuxToolStripMenuItem_Click);
+            // 
+            // tsm_release_macos
+            // 
+            this.tsm_release_macos.Name = "tsm_release_macos";
+            this.tsm_release_macos.Size = new System.Drawing.Size(180, 22);
+            this.tsm_release_macos.Text = "MacOs";
+            this.tsm_release_macos.Click += new System.EventHandler(this.macOsToolStripMenuItem_Click);
+            // 
+            // tsm_release_android
+            // 
+            this.tsm_release_android.Name = "tsm_release_android";
+            this.tsm_release_android.Size = new System.Drawing.Size(180, 22);
+            this.tsm_release_android.Text = "Android";
+            this.tsm_release_android.Click += new System.EventHandler(this.androidToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -461,13 +504,6 @@
             this.ProjectAssetList_imagelist.ImageSize = new System.Drawing.Size(16, 16);
             this.ProjectAssetList_imagelist.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // llToolStripMenuItem
-            // 
-            this.llToolStripMenuItem.Name = "llToolStripMenuItem";
-            this.llToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.llToolStripMenuItem.Text = "All";
-            this.llToolStripMenuItem.Click += new System.EventHandler(this.llToolStripMenuItem_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -535,7 +571,11 @@
         private System.Windows.Forms.ToolStripMenuItem compileRunToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem compileAndRunToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem llToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsm_release_all;
+        private System.Windows.Forms.ToolStripMenuItem tsm_release_windows;
+        private System.Windows.Forms.ToolStripMenuItem tsm_release_linux;
+        private System.Windows.Forms.ToolStripMenuItem tsm_release_macos;
+        private System.Windows.Forms.ToolStripMenuItem tsm_release_android;
     }
 }
 

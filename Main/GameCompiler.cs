@@ -26,8 +26,9 @@ namespace ArtCore_Editor.Main
 
         private readonly bool _runGame;
         private readonly bool _closeAfterDone;
-        private const string AssetPackFileName = "assets" + Program.FileExtensions_AssetPack;
-        private const string GameDataFileName = "game" + Program.FileExtensions_GameDataPack; 
+        private const string AssetPackFileName = "output\\assets" + Program.FileExtensions_AssetPack;
+        private const string GameDataFileName = "output\\game" + Program.FileExtensions_GameDataPack; 
+        private const string PlatformFileName = "output\\Platform" + Program.FileExtensions_GameDataPack; 
         private readonly List<string> _fileList = new List<string>();
 
         public GameCompiler(bool debugMode, bool runGame = false, bool closeAfterDone = false)
@@ -364,7 +365,7 @@ namespace ArtCore_Editor.Main
                 content.Add(property.Name + "=" + value);
             }
 
-            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + "Platform.dat", "setup.ini", content,
+            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + PlatformFileName, "setup.ini", content,
                     true)) return;
         }
 

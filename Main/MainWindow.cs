@@ -154,8 +154,10 @@ namespace ArtCore_Editor
                 {
                     return;
                 }
-
             }
+
+            List<string> AdvancedAssets = GameProject.GetInstance().TargetPlatforms;
+            //tsm_release_windows.Enabled = GameProject.GetInstance().TargetPlatforms.Contains(tsm_release_windows.Text.Split('_').Last())
 
             // update last.txt
             List<string> lines = new List<string>();
@@ -519,7 +521,7 @@ namespace ArtCore_Editor
 
         void RunGame(bool debugMode)
         {
-            string binPath = debugMode ? "bin_Debug" : "bin_Release";
+            string binPath = debugMode ? "windows_bin_Debug" : "windows_bin_Release";
             string fileNamePath = $"{Program.ProgramDirectory}\\Core\\{binPath}\\ArtCore.exe";
             if (!File.Exists(fileNamePath))
             {
@@ -529,7 +531,10 @@ namespace ArtCore_Editor
 
             Process compiler = new Process();
             compiler.StartInfo.FileName = fileNamePath;
-            compiler.StartInfo.Arguments = (debugMode ? "-debug " : "") + "-assets \"" + GameProject.ProjectPath + "\\assets.pak\" -game_dat \"" + GameProject.ProjectPath + "\\game.dat\"";
+            compiler.StartInfo.Arguments = (debugMode ? "-debug " : "")
+                                           + "-assets \""   + GameProject.ProjectPath + "\\output\\assets.pak\" "
+                                           + "-game_dat \"" + GameProject.ProjectPath + "\\output\\game.dat\" "
+                                           + "-platform \"" + GameProject.ProjectPath + "\\output\\Platform.dat\" ";
             compiler.StartInfo.UseShellExecute = false;
             compiler.StartInfo.CreateNoWindow = true;
             compiler.StartInfo.RedirectStandardOutput = debugMode;
@@ -557,9 +562,9 @@ namespace ArtCore_Editor
             {
                 listBox1.Items.Add("wait for console output...");
                 BackgroundWorker bw = new BackgroundWorker();
-                bw.DoWork += (object sender, DoWorkEventArgs e) =>
+                bw.DoWork += (sender, e) =>
                 {
-                    foreach (string line in ((StringBuilder)e.Argument).ToString().Split('\n'))
+                    foreach (string line in (((StringBuilder)e.Argument)!).ToString().Split('\n'))
                     {
                         listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
                     }
@@ -604,41 +609,6 @@ namespace ArtCore_Editor
             string scene = PicFromList.Get(GlobalProject.Scenes.Keys.ToList());
             if (scene == null) return;
             GlobalProject.StartingScene = GlobalProject.Scenes[scene].Name;
-        }
-
-        // move game files to output folder, prepare to release game
-        private void ReleaseGame(string platform)
-        {
-            // run
-            if (CheckCoreFiles())
-            {
-                GameCompiler gameCompiler = new GameCompiler(false, false, true);
-                if (gameCompiler.ShowDialog() != DialogResult.OK) return;
-
-                string output = GameProject.ProjectPath + "\\output_" + platform + "\\" + GlobalProject.ProjectName;
-                if (Directory.Exists(output))
-                {
-                    Directory.Delete(output, true);
-                }
-                Directory.CreateDirectory(output);
-
-                List<string> files = new List<string>
-                {
-                    // standard assets multi-platform
-                    GameProject.ProjectPath + "\\game" + Program.FileExtensions_GameDataPack,
-                    GameProject.ProjectPath + "\\assets.pak"
-                };
-                files.AddRange(Directory.GetFiles("Core\\bin_Release_" + platform + "+\\"));
-
-                foreach (string file in files.Where(File.Exists))
-                {
-                    File.Copy(file, output + "\\" + Path.GetFileName(file), true);
-                }
-
-                MessageBox.Show("Game files are prepared for release", "Operation complete");
-                Process.Start("explorer.exe", output);
-
-            }
         }
 
         // split content in filelist.txt in core.tar to separate file names(path included)
@@ -735,11 +705,7 @@ namespace ArtCore_Editor
             }
 
             string tempDirectory = Program.ProgramDirectory + "\\" + "temp";
-            if (Directory.Exists(tempDirectory))
-            {
-                Directory.Delete(tempDirectory, true);
-            }
-            //Directory.CreateDirectory("temp");
+            Functions.Functions.CleanDirectory(tempDirectory);
             try
             {
                 Tar.ExtractTar(fileName, tempDirectory);
@@ -829,7 +795,90 @@ namespace ArtCore_Editor
 
         private void llToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ReleaseGame(platform)
+            //ReleaseGame(All)
+            if (ReleaseWindows() && ReleaseLinux() && ReleaseAndroid() && ReleaseMacOs())
+            {
+
+                MessageBox.Show("Game files are prepared for release", "Operation complete");
+                Process.Start("explorer.exe", GameProject.ProjectPath + "\\" + "output");
+            }
+            else
+            {
+                MessageBox.Show("Can not prepare game for release, try test in debug mode.", "Operation failure");
+            }
         }
+
+        private void windowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ReleaseGame(windows)
+            if (!ReleaseWindows(true))
+            {
+                MessageBox.Show("Can not prepare game for release, try test in debug mode.", "Operation failure");
+            }
+        }
+
+        private void linuxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ReleaseGame(linux)
+
+        }
+
+        private void macOsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ReleaseGame(macOs)
+
+        }
+
+        private void androidToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ReleaseGame(android)
+        }
+
+        private bool ReleaseWindows(bool openFolder = false)
+        {
+            if (!CheckCoreFiles()) return false;
+
+            GameCompiler gameCompiler = new GameCompiler(false, false, true);
+            if (gameCompiler.ShowDialog() != DialogResult.OK) return false;
+
+            string output = GameProject.ProjectPath + "\\" + "output" + "\\" + "windows_" + GlobalProject.ProjectName;
+            Functions.Functions.CleanDirectory(output);
+            List<string> files = new List<string>
+            {
+                GameProject.ProjectPath + "\\" + "output" + "\\" + "game"   + Program.FileExtensions_GameDataPack,
+                GameProject.ProjectPath + "\\" + "output" + "\\" + "assets" + Program.FileExtensions_AssetPack,
+                GameProject.ProjectPath + "\\" + "output" + "\\" + "Platform" + Program.FileExtensions_GameDataPack
+            };
+            files.AddRange(Directory.GetFiles("Core" + "\\" + "windows_bin_Release" + "\\"));
+
+            foreach (string file in files.Where(File.Exists))
+            {
+                File.Copy(file, output + "\\" + Path.GetFileName(file), true);
+            }
+
+            if (openFolder)
+            {
+                MessageBox.Show("Game files are prepared for release", "Operation complete");
+                Process.Start("explorer.exe", output);
+            }
+
+            return true;
+        }
+
+        private bool ReleaseLinux()
+        {
+            return false;
+        }
+
+        private bool ReleaseMacOs()
+        {
+            return false;
+        }
+
+        private bool ReleaseAndroid()
+        {
+            return false;
+        }
+
     }
 }

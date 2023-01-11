@@ -202,9 +202,9 @@ namespace ArtCore_Editor.Main
                     foreach (string file in Directory.GetDirectories(projectPath + "\\scene", "*", SearchOption.TopDirectoryOnly))
                     {
                         string fileName = file.Split("\\").Last();
-                        if (File.Exists(projectPath + "\\scene\\" + fileName + "\\" + fileName + ".scd"))
+                        if (File.Exists(projectPath + "\\scene\\" + fileName + "\\" + fileName + Program.FileExtensions_SceneObject))
                         {
-                            using StreamReader reader = new StreamReader(File.Open(projectPath + "\\scene\\" + fileName + "\\" + fileName + ".scd", FileMode.Open));
+                            using StreamReader reader = new StreamReader(File.Open(projectPath + "\\scene\\" + fileName + "\\" + fileName + Program.FileExtensions_SceneObject, FileMode.Open));
                             fileContents = reader.ReadToEnd();
                             Scene scene = JsonConvert.DeserializeObject<Scene>(fileContents);
                             if (scene != null)
@@ -254,6 +254,8 @@ namespace ArtCore_Editor.Main
             Textures = new Dictionary<string, Asset>();
             Instances = new Dictionary<string, Instance>();
             Scenes = new Dictionary<string, Scene>();
+            TargetPlatforms = new List<string>();
+            ArtCoreDefaultSettings ??= new ArtCorePreset();
             foreach (string directory in Program.ProjectDirectoryStructure)
             {
                 Directory.CreateDirectory(GameProject.ProjectPath + directory);

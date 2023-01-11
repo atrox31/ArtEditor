@@ -240,7 +240,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
             }
 
             string pathToObjectData = GameProject.ProjectPath + "\\scene\\" + _cScene.Name;
-            _cScene.FileName = "\\scene\\" + _cScene.Name + "\\" + _cScene.Name + ".scd";
+            _cScene.FileName = "\\scene\\" + _cScene.Name + "\\" + _cScene.Name + Program.FileExtensions_SceneObject;
             _cScene.ProjectPath = "\\scene\\" + _cScene.Name;
 
             _cScene.SceneInstancesList.Clear();

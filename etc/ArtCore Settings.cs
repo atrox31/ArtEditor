@@ -43,14 +43,15 @@ namespace ArtCore_Editor.etc
         }
         public ArtCoreSettings()
         {
-            InitializeComponent(); Program.ApplyTheme(this);
+            InitializeComponent();
             foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
             {
                 string fName = property.Name;
-                int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null);
+                int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null)!;
                 AddNewField(fName, value.ToString());
 
             }
+            Program.ApplyTheme(this);
             Size = new Size(Size.Width, 140 + flowLayoutPanel1.Controls.Count / 2 * 50);
             DialogResult = DialogResult.Cancel;
         }

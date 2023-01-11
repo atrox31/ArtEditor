@@ -332,11 +332,7 @@ public partial class ObjectManager : Form
         }
 
         string pathToObjectData = ProjectPath + "\\object\\" + _currentObject.Name;
-        if (Directory.Exists(pathToObjectData))
-        {
-            Directory.Delete(pathToObjectData, true);
-        }
-        Directory.CreateDirectory(pathToObjectData);
+        Functions.Functions.CleanDirectory(pathToObjectData);
 
         _currentObject.FileName = _currentObject.Name + "" + Program.FileExtensions_InstanceObject;
         _currentObject.ProjectPath = "\\object\\" + _currentObject.Name + "\\";

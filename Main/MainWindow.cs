@@ -71,7 +71,7 @@ namespace ArtCore_Editor
                     output.Add(standardOutput);
                 }
 
-                compiler.WaitForExit();
+                compiler.WaitForExit(3000);
                 if (output.Count >= 2)
                 {
                     _aCompilerVersion = output.Last();
@@ -156,9 +156,6 @@ namespace ArtCore_Editor
                 }
             }
 
-            List<string> AdvancedAssets = GameProject.GetInstance().TargetPlatforms;
-            //tsm_release_windows.Enabled = GameProject.GetInstance().TargetPlatforms.Contains(tsm_release_windows.Text.Split('_').Last())
-
             // update last.txt
             List<string> lines = new List<string>();
             if (File.Exists(Program.ProgramDirectory + "\\" + Program.LastFilename))
@@ -202,7 +199,7 @@ namespace ArtCore_Editor
             }
         }
 
-        public void RefreshListView(bool rememberStates = true)
+        private void RefreshListView(bool rememberStates = true)
         {
             List<string> savedExpansionState = new List<string>();
             if (rememberStates)
@@ -344,51 +341,82 @@ namespace ArtCore_Editor
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            // if asset is clicked, nor category
+            // if asset is clicked, not category
             if (e.Node.Parent == null) return;
-            string category = e.Node.FullPath.Split('\\')[0];
+            string category = e.Node.FullPath.Split('\\').First();
             string name = e.Node.FullPath.Split('\\').Last();
             OpenAssetFromList(category, name);
         }
 
+        // after program launch
+        // show welcome window and try one from 3 options
+        // 1 - create new project
+        // 2 - open existing project
+        // 3 - open one from last opened projects
         private void Form1_Shown(object sender, EventArgs e)
         {
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
-                OpenProject(args[1]);
-                if(GlobalProject == null)
+                for (int i = 1; i < args.Length; i++)
                 {
-                    MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening", MessageBoxButtons.OK, MessageBoxIcon.Stop); return;
+                    // check if argument file have extension of project file
+                    if (args[i].EndsWith(Program.ProjectFilename.Split(('.')).Last()))
+                    {
+                        OpenProject(args[i]);
+                        if (GlobalProject != null) continue;
+                        MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening",
+                            MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    }
+                    // check if argument is update core.tar file
+                    if (args[i].EndsWith("Core.tar"))
+                    {
+                        if(UpdateProgram(args[i])) continue;
+                        MessageBox.Show("Error while opening file'" + args[1] + "'", "Error opening",
+                            MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    }
                 }
                 
             }
             while (GlobalProject == null)
             {
+                // to create new project user must have updated core.tar file
+                // else user can only view or edit code but not run
                 Welcome welcome = new Welcome();
                 welcome.ShowDialog();
-                if (welcome.DialogResult == DialogResult.OK) // open recent
+                switch (welcome.DialogResult)
                 {
-                    OpenProject(welcome.OpenProject + "\\" + Program.ProjectFilename);
-                }
-                else if (welcome.DialogResult == DialogResult.Yes) // create
-                {
-
-                    NewProjectWindow npw = new NewProjectWindow();
-                    if (npw.ShowDialog() == DialogResult.OK)
+                    // open recent
+                    case DialogResult.OK:
                     {
-                        OpenProject(GameProject.ProjectPath);
+                        OpenProject(welcome.OpenProject + "\\" + Program.ProjectFilename);
+                        break;
                     }
+                    // create
+                    case DialogResult.Yes:
+                    {
+                        // check if core files are exists, if not try to update program
+                        // create new project is available only with
+                        // updated core files
+                        if (CheckCoreFiles() || UpdateProgram())
+                        {
+                            NewProjectWindow npw = new NewProjectWindow();
+                            if (npw.ShowDialog() == DialogResult.OK)
+                            {
+                                OpenProject(GameProject.ProjectPath);
+                            }
+                        }
 
-                }
-                else if (welcome.DialogResult == DialogResult.Cancel) // open from file
-                {
-                    OpenProject();
-                }
-                else if (welcome.DialogResult == DialogResult.Abort) // exit
-                {
-                    Application.Exit();
-                    return;
+                        break;
+                    }
+                    // open from file
+                    case DialogResult.Cancel:
+                        OpenProject();
+                        break;
+                    // exit
+                    case DialogResult.Abort:
+                        Application.Exit();
+                        return;
                 }
             }
 
@@ -598,9 +626,7 @@ namespace ArtCore_Editor
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ArtCoreSettings settings = new ArtCoreSettings();
-            settings.ShowDialog();
-            // Save settings is automatic
+            GlobalProject.UpdateUserSettings();
         }
 
         private void setStartSceneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -660,6 +686,11 @@ namespace ArtCore_Editor
             return output;
         }
 
+        /// <summary>
+        /// CHeck if core files are exists
+        /// </summary>
+        /// <param name="showMsg">Show user message about error</param>
+        /// <returns>True if all files are ok</returns>
         bool CheckCoreFiles(bool showMsg = true)
         {
             if (File.Exists(Program.ProgramDirectory + "\\" + "Core\\FileList.txt"))
@@ -796,7 +827,7 @@ namespace ArtCore_Editor
         private void llToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //ReleaseGame(All)
-            if (ReleaseWindows() && ReleaseLinux() && ReleaseAndroid() && ReleaseMacOs())
+            if (ReleaseWindows() && ReleaseLinux() && ReleaseAndroid())
             {
 
                 MessageBox.Show("Game files are prepared for release", "Operation complete");
@@ -820,18 +851,19 @@ namespace ArtCore_Editor
         private void linuxToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //ReleaseGame(linux)
-
+            if (!ReleaseLinux(true))
+            {
+                MessageBox.Show("Can not prepare game for release, try test in debug mode.", "Operation failure");
+            }
         }
-
-        private void macOsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //ReleaseGame(macOs)
-
-        }
-
+        
         private void androidToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //ReleaseGame(android)
+            if (!ReleaseAndroid(true))
+            {
+                MessageBox.Show("Can not prepare game for release, try test in debug mode.", "Operation failure");
+            }
         }
 
         private bool ReleaseWindows(bool openFolder = false)
@@ -865,17 +897,12 @@ namespace ArtCore_Editor
             return true;
         }
 
-        private bool ReleaseLinux()
+        private bool ReleaseLinux(bool openFolder = false)
         {
             return false;
         }
-
-        private bool ReleaseMacOs()
-        {
-            return false;
-        }
-
-        private bool ReleaseAndroid()
+        
+        private bool ReleaseAndroid(bool openFolder = false)
         {
             return false;
         }

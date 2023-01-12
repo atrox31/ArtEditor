@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -83,19 +85,19 @@ namespace ArtCore_Editor.Main
 
             {   // saving project
                 Bgw.ReportProgress(1, new Message("Saving project", 2, false));
-                GameProject.GetInstance().SaveToFile();
+                    GameProject.GetInstance().SaveToFile();
                 Bgw.ReportProgress(1, new Message("Saving project ..done", -1, true));
                 if (CancelRequest(Bgw, e)) return;
 
                 // write platform files to Platform.dat
                 Bgw.ReportProgress(1, new Message("Platform settings", 3, false));
-                PreparePlatformSettings();
+                    if (!PreparePlatformSettings()) return;
                 Bgw.ReportProgress(1, new Message("Platform settings ..done", -1, true));
                 if (CancelRequest(Bgw, e)) return;
 
                 // game core files like default font, shaders etc.
                 Bgw.ReportProgress(1, new Message("Prepare game file", 4, false));
-                PrepareGameCoreFiles(Bgw, e);
+                    if(!PrepareGameCoreFiles(Bgw, e)) return;
                 Bgw.ReportProgress(1, new Message("Prepare game file ..done", -1, true));
                 if (CancelRequest(Bgw, e)) return;
             }
@@ -146,7 +148,7 @@ namespace ArtCore_Editor.Main
         {
             string output = GameProject.ProjectPath + "\\" + AssetPackFileName;
 
-            int maxCount = asset.Count();
+            int maxCount = asset.Count;
             int currentItem = 0;
             int skipped = 0;
             sender.ReportProgress(1,
@@ -325,7 +327,7 @@ namespace ArtCore_Editor.Main
             return true;
         }
 
-        void UpdateCoreFiles(string folder, string file, int c, int max)
+        void CopyCoreFiles(string folder, string file, int c, int max)
         {
 
             if (!ZipIO.WriteFileToZipFile(
@@ -336,37 +338,40 @@ namespace ArtCore_Editor.Main
             Bgw.ReportProgress(1, new Message("Prepare game file (" + c.ToString() + "/" + max.ToString() + ")", -1, true));
         }
 
-        private void PrepareGameCoreFiles(BackgroundWorker obj, DoWorkEventArgs e)
+        private bool PrepareGameCoreFiles(BackgroundWorker obj, DoWorkEventArgs e)
         {
             {
                 for (int i = 0; i < Program.coreFiles.Count; i++)
                 {
-                    UpdateCoreFiles("Core\\" + Program.coreFiles[i][0], Program.coreFiles[i][1], i, Program.coreFiles.Count);
-                    if (CancelRequest(obj, e)) return;
+                    CopyCoreFiles("Core\\" + Program.coreFiles[i][0], Program.coreFiles[i][1], i, Program.coreFiles.Count);
                 }
+
+                if (CancelRequest(obj, e)) return false;
+
                 if (File.Exists(GameProject.ProjectPath + "\\bg_img.png"))
                 {
                     if (!ZipIO.WriteFileToZipFile(
                             GameProject.ProjectPath + "\\" + GameDataFileName,
                             "bg_img.png",
                             GameProject.ProjectPath + "\\bg_img.png",
-                            true)) return;
-                    if (CancelRequest(obj, e)) return;
+                            true)) return false;
                 }
             }
+            return true;
         }
 
-        private void PreparePlatformSettings()
+        private bool PreparePlatformSettings()
         {
-            List<string> content = new List<string>();
-            foreach (PropertyInfo property in typeof(GameProject.ArtCorePreset).GetProperties())
-            {
-                int value = (int)property.GetValue(GameProject.GetInstance().ArtCoreDefaultSettings, null)!;
-                content.Add(property.Name + "=" + value);
-            }
+            // prepare nice format ini file
+            List<string> content = (
+                from DictionaryEntry dictionaryEntry 
+                in GameProject.GetInstance().UserProperties 
+                select dictionaryEntry.Key + "=" + dictionaryEntry.Value
+                ).ToList();
 
-            if (!ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + PlatformFileName, "setup.ini", content,
-                    true)) return;
+            // save to archive
+            return ZipIO.WriteListToArchive(GameProject.ProjectPath + "\\" + PlatformFileName, "setup.ini", content,
+                true);
         }
 
         private bool CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e, int currentProgress, int progressMax)
@@ -387,10 +392,10 @@ namespace ArtCore_Editor.Main
                     "BackGroundType=" + scene.Value.BackGroundType.ToString(),
                     "BackGroundWrapMode=" + scene.Value.BackGroundWrapMode,
                     "BackGroundColor=" + scene.Value.BackGroundColor.ColorToHex(),
-                    "SceneStartingTrigger=" + scene.Value.SceneStartingTrigger,
-                    "[regions]"
+                    "SceneStartingTrigger=" + scene.Value.SceneStartingTrigger
                 };
 
+                content.Add("[regions]");
                 foreach (Scene.Region regions in scene.Value.Regions)
                 {
                     content.Add(regions.ToString());

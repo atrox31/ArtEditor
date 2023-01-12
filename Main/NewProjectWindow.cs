@@ -30,7 +30,6 @@ namespace ArtCore_Editor.Main
 
             chb_target_1.Text = "Windows (x64) 7, 8, 8.1, 10, 11";
             chb_target_2.Text = "Linux (x64)    --IN VERSION 1.0"; chb_target_2.Enabled = false;
-            chb_target_3.Text = "MacOs (x64)    --IN VERSION 1.0"; chb_target_3.Enabled = false;
             chb_target_4.Text = "Android (x64)  --IN VERSION 1.0"; chb_target_4.Enabled = false;
 
 
@@ -47,7 +46,7 @@ namespace ArtCore_Editor.Main
             if(Functions.Functions.ErrorCheck(tbx_project_path.Text.Length > 0, "Select project path!")) return false;
             if(Functions.Functions.ErrorCheck(tbx_project_name.Text.Length > 0, "Select project path, to get project name.")) return false;
             if(Functions.Functions.ErrorCheck(
-                   chb_target_1.Checked || chb_target_2.Checked || chb_target_3.Checked || chb_target_4.Checked 
+                   chb_target_1.Checked || chb_target_2.Checked || chb_target_4.Checked 
                    , "Select at least one target platform")) return false;
 
             // all ok, create project
@@ -63,7 +62,6 @@ namespace ArtCore_Editor.Main
 
             if (chb_target_1.Checked) globalProject.TargetPlatforms.Add(chb_target_1.Text.Split(' ').First());
             if (chb_target_2.Checked) globalProject.TargetPlatforms.Add(chb_target_2.Text.Split(' ').First());
-            if (chb_target_3.Checked) globalProject.TargetPlatforms.Add(chb_target_3.Text.Split(' ').First());
             if (chb_target_4.Checked) globalProject.TargetPlatforms.Add(chb_target_4.Text.Split(' ').First());
             
 
@@ -108,13 +106,26 @@ namespace ArtCore_Editor.Main
                 }
             }
 
-            MainWindow.GetInstance().GlobalProject = globalProject;
-
             // adjust standard options for core, sdl and opengl
-            ArtCoreSettings settings = new ArtCoreSettings();
-            settings.ShowDialog();
+            MessageBox.Show("Almost ready, now look at ArtCore settings. You can adjust it now or just click Apply.\n" +
+                            "You can edit settings in upper bar: Game->Settings");
 
             loadScreen.Close();
+
+            globalProject.UpdateUserSettings();
+            if (globalProject.UserProperties.Count == 0)
+            {
+                // error, user must update core files
+                // roll back all
+                Functions.Functions.CleanDirectory(GameProject.ProjectPath);
+                globalProject.Dispose();
+            }
+            else
+            {
+                // all ok
+                MainWindow.GetInstance().GlobalProject = globalProject;
+            }
+
             return true;
         }
 
@@ -131,6 +142,18 @@ namespace ArtCore_Editor.Main
         {
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK) return;
+
+            // avoid directory not found error and create new
+            // project must be in new empty directory to avoid conflicts
+            if (!Directory.Exists(folderBrowserDialog1.SelectedPath))
+            {
+                if (MessageBox.Show("Create new directory?", "Directory not exists", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    return;
+                }
+                Directory.CreateDirectory(folderBrowserDialog1.SelectedPath);
+                
+            }
 
             if(Functions.Functions.ErrorCheck(
                 Directory.GetFiles(folderBrowserDialog1.SelectedPath).Length == 0,

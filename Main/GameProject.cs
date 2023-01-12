@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -9,6 +10,8 @@ using ArtCore_Editor.AdvancedAssets.Instance_Manager;
 using ArtCore_Editor.etc;
 using ArtCore_Editor.AdvancedAssets.SceneManager;
 using ArtCore_Editor.AdvancedAssets.SpriteManager;
+using System.Windows.Forms;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace ArtCore_Editor.Main
 {
@@ -33,39 +36,18 @@ namespace ArtCore_Editor.Main
             Textures = null;
             Instances = null;
             Scenes = null;
-            ArtCoreDefaultSettings = null;
             GC.Collect();
         }
-
-        // Game settings used in ArtCore, some names must to be like this because is used in sdl or opengl
-        public class ArtCorePreset
-        {
-            public int DefaultResolutionX { get; set; } = 1920;
-            public int DefaultResolutionY { get; set; } = 1080;
-            public int DefaultFramerate { get; set; } = 60;
-            public int GameUsingController { get; set; } = 0;
-            public int FullScreen { get; set; } = 0;
-            public int SdlHintRenderScaleQuality { get; set; } = 1;
-            public int SdlGlMultisamplebuffers { get; set; } = 1;
-            public int SdlGlMultisamplesamples { get; set; } = 4;
-            public int SdlGlDepthSize { get; set; } = 16;
-            public int SdlGlRedSize { get; set; } = 4;
-            public int SdlGlGreenSize { get; set; } = 4;
-            public int SdlGlBlueSize { get; set; } = 4;
-            public int SdlGlAlphaSize { get; set; } = 4;
-            public int SdlHintRenderVsync { get; set; } = 0;
-            public int AudioChunksize { get; set; } = 4096;
-            public int AudioFreq { get; set; } = 44100;
-        }
-
-        [JsonProperty]
-        public ArtCorePreset ArtCoreDefaultSettings;
+        
         [JsonProperty]
         public float Version = 0.0f;
         [JsonProperty]
         public string ProjectName = "New game";
         [JsonProperty]
         public string StartingScene = null;
+
+        [JsonProperty]
+        public OrderedDictionary UserProperties = null;
 
         // game assets
         [JsonProperty]
@@ -82,11 +64,6 @@ namespace ArtCore_Editor.Main
         public Dictionary<string, Instance> Instances { get; set; }
         [JsonProperty]
         public Dictionary<string, Scene> Scenes { get; set; }
-
-        public GameProject()
-        {
-            ArtCoreDefaultSettings = new ArtCorePreset();
-        }
 
         private void CalculateHashForAllAssets<T>(T assetListDictionary) where T : Dictionary<string, Asset>
         {
@@ -240,8 +217,7 @@ namespace ArtCore_Editor.Main
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Warning);
             }
-
-            gameProject.ArtCoreDefaultSettings ??= new ArtCorePreset();
+            
             return gameProject;
         }
 
@@ -255,12 +231,23 @@ namespace ArtCore_Editor.Main
             Instances = new Dictionary<string, Instance>();
             Scenes = new Dictionary<string, Scene>();
             TargetPlatforms = new List<string>();
-            ArtCoreDefaultSettings ??= new ArtCorePreset();
+            UserProperties = new OrderedDictionary();
             foreach (string directory in Program.ProjectDirectoryStructure)
             {
-                Directory.CreateDirectory(GameProject.ProjectPath + directory);
+                Directory.CreateDirectory(ProjectPath + directory);
             }
         }
-
+        
+        // open new settings editor menu and allow to edit data
+        // if user want to save changes
+        public void UpdateUserSettings()
+        {
+            ArtCoreSettings settings = new ArtCoreSettings(UserProperties);
+            if (settings.ShowDialog() == DialogResult.OK)
+            {
+                // get updated settings
+                UserProperties = settings.UserProperties;
+            };
+        }
     }
 }

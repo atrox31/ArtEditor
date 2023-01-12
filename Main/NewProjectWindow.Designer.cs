@@ -32,6 +32,9 @@
             this.brn_project_path = new System.Windows.Forms.Button();
             this.tbx_project_path = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chb_target_4 = new System.Windows.Forms.CheckBox();
+            this.chb_target_2 = new System.Windows.Forms.CheckBox();
+            this.chb_target_1 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tbx_project_name = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -42,10 +45,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btn_accept = new System.Windows.Forms.Button();
             this.btn_cancel = new System.Windows.Forms.Button();
-            this.chb_target_1 = new System.Windows.Forms.CheckBox();
-            this.chb_target_2 = new System.Windows.Forms.CheckBox();
-            this.chb_target_3 = new System.Windows.Forms.CheckBox();
-            this.chb_target_4 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -86,7 +85,6 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.chb_target_4);
-            this.groupBox2.Controls.Add(this.chb_target_3);
             this.groupBox2.Controls.Add(this.chb_target_2);
             this.groupBox2.Controls.Add(this.chb_target_1);
             this.groupBox2.Location = new System.Drawing.Point(259, 15);
@@ -95,6 +93,36 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Target platform\'s";
+            // 
+            // chb_target_4
+            // 
+            this.chb_target_4.AutoSize = true;
+            this.chb_target_4.Location = new System.Drawing.Point(6, 76);
+            this.chb_target_4.Name = "chb_target_4";
+            this.chb_target_4.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_4.TabIndex = 3;
+            this.chb_target_4.Text = "checkBox4";
+            this.chb_target_4.UseVisualStyleBackColor = true;
+            // 
+            // chb_target_2
+            // 
+            this.chb_target_2.AutoSize = true;
+            this.chb_target_2.Location = new System.Drawing.Point(6, 51);
+            this.chb_target_2.Name = "chb_target_2";
+            this.chb_target_2.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_2.TabIndex = 1;
+            this.chb_target_2.Text = "checkBox2";
+            this.chb_target_2.UseVisualStyleBackColor = true;
+            // 
+            // chb_target_1
+            // 
+            this.chb_target_1.AutoSize = true;
+            this.chb_target_1.Location = new System.Drawing.Point(6, 26);
+            this.chb_target_1.Name = "chb_target_1";
+            this.chb_target_1.Size = new System.Drawing.Size(83, 19);
+            this.chb_target_1.TabIndex = 0;
+            this.chb_target_1.Text = "checkBox1";
+            this.chb_target_1.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -194,46 +222,6 @@
             this.btn_cancel.UseVisualStyleBackColor = true;
             this.btn_cancel.Click += new System.EventHandler(this.btn_cancel_Click);
             // 
-            // chb_target_1
-            // 
-            this.chb_target_1.AutoSize = true;
-            this.chb_target_1.Location = new System.Drawing.Point(6, 26);
-            this.chb_target_1.Name = "chb_target_1";
-            this.chb_target_1.Size = new System.Drawing.Size(83, 19);
-            this.chb_target_1.TabIndex = 0;
-            this.chb_target_1.Text = "checkBox1";
-            this.chb_target_1.UseVisualStyleBackColor = true;
-            // 
-            // chb_target_2
-            // 
-            this.chb_target_2.AutoSize = true;
-            this.chb_target_2.Location = new System.Drawing.Point(6, 51);
-            this.chb_target_2.Name = "chb_target_2";
-            this.chb_target_2.Size = new System.Drawing.Size(83, 19);
-            this.chb_target_2.TabIndex = 1;
-            this.chb_target_2.Text = "checkBox2";
-            this.chb_target_2.UseVisualStyleBackColor = true;
-            // 
-            // chb_target_3
-            // 
-            this.chb_target_3.AutoSize = true;
-            this.chb_target_3.Location = new System.Drawing.Point(6, 76);
-            this.chb_target_3.Name = "chb_target_3";
-            this.chb_target_3.Size = new System.Drawing.Size(83, 19);
-            this.chb_target_3.TabIndex = 2;
-            this.chb_target_3.Text = "checkBox3";
-            this.chb_target_3.UseVisualStyleBackColor = true;
-            // 
-            // chb_target_4
-            // 
-            this.chb_target_4.AutoSize = true;
-            this.chb_target_4.Location = new System.Drawing.Point(6, 100);
-            this.chb_target_4.Name = "chb_target_4";
-            this.chb_target_4.Size = new System.Drawing.Size(83, 19);
-            this.chb_target_4.TabIndex = 3;
-            this.chb_target_4.Text = "checkBox4";
-            this.chb_target_4.UseVisualStyleBackColor = true;
-            // 
             // NewProjectWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -283,7 +271,6 @@
         private System.Windows.Forms.Button btn_accept;
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.CheckBox chb_target_4;
-        private System.Windows.Forms.CheckBox chb_target_3;
         private System.Windows.Forms.CheckBox chb_target_2;
         private System.Windows.Forms.CheckBox chb_target_1;
     }

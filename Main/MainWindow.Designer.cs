@@ -53,7 +53,6 @@
             this.tsm_release_all = new System.Windows.Forms.ToolStripMenuItem();
             this.tsm_release_windows = new System.Windows.Forms.ToolStripMenuItem();
             this.tsm_release_linux = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsm_release_macos = new System.Windows.Forms.ToolStripMenuItem();
             this.tsm_release_android = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -256,7 +255,6 @@
             this.tsm_release_all,
             this.tsm_release_windows,
             this.tsm_release_linux,
-            this.tsm_release_macos,
             this.tsm_release_android});
             this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
             this.releaseToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
@@ -282,13 +280,6 @@
             this.tsm_release_linux.Size = new System.Drawing.Size(180, 22);
             this.tsm_release_linux.Text = "Linux";
             this.tsm_release_linux.Click += new System.EventHandler(this.linuxToolStripMenuItem_Click);
-            // 
-            // tsm_release_macos
-            // 
-            this.tsm_release_macos.Name = "tsm_release_macos";
-            this.tsm_release_macos.Size = new System.Drawing.Size(180, 22);
-            this.tsm_release_macos.Text = "MacOs";
-            this.tsm_release_macos.Click += new System.EventHandler(this.macOsToolStripMenuItem_Click);
             // 
             // tsm_release_android
             // 
@@ -574,7 +565,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsm_release_all;
         private System.Windows.Forms.ToolStripMenuItem tsm_release_windows;
         private System.Windows.Forms.ToolStripMenuItem tsm_release_linux;
-        private System.Windows.Forms.ToolStripMenuItem tsm_release_macos;
         private System.Windows.Forms.ToolStripMenuItem tsm_release_android;
     }
 }

@@ -386,8 +386,9 @@ namespace ArtCore_Editor.Main
                 List<string> content = new List<string>
                 {
                     "[setup]",
-                    "Width=" + scene.Value.Width,
-                    "Height=" + scene.Value.Height,
+                    "ViewWidth=" + scene.Value.ViewWidth,
+                    "ViewHeight=" + scene.Value.ViewHeight,
+                    "EnableCamera=" + (scene.Value.EnableCamera ? "1" : "0"),
                     "BackGroundTexture=" + scene.Value.BackGroundTexture?.Name,
                     "BackGroundType=" + scene.Value.BackGroundType.ToString(),
                     "BackGroundWrapMode=" + scene.Value.BackGroundWrapMode,

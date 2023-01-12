@@ -79,6 +79,7 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Content = new System.Windows.Forms.PictureBox();
+            this.chb_enable_camera = new System.Windows.Forms.CheckBox();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -185,7 +186,7 @@
             // sceneVariablesToolStripMenuItem
             // 
             this.sceneVariablesToolStripMenuItem.Name = "sceneVariablesToolStripMenuItem";
-            this.sceneVariablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sceneVariablesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.sceneVariablesToolStripMenuItem.Text = "Scene variables";
             this.sceneVariablesToolStripMenuItem.Click += new System.EventHandler(this.sceneVariablesToolStripMenuItem_Click);
             // 
@@ -195,7 +196,7 @@
             this.editTriggersToolStripMenuItem,
             this.setStartupTriggerToolStripMenuItem});
             this.sceneTriggersToolStripMenuItem.Name = "sceneTriggersToolStripMenuItem";
-            this.sceneTriggersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sceneTriggersToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.sceneTriggersToolStripMenuItem.Text = "Scene triggers";
             // 
             // editTriggersToolStripMenuItem
@@ -291,16 +292,17 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chb_enable_camera);
             this.groupBox1.Controls.Add(this.groupBox5);
             this.groupBox1.Controls.Add(this.groupBox4);
             this.groupBox1.Location = new System.Drawing.Point(4, 64);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(286, 74);
+            this.groupBox1.Size = new System.Drawing.Size(286, 93);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Dimensions";
+            this.groupBox1.Text = "View dimensions";
             // 
             // groupBox5
             // 
@@ -351,7 +353,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.tabControl1);
-            this.groupBox2.Location = new System.Drawing.Point(4, 144);
+            this.groupBox2.Location = new System.Drawing.Point(4, 163);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -596,9 +598,9 @@
             // 
             // groupBox6
             // 
-            this.groupBox6.Location = new System.Drawing.Point(3, 515);
+            this.groupBox6.Location = new System.Drawing.Point(3, 534);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(288, 205);
+            this.groupBox6.Size = new System.Drawing.Size(288, 179);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Properties";
@@ -628,6 +630,17 @@
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
             this.Content.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Content_MouseMove);
             // 
+            // chb_enable_camera
+            // 
+            this.chb_enable_camera.AutoSize = true;
+            this.chb_enable_camera.Enabled = false;
+            this.chb_enable_camera.Location = new System.Drawing.Point(12, 68);
+            this.chb_enable_camera.Name = "chb_enable_camera";
+            this.chb_enable_camera.Size = new System.Drawing.Size(103, 19);
+            this.chb_enable_camera.TabIndex = 2;
+            this.chb_enable_camera.Text = "Enable camera";
+            this.chb_enable_camera.UseVisualStyleBackColor = true;
+            // 
             // SceneManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -648,6 +661,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.groupBox4.ResumeLayout(false);
@@ -722,5 +736,6 @@
         private System.Windows.Forms.ToolStripMenuItem sceneTriggersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editTriggersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setStartupTriggerToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chb_enable_camera;
     }
 }

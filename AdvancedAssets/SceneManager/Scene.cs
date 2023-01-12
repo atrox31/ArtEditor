@@ -34,8 +34,14 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
             }
         }
 
-        [JsonProperty] public int Width;
-        [JsonProperty] public int Height;
+        // base view dimensions
+        // from this value view will be scaled to 
+        // user selected resolution
+        // this make inpact for instances coords
+        [JsonProperty] public int ViewWidth;
+        [JsonProperty] public int ViewHeight;
+        [JsonProperty] public bool EnableCamera;
+
         [JsonProperty] public Color BackGroundColor;
         [JsonProperty] public Asset BackGroundTexture;
         [JsonProperty] public string BackGroundTextureName;

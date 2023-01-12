@@ -70,7 +70,6 @@ namespace ArtCore_Editor.etc
                     case DialogResult.Cancel:
                         e.Cancel = true;
                         return;
-                        break;
                 }
             }
             DialogResult = _saved ? DialogResult.OK : DialogResult.Cancel;

@@ -49,8 +49,8 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
                 point.Y = (int)(Math.Round((decimal)point.Y / _grid.Y) * _grid.Y);
             }
 
-            point.X = (point.X < 0 ? 0 : (point.X > _cScene.Width ? _cScene.Width : point.X));
-            point.Y = (point.Y < 0 ? 0 : (point.Y > _cScene.Height ? _cScene.Height : point.Y));
+            point.X = (point.X < 0 ? 0 : (point.X > _cScene.ViewWidth ? _cScene.ViewWidth : point.X));
+            point.Y = (point.Y < 0 ? 0 : (point.Y > _cScene.ViewHeight ? _cScene.ViewHeight : point.Y));
 
             _selectedSceneInstance.X = point.X;
             _selectedSceneInstance.Y = point.Y;

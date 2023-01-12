@@ -108,8 +108,9 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
 
             Name = _cScene.Name;
             textBox2.Text = _cScene.Name;
-            Content.Height = _cScene.Height;
-            Content.Width = _cScene.Width;
+            Content.Height = _cScene.ViewHeight;
+            Content.Width = _cScene.ViewWidth;
+            chb_enable_camera.Checked = _cScene.EnableCamera;
             numericUpDown1.Value = Content.Width;
             numericUpDown2.Value = Content.Height;
 
@@ -295,8 +296,8 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             // width change
-            _cScene.Width = (int)numericUpDown1.Value;
-            Content.Width = _cScene.Width;
+            _cScene.ViewWidth = (int)numericUpDown1.Value;
+            Content.Width = _cScene.ViewWidth;
             RedrawScene();
             MakeChange();
         }
@@ -304,8 +305,8 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             // height change
-            _cScene.Height = (int)numericUpDown2.Value;
-            Content.Height = _cScene.Height;
+            _cScene.ViewHeight = (int)numericUpDown2.Value;
+            Content.Height = _cScene.ViewHeight;
             RedrawScene();
             MakeChange();
         }

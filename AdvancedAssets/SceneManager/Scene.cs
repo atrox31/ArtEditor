@@ -67,6 +67,9 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
             BackGroundColor = "#E7F6F2".HexToColor();
             BackGroundTexture = null;
             BackGroundTextureName = null;
+            EnableCamera = false;
+            ViewWidth = 1;
+            ViewHeight = 1;
             BackGroundType = BackGroundTypeEnum.DrawColor;
             BackGroundWrapMode = WrapMode.Tile;
         }

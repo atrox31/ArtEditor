@@ -65,17 +65,19 @@
             this.s_sprite_center_left = new System.Windows.Forms.RadioButton();
             this.s_sprite_center_center = new System.Windows.Forms.RadioButton();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.rb_mask_none = new System.Windows.Forms.RadioButton();
+            this.lb_mask_value = new System.Windows.Forms.Label();
             this.s_col_mask_show = new System.Windows.Forms.CheckBox();
-            this.s_collision_have_mask = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.s_col_mask_value = new System.Windows.Forms.TrackBar();
-            this.s_col_mask_rect = new System.Windows.Forms.RadioButton();
-            this.s_col_mask_circle = new System.Windows.Forms.RadioButton();
+            this.rb_mask_rect = new System.Windows.Forms.RadioButton();
+            this.rb_mask_circle = new System.Windows.Forms.RadioButton();
+            this.sb_mask_value_2 = new System.Windows.Forms.TrackBar();
+            this.sb_mask_value_1 = new System.Windows.Forms.TrackBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lb_sprite_info = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -89,7 +91,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.s_sprite_center_y)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.s_sprite_center_x)).BeginInit();
             this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.s_col_mask_value)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sb_mask_value_2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sb_mask_value_1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -103,6 +106,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.groupBox1.Controls.Add(this.lb_sprite_info);
             this.groupBox1.Controls.Add(this.groupBox9);
             this.groupBox1.Controls.Add(this.groupBox7);
             this.groupBox1.Controls.Add(this.groupBox3);
@@ -397,7 +401,7 @@
             // s_sprite_center_show
             // 
             this.s_sprite_center_show.AutoSize = true;
-            this.s_sprite_center_show.Location = new System.Drawing.Point(121, 70);
+            this.s_sprite_center_show.Location = new System.Drawing.Point(119, 0);
             this.s_sprite_center_show.Name = "s_sprite_center_show";
             this.s_sprite_center_show.Size = new System.Drawing.Size(55, 19);
             this.s_sprite_center_show.TabIndex = 8;
@@ -409,7 +413,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(89, 22);
+            this.label1.Location = new System.Drawing.Point(92, 38);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(19, 18);
             this.label1.TabIndex = 7;
@@ -419,7 +423,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(89, 48);
+            this.label2.Location = new System.Drawing.Point(92, 62);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(18, 18);
             this.label2.TabIndex = 6;
@@ -427,7 +431,7 @@
             // 
             // s_sprite_center_y
             // 
-            this.s_sprite_center_y.Location = new System.Drawing.Point(114, 46);
+            this.s_sprite_center_y.Location = new System.Drawing.Point(116, 62);
             this.s_sprite_center_y.Maximum = new decimal(new int[] {
             60,
             0,
@@ -440,7 +444,7 @@
             // 
             // s_sprite_center_x
             // 
-            this.s_sprite_center_x.Location = new System.Drawing.Point(114, 20);
+            this.s_sprite_center_x.Location = new System.Drawing.Point(117, 33);
             this.s_sprite_center_x.Maximum = new decimal(new int[] {
             60,
             0,
@@ -489,12 +493,13 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.rb_mask_none);
+            this.groupBox6.Controls.Add(this.lb_mask_value);
             this.groupBox6.Controls.Add(this.s_col_mask_show);
-            this.groupBox6.Controls.Add(this.s_collision_have_mask);
-            this.groupBox6.Controls.Add(this.label3);
-            this.groupBox6.Controls.Add(this.s_col_mask_value);
-            this.groupBox6.Controls.Add(this.s_col_mask_rect);
-            this.groupBox6.Controls.Add(this.s_col_mask_circle);
+            this.groupBox6.Controls.Add(this.rb_mask_rect);
+            this.groupBox6.Controls.Add(this.rb_mask_circle);
+            this.groupBox6.Controls.Add(this.sb_mask_value_2);
+            this.groupBox6.Controls.Add(this.sb_mask_value_1);
             this.groupBox6.Location = new System.Drawing.Point(3, 385);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(289, 93);
@@ -502,11 +507,31 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Collision mask";
             // 
+            // rb_mask_none
+            // 
+            this.rb_mask_none.AutoSize = true;
+            this.rb_mask_none.Location = new System.Drawing.Point(6, 16);
+            this.rb_mask_none.Name = "rb_mask_none";
+            this.rb_mask_none.Size = new System.Drawing.Size(54, 19);
+            this.rb_mask_none.TabIndex = 10;
+            this.rb_mask_none.TabStop = true;
+            this.rb_mask_none.Text = "None";
+            this.rb_mask_none.UseVisualStyleBackColor = true;
+            this.rb_mask_none.CheckedChanged += new System.EventHandler(this.rb_mask_none_CheckedChanged);
+            // 
+            // lb_mask_value
+            // 
+            this.lb_mask_value.AutoSize = true;
+            this.lb_mask_value.Location = new System.Drawing.Point(165, 65);
+            this.lb_mask_value.Name = "lb_mask_value";
+            this.lb_mask_value.Size = new System.Drawing.Size(35, 15);
+            this.lb_mask_value.TabIndex = 5;
+            this.lb_mask_value.Text = "Value";
+            // 
             // s_col_mask_show
             // 
             this.s_col_mask_show.AutoSize = true;
-            this.s_col_mask_show.Enabled = false;
-            this.s_col_mask_show.Location = new System.Drawing.Point(144, 65);
+            this.s_col_mask_show.Location = new System.Drawing.Point(221, 1);
             this.s_col_mask_show.Name = "s_col_mask_show";
             this.s_col_mask_show.Size = new System.Drawing.Size(55, 19);
             this.s_col_mask_show.TabIndex = 9;
@@ -514,64 +539,55 @@
             this.s_col_mask_show.UseVisualStyleBackColor = true;
             this.s_col_mask_show.CheckedChanged += new System.EventHandler(this.s_col_mask_show_CheckedChanged);
             // 
-            // s_collision_have_mask
+            // rb_mask_rect
             // 
-            this.s_collision_have_mask.AutoSize = true;
-            this.s_collision_have_mask.Location = new System.Drawing.Point(203, 65);
-            this.s_collision_have_mask.Name = "s_collision_have_mask";
-            this.s_collision_have_mask.Size = new System.Drawing.Size(84, 19);
-            this.s_collision_have_mask.TabIndex = 6;
-            this.s_collision_have_mask.Text = "Have mask";
-            this.s_collision_have_mask.UseVisualStyleBackColor = true;
-            this.s_collision_have_mask.CheckedChanged += new System.EventHandler(this.s_collision_have_mask_CheckedChanged);
+            this.rb_mask_rect.AutoSize = true;
+            this.rb_mask_rect.Location = new System.Drawing.Point(6, 66);
+            this.rb_mask_rect.Name = "rb_mask_rect";
+            this.rb_mask_rect.Size = new System.Drawing.Size(77, 19);
+            this.rb_mask_rect.TabIndex = 2;
+            this.rb_mask_rect.TabStop = true;
+            this.rb_mask_rect.Text = "Rectangle";
+            this.rb_mask_rect.UseVisualStyleBackColor = true;
+            this.rb_mask_rect.CheckedChanged += new System.EventHandler(this.s_col_mask_rect_CheckedChanged);
             // 
-            // label3
+            // rb_mask_circle
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(165, 23);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 15);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Value";
+            this.rb_mask_circle.AutoSize = true;
+            this.rb_mask_circle.Location = new System.Drawing.Point(6, 41);
+            this.rb_mask_circle.Name = "rb_mask_circle";
+            this.rb_mask_circle.Size = new System.Drawing.Size(55, 19);
+            this.rb_mask_circle.TabIndex = 1;
+            this.rb_mask_circle.TabStop = true;
+            this.rb_mask_circle.Text = "Circle";
+            this.rb_mask_circle.UseVisualStyleBackColor = true;
+            this.rb_mask_circle.CheckedChanged += new System.EventHandler(this.s_col_mask_circle_CheckedChanged);
             // 
-            // s_col_mask_value
+            // sb_mask_value_2
             // 
-            this.s_col_mask_value.Enabled = false;
-            this.s_col_mask_value.LargeChange = 1;
-            this.s_col_mask_value.Location = new System.Drawing.Point(86, 37);
-            this.s_col_mask_value.Maximum = 100;
-            this.s_col_mask_value.Minimum = 1;
-            this.s_col_mask_value.Name = "s_col_mask_value";
-            this.s_col_mask_value.Size = new System.Drawing.Size(197, 45);
-            this.s_col_mask_value.TabIndex = 4;
-            this.s_col_mask_value.Value = 1;
-            this.s_col_mask_value.Scroll += new System.EventHandler(this.s_col_mask_value_Scroll);
+            this.sb_mask_value_2.LargeChange = 1;
+            this.sb_mask_value_2.Location = new System.Drawing.Point(113, 44);
+            this.sb_mask_value_2.Maximum = 100;
+            this.sb_mask_value_2.Minimum = 1;
+            this.sb_mask_value_2.Name = "sb_mask_value_2";
+            this.sb_mask_value_2.Size = new System.Drawing.Size(163, 45);
+            this.sb_mask_value_2.TabIndex = 11;
+            this.sb_mask_value_2.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.sb_mask_value_2.Value = 1;
+            this.sb_mask_value_2.Scroll += new System.EventHandler(this.sb_mask_value_2_Scroll);
             // 
-            // s_col_mask_rect
+            // sb_mask_value_1
             // 
-            this.s_col_mask_rect.AutoSize = true;
-            this.s_col_mask_rect.Enabled = false;
-            this.s_col_mask_rect.Location = new System.Drawing.Point(6, 42);
-            this.s_col_mask_rect.Name = "s_col_mask_rect";
-            this.s_col_mask_rect.Size = new System.Drawing.Size(77, 19);
-            this.s_col_mask_rect.TabIndex = 2;
-            this.s_col_mask_rect.TabStop = true;
-            this.s_col_mask_rect.Text = "Rectangle";
-            this.s_col_mask_rect.UseVisualStyleBackColor = true;
-            this.s_col_mask_rect.CheckedChanged += new System.EventHandler(this.s_col_mask_rect_CheckedChanged);
-            // 
-            // s_col_mask_circle
-            // 
-            this.s_col_mask_circle.AutoSize = true;
-            this.s_col_mask_circle.Enabled = false;
-            this.s_col_mask_circle.Location = new System.Drawing.Point(6, 19);
-            this.s_col_mask_circle.Name = "s_col_mask_circle";
-            this.s_col_mask_circle.Size = new System.Drawing.Size(55, 19);
-            this.s_col_mask_circle.TabIndex = 1;
-            this.s_col_mask_circle.TabStop = true;
-            this.s_col_mask_circle.Text = "Circle";
-            this.s_col_mask_circle.UseVisualStyleBackColor = true;
-            this.s_col_mask_circle.CheckedChanged += new System.EventHandler(this.s_col_mask_circle_CheckedChanged);
+            this.sb_mask_value_1.LargeChange = 1;
+            this.sb_mask_value_1.Location = new System.Drawing.Point(113, 18);
+            this.sb_mask_value_1.Maximum = 100;
+            this.sb_mask_value_1.Minimum = 1;
+            this.sb_mask_value_1.Name = "sb_mask_value_1";
+            this.sb_mask_value_1.Size = new System.Drawing.Size(163, 45);
+            this.sb_mask_value_1.TabIndex = 4;
+            this.sb_mask_value_1.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.sb_mask_value_1.Value = 1;
+            this.sb_mask_value_1.Scroll += new System.EventHandler(this.sb_mask_value_1_Scroll);
             // 
             // backgroundWorker1
             // 
@@ -614,6 +630,15 @@
             this.panel1.Size = new System.Drawing.Size(484, 482);
             this.panel1.TabIndex = 5;
             // 
+            // lb_sprite_info
+            // 
+            this.lb_sprite_info.AutoSize = true;
+            this.lb_sprite_info.Location = new System.Drawing.Point(9, 318);
+            this.lb_sprite_info.Name = "lb_sprite_info";
+            this.lb_sprite_info.Size = new System.Drawing.Size(38, 15);
+            this.lb_sprite_info.TabIndex = 5;
+            this.lb_sprite_info.Text = "label3";
+            // 
             // SpriteEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -629,6 +654,7 @@
             this.Text = "Sprite";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpriteAddForm_FormClosing);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -646,7 +672,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.s_sprite_center_x)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.s_col_mask_value)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sb_mask_value_2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sb_mask_value_1)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -679,17 +706,16 @@
         private System.Windows.Forms.RadioButton s_sprite_center_left;
         private System.Windows.Forms.RadioButton s_sprite_center_center;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TrackBar s_col_mask_value;
-        private System.Windows.Forms.RadioButton s_col_mask_rect;
-        private System.Windows.Forms.RadioButton s_col_mask_circle;
+        private System.Windows.Forms.Label lb_mask_value;
+        private System.Windows.Forms.TrackBar sb_mask_value_1;
+        private System.Windows.Forms.RadioButton rb_mask_rect;
+        private System.Windows.Forms.RadioButton rb_mask_circle;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.CheckBox s_sprite_center_show;
         private System.Windows.Forms.CheckBox s_col_mask_show;
-        private System.Windows.Forms.CheckBox s_collision_have_mask;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
@@ -704,5 +730,8 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.GroupBox groupBox10;
         private System.Windows.Forms.ComboBox s_animationSequencePreview;
+        private System.Windows.Forms.RadioButton rb_mask_none;
+        private System.Windows.Forms.TrackBar sb_mask_value_2;
+        private System.Windows.Forms.Label lb_sprite_info;
     }
 }

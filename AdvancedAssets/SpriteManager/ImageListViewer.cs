@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,39 +7,29 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 {
     public partial class ImageListViewer : Form
     {
-        private readonly Sprite _thisSprite;
-        public ImageListViewer(Sprite spriteData)
+        public ImageListViewer()
         {
-            if (spriteData == null)
-            {
-                Close();
-            }
-            _thisSprite = spriteData;
             InitializeComponent(); Program.ApplyTheme(this);
+
+            listView1.View = View.LargeIcon;
+            imageList1.ImageSize = new Size(64, 64);
+
+        }
+
+        public static void Show(List<Image> Textures)
+        {
+            ImageListViewer instance = new ImageListViewer();
+            if (Textures == null || Textures.Count == 0)
+            {
+                return;
+            }
+            instance.imageList1.Images.AddRange(Textures.ToArray());
+            instance.ShowDialog();
         }
 
         private void ImageListViewer_Load(object sender, EventArgs e)
         {
-            if (_thisSprite.Textures == null)
-            {
-                Close();
-                return;
-            }
-            foreach (Image img in _thisSprite.Textures)
-            {
-                try
-                {
-                    imageList1.Images.Add(img);
-                }
-                catch
-                {
-                    Console.WriteLine("This is not an image file");
-                }
-            }
-            listView1.View = View.LargeIcon;
-            imageList1.ImageSize = new Size(64, 64);
-
-
+            
             for (int j = 0; j < imageList1.Images.Count; j++)
             {
                 ListViewItem item = new ListViewItem
@@ -48,7 +39,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 listView1.Items.Add(item);
             }
             listView1.LargeImageList = imageList1;
-
         }
     }
 

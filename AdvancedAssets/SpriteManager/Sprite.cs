@@ -28,27 +28,22 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         [JsonProperty][JsonConverter(typeof(StringEnumConverter))]
         public CollisionMaskEnum CollisionMask;
 
-        [JsonProperty] public int CollisionMaskValue;
+        [JsonProperty] public int CollisionMaskValue1;
+        [JsonProperty] public int CollisionMaskValue2;
 
-        [JsonProperty] public SpriteCenterEnum SpriteCenter;
+        [JsonProperty] public SpriteCenterEnum SpriteCenter; // for editor
 
         [JsonProperty] public int SpriteCenterX;
         [JsonProperty] public int SpriteCenterY;
 
         [JsonProperty] public int SpriteWidth;
         [JsonProperty] public int SpriteHeight;
-        [JsonProperty] public Dictionary<string, AnimationSequence> SpriteAnimationSequence;
 
-        // editor value
-        [JsonProperty] public bool EditorShowMask;
-        [JsonProperty] public bool EditorShowCenter;
-        [JsonProperty] public bool EditorPreviewPlay;
-        [JsonProperty] public bool EditorPreviewLoop;
-        [JsonProperty] public int EditorFps;
-        [JsonProperty] public int EditorFrame;
-        [JsonProperty] public int EditorFrameMax;
-        [JsonIgnore]   public List<Image> Textures;
-        [JsonProperty] public int TexturesCount;
+        [JsonProperty] public int SpriteFrames;
+        [JsonProperty] public Dictionary<string, AnimationSequence> SpriteAnimationSequence; 
+
+        // path to frames data file
+        [JsonProperty] public string DataPath;
 
         [JsonObject(MemberSerialization.OptIn)]
         public class AnimationSequence
@@ -60,6 +55,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             public AnimationSequence(string data)
             {
                 string[] tmp = data.Split('|');
+                if (tmp.Count() != 4) return;
                 Name = tmp[0];
                 Index = tmp[1];
                 FrameFrom = Convert.ToInt32(tmp[2]);
@@ -72,6 +68,14 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 FrameFrom = frameFrom;
                 FrameTo = frameTo;
             }
+            // default contructor for deserialization
+            public AnimationSequence()
+            {
+                Name = "";
+                Index = "";
+                FrameFrom = 0;
+                FrameTo = 0;
+            }
             public string Get()
             {
                 return Name + '|' + Index + '|' + FrameFrom + '|' + FrameTo;
@@ -83,100 +87,14 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         {
             SpriteAnimationSequence = new Dictionary<string, AnimationSequence>();
             CollisionMask = CollisionMaskEnum.None;
-            CollisionMaskValue = 0;
+            CollisionMaskValue1 = 1;
+            CollisionMaskValue2 = 1;
             SpriteCenter = SpriteCenterEnum.LeftCorner;
             SpriteCenterX = 0;
             SpriteCenterY = 0;
             SpriteWidth = 0;
             SpriteHeight = 0;
-            TexturesCount = 0;
-
-            EditorFps = 60;
-
-            EditorPreviewLoop = false;
-            EditorPreviewPlay = false;
-            EditorShowCenter = false;
-            EditorShowMask = false;
-            Textures = new List<Image>();
+            SpriteFrames = 0;
         }
-
-        public void AddImage(string file)
-        {
-            byte[] content = File.ReadAllBytes(file);
-            Textures.Add(Image.FromStream(new MemoryStream(content)));
-
-            // set size of sprite to match rest of frames
-            if (Textures[^1].Width > SpriteWidth ||
-                Textures[^1].Height > SpriteHeight)
-            {
-                SpriteWidth = Textures[^1].Width;
-                SpriteHeight = Textures[^1].Height;
-            }
-
-            EditorFrameMax = Textures.Count - 1;
-            TexturesCount = Textures.Count;
-        }
-
-        public void ClearImages()
-        {
-            if (Textures == null) return;
-            foreach (Image t in Textures)
-            {
-                t.Dispose();
-            }
-            Textures.Clear();
-        }
-
-        public void Save()
-        {
-            LoadScreen load = new LoadScreen(true);
-            load.Show();
-            {
-                if (ProjectPath.Length == 0)
-                {
-                    load.Close();
-                    return;
-                }
-
-                Functions.Functions.CleanDirectory(GameProject.ProjectPath + ProjectPath + "\\img");
-
-                using FileStream createStream =
-                    File.Create(GameProject.ProjectPath + ProjectPath + "\\" + FileName);
-
-                byte[] buffer = JsonConvert.SerializeObject(this).Select(c => (byte)c).ToArray();
-                createStream.Write(buffer);
-
-                if (Textures.Count <= 0)
-                {
-                    load.Close();
-                    return;
-                }
-
-                int i = 0;
-                foreach (Image texture in Textures)
-                {
-                    texture.Save(GameProject.ProjectPath + ProjectPath + "\\img\\" + (i++) + ".png");
-                }
-            }
-            load.Close();
-            load.Dispose();
-        }
-
-        public bool Load()
-        {
-            LoadScreen load = new LoadScreen(true);
-            load.Show();
-            {
-                foreach (string enumerateFile in 
-                         Directory.EnumerateFiles(GameProject.ProjectPath + "\\" + ProjectPath + "\\img\\"))
-                {
-                    AddImage(enumerateFile);
-                }
-            }
-            load.Close();
-            load.Dispose();
-            return true;
-        }
-            
     }
 }

@@ -1,9 +1,11 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager;
 using ArtCore_Editor.Main;
 using ArtCore_Editor.Pick_forms;
 
@@ -36,6 +38,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 _pFirstFrame = 0;
                 _pLastFrame = (_globalSprite.Textures == null ? 0 : _globalSprite.Textures.Count - 1);
                 _pCurrentFrame = _pFirstFrame;
+                MaskTypeView();
             }
             else
             {
@@ -57,8 +60,9 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                     $"Asset name must have more that 3 chars ({s_spritename.Text.Length} current)")) return;
 
             _globalSprite.CollisionMask =
-                (Sprite.CollisionMaskEnum)(s_collision_have_mask.Checked ? (s_col_mask_circle.Checked ? 1 : s_col_mask_rect.Checked ? 2 : 0) : 0);
-            _globalSprite.CollisionMaskValue = s_col_mask_value.Value;
+                (Sprite.CollisionMaskEnum)( (rb_mask_circle.Checked ? 1 : rb_mask_rect.Checked ? 2 : 0));
+            _globalSprite.CollisionMaskValue1 = sb_mask_value_1.Value;
+            _globalSprite.CollisionMaskValue2 = sb_mask_value_2.Value;
             _globalSprite.SpriteCenter = (s_sprite_center_center.Checked ? Sprite.SpriteCenterEnum.Center : s_sprite_center_left.Checked ? Sprite.SpriteCenterEnum.LeftCorner : Sprite.SpriteCenterEnum.Custom);
             _globalSprite.SpriteCenterX = (int)s_sprite_center_x.Value;
             _globalSprite.SpriteCenterY = (int)s_sprite_center_y.Value;
@@ -70,7 +74,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             _globalSprite.Name = s_spritename.Text;
             _globalSprite.ProjectPath = $"\\assets\\sprite\\{_globalSprite.Name}";
             _globalSprite.FileName = $"{_globalSprite.Name}" + Program.FileExtensions_Sprite;
-
+            
             // fresh sprite
             if (_aid == null)
             {
@@ -106,12 +110,15 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             switch (_globalSprite?.CollisionMask)
             {
                 case Sprite.CollisionMaskEnum.Circle:
-                    s_col_mask_value.Value = Math.Max(1,_globalSprite.CollisionMaskValue);
-                    s_col_mask_value.Maximum = Math.Max(_globalSprite.SpriteHeight, _globalSprite.SpriteWidth) / 2;
+                    sb_mask_value_1.Value = Math.Max(1,_globalSprite.CollisionMaskValue1);
+                    sb_mask_value_1.Maximum = Math.Max(_globalSprite.SpriteHeight, _globalSprite.SpriteWidth) / 2;
                     break;
                 case Sprite.CollisionMaskEnum.Rectangle:
-                    s_col_mask_value.Value = Math.Max(1, _globalSprite.CollisionMaskValue);
-                    s_col_mask_value.Maximum = Math.Max(_globalSprite.SpriteHeight, _globalSprite.SpriteWidth) / 2;
+                    sb_mask_value_1.Value = Math.Max(1, _globalSprite.CollisionMaskValue1);
+                    sb_mask_value_1.Maximum = _globalSprite.SpriteWidth;
+
+                    sb_mask_value_2.Value = Math.Max(1, _globalSprite.CollisionMaskValue2);
+                    sb_mask_value_2.Maximum = _globalSprite.SpriteHeight;
                     break;
             }
         }
@@ -124,25 +131,20 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             s_sprite_center_x.Maximum = _globalSprite.SpriteHeight;
             
             s_col_mask_show.Checked = _globalSprite.EditorShowMask;
-            if (_globalSprite.CollisionMask == Sprite.CollisionMaskEnum.None)
-            {
-                s_collision_have_mask.Checked = false;
-            }
-            else
-            {
-                s_collision_have_mask.Checked = true;
 
-                switch (_globalSprite.CollisionMask)
-                {
-                    case Sprite.CollisionMaskEnum.Circle:
-                        s_col_mask_circle.Checked = true;
-                        break;
-                    case Sprite.CollisionMaskEnum.Rectangle:
-                        s_col_mask_rect.Checked = true;
-                        break;
-                }
+            switch (_globalSprite.CollisionMask)
+            {
+                case Sprite.CollisionMaskEnum.Circle:
+                    rb_mask_circle.Checked = true;
+                    break;
+                case Sprite.CollisionMaskEnum.Rectangle:
+                    rb_mask_rect.Checked = true;
+                    break;
+                case Sprite.CollisionMaskEnum.None:
+                    rb_mask_none.Checked = true;
+                    break;
             }
-            SetCollisionMaskSliderValues();
+            MaskTypeView();
 
             s_sprite_center_show.Checked = _globalSprite.EditorShowCenter;
             switch (_globalSprite.SpriteCenter)
@@ -177,6 +179,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 listBox1.Items.Add("[" + item.Value.Index + "] " + item.Value.Name + "( " + item.Value.FrameFrom.ToString() + ":" + item.Value.FrameTo.ToString() + " )");
             }
 
+            UpdateSpriteInfo();
             s_preview.Refresh();
         }
 
@@ -366,6 +369,20 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             UpdatePreview(e);
         }
 
+        private void UpdateSpriteInfo()
+        {
+            if (_globalSprite.Textures == null)
+            {
+                lb_sprite_info.Text = "";
+            }
+            else
+            {
+                lb_sprite_info.Text = $"Textures count: {_globalSprite.Textures.Count}\n" +
+                                      $"Sprite width: {_globalSprite.SpriteWidth}\n" + 
+                                      $"Sprite height: {_globalSprite.SpriteHeight}\n";
+            }
+        }
+
         private void UpdatePreview(PaintEventArgs e)
         {
             //s_col_mask_value.Maximum = Math.Max(_globalSprite.SpriteHeight, _globalSprite.SpriteWidth) / 2;
@@ -392,7 +409,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                             int xCenter = Functions.Functions.Scale(_globalSprite.SpriteCenterX, 0, _globalSprite.SpriteWidth, 0, s_preview.Width);
                             int yCenter = Functions.Functions.Scale(_globalSprite.SpriteCenterY, 0, _globalSprite.SpriteHeight, 0, s_preview.Height);
 
-                            int rCircle = Functions.Functions.Scale(s_col_mask_value.Value, 0, s_col_mask_value.Maximum, 0, s_preview.Width);
+                            int rCircle = Functions.Functions.Scale(sb_mask_value_1.Value, 0, sb_mask_value_1.Maximum, 0, s_preview.Width);
 
                             using Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
                             using Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
@@ -414,15 +431,16 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                             int xCenter = Functions.Functions.Scale(_globalSprite.SpriteCenterX, 0, _globalSprite.SpriteWidth, 0, s_preview.Width);
                             int yCenter = Functions.Functions.Scale(_globalSprite.SpriteCenterY, 0, _globalSprite.SpriteHeight, 0, s_preview.Height);
 
-                            int rRect = Functions.Functions.Scale(s_col_mask_value.Value, 0, s_col_mask_value.Maximum, 0, s_preview.Width);
+                            int rRectW = Functions.Functions.Scale(sb_mask_value_1.Value, 0, sb_mask_value_1.Maximum, 0, s_preview.Width);
+                            int rRectH = Functions.Functions.Scale(sb_mask_value_2.Value, 0, sb_mask_value_2.Maximum, 0, s_preview.Height);
 
                             using Brush fillPen = new SolidBrush(Color.FromArgb(60, 132, 59, 98));
                             using Pen redPen = new Pen(Color.FromArgb(255, 132, 59, 98), 2);
                             Rectangle r = new Rectangle(
-                                xCenter - rRect / 2,
-                                yCenter - rRect / 2,
-                                 rRect,
-                                 rRect
+                                xCenter - rRectW / 2,
+                                yCenter - rRectH / 2,
+                                 rRectW,
+                                 rRectH
                             );
                             e.Graphics.FillRectangle(fillPen, r);
                             e.Graphics.DrawRectangle(redPen, r);
@@ -476,26 +494,57 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             s_preview.Refresh();
         }
 
-        private void s_collision_have_mask_CheckedChanged(object sender, EventArgs e)
-        {
-            s_col_mask_circle.Enabled = s_collision_have_mask.Checked;
-            s_col_mask_rect.Enabled = s_collision_have_mask.Checked;
-            s_col_mask_show.Enabled = s_collision_have_mask.Checked;
-            s_col_mask_value.Enabled = s_collision_have_mask.Checked;
-            SetCollisionMaskSliderValues();
-            s_preview.Refresh();
-        }
-
         private void s_col_mask_circle_CheckedChanged(object sender, EventArgs e)
         {
-            _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.Circle;
-            SetCollisionMaskSliderValues();
-            s_preview.Refresh();
+            MaskTypeView();
         }
 
         private void s_col_mask_rect_CheckedChanged(object sender, EventArgs e)
         {
-            _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.Rectangle;
+            MaskTypeView();
+        }
+        private void rb_mask_none_CheckedChanged(object sender, EventArgs e)
+        {
+            MaskTypeView();
+        }
+
+        private void MaskTypeView()
+        {
+            if (rb_mask_none.Checked)
+            {
+                _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.None;
+            }
+            else
+            {
+                if (rb_mask_circle.Checked)
+                {
+                    _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.Circle;
+                }
+                else if (rb_mask_rect.Checked)
+                {
+                    _globalSprite.CollisionMask = Sprite.CollisionMaskEnum.Rectangle;
+                }
+            }
+
+            sb_mask_value_1.Visible = false;
+            sb_mask_value_2.Visible = false;
+            lb_mask_value.Visible = false;
+
+            switch (_globalSprite.CollisionMask)
+            {
+                case Sprite.CollisionMaskEnum.None:
+                    break;
+                case Sprite.CollisionMaskEnum.Circle:
+                    sb_mask_value_1.Visible = true;
+                    //sb_mask_value_2.Visible = false;
+                    lb_mask_value.Visible = true;
+                    break;
+                case Sprite.CollisionMaskEnum.Rectangle:
+                    sb_mask_value_1.Visible = true;
+                    sb_mask_value_2.Visible = true;
+                    lb_mask_value.Visible = true;
+                    break;
+            }
             SetCollisionMaskSliderValues();
             s_preview.Refresh();
         }
@@ -504,13 +553,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         {
             _globalSprite.EditorShowMask = s_col_mask_show.Checked;
             SetCollisionMaskSliderValues();
-            s_preview.Refresh();
-        }
-
-        private void s_col_mask_value_Scroll(object sender, EventArgs e)
-        {
-            _globalSprite.CollisionMaskValue = s_col_mask_value.Value;
-            label3.Text = "Value ( " + _globalSprite.CollisionMaskValue + " )";
             s_preview.Refresh();
         }
 
@@ -551,6 +593,37 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             }
         }
 
+        private void SetCollisionMaskLabel()
+        {
+            switch (_globalSprite.CollisionMask)
+            {
+                case Sprite.CollisionMaskEnum.None:
+                    lb_mask_value.Text = "";
+                    break;
+                case Sprite.CollisionMaskEnum.Circle:
+                    lb_mask_value.Text = "Radius: " + _globalSprite.CollisionMaskValue1.ToString();
+                    break;
+                case Sprite.CollisionMaskEnum.Rectangle:
+                    lb_mask_value.Text = "Size: " + _globalSprite.CollisionMaskValue1.ToString() + "x" + _globalSprite.CollisionMaskValue2;
+                    break;
+            }
+        }
+
+        private void sb_mask_value_1_Scroll(object sender, EventArgs e)
+        {
+            _globalSprite.CollisionMaskValue1 = sb_mask_value_1.Value;
+            SetCollisionMaskLabel();
+            s_preview.Refresh();
+        }
+
+        private void sb_mask_value_2_Scroll(object sender, EventArgs e)
+        {
+            _globalSprite.CollisionMaskValue2 = sb_mask_value_2.Value;
+            SetCollisionMaskLabel();
+            s_preview.Refresh();
+        }
+
+
         private void button6_Click(object sender, EventArgs e)
         {
             if (listBox1.SelectedItem != null)
@@ -590,3 +663,4 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
         }
     }
 }
+*/

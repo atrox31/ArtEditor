@@ -32,7 +32,10 @@ namespace ArtCore_Editor
         private bool _projectSaved = true;
         private readonly string _aCompilerVersion = null;
 
-        private string GetTitleString() => $"ArtCore Editor({Program.Version}) ArtCompiler({_aCompilerVersion ?? "not found"}) - \"{GlobalProject.ProjectName}\"";
+        private static string GetTitleString()
+        {
+            return $"ArtCore Editor({Program.Version}) ArtCompiler({_instance._aCompilerVersion ?? "not found"}) - \"{_instance.GlobalProject.ProjectName}\"";
+        }
 
         private void MakeChange()
         {
@@ -72,7 +75,7 @@ namespace ArtCore_Editor
                 }
 
                 compiler.WaitForExit(3000);
-                if (output.Count >= 2)
+                if (output.Count >= 1)
                 {
                     _aCompilerVersion = output.Last();
                 }

@@ -60,6 +60,9 @@ public partial class ObjectManager : Form
             comboBox1.Text = _currentObject.Sprite != null ? _currentObject.Sprite.Name : "<default>";
 
             bodyType_IsSolid.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.None);
+            bodyType_circle.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Circle);
+            bodyType_rect.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Rect);
+            bodyType_mask.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Sprite);
             RefreshBodyTypeView();
 
             foreach (Variable item in _currentObject.Variables)

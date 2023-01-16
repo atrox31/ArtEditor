@@ -39,7 +39,7 @@ namespace ArtCore_Editor.Functions
         // combine path from target paths
         public static string Combine(string path1, string path2, string path3, string path4)
         {
-            return Combine(Combine(Combine(path1, path2), path3), path4);
+            return Combine(Combine(path1, path2, path3), path4);
         }
 
         // convert hex value to color

@@ -195,9 +195,21 @@ namespace ArtCore_Editor.Functions
         /// <returns></returns>
         public static bool ErrorCheck(bool condition, string errorMsg)
         {
-            if (condition == false)
+            if (!condition)
                 MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return !condition;
+        }
+
+        /// <summary>
+        /// Delete target directory and all files inside, if exists
+        /// </summary>
+        /// <param name="path">Path to directory</param>
+        public static void DeleteDirectory(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
         }
     }
 }

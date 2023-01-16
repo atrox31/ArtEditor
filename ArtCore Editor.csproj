@@ -21,6 +21,12 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="AdvancedAssets\SpriteManager\Nowy folder\**" />
+    <EmbeddedResource Remove="AdvancedAssets\SpriteManager\Nowy folder\**" />
+    <None Remove="AdvancedAssets\SpriteManager\Nowy folder\**" />
+    <Page Remove="AdvancedAssets\SpriteManager\Nowy folder\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.6.7" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -30,11 +36,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.18" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="AdvancedAssets\SpriteManager\SpriteManager.cs" />
-    <Compile Remove="AdvancedAssets\SpriteManager\SpriteManager.Designer.cs" />
-    <EmbeddedResource Remove="AdvancedAssets\SpriteManager\SpriteManager.resx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="artSplash.ico" />

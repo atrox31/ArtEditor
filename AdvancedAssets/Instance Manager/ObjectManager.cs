@@ -607,63 +607,53 @@ public partial class ObjectManager : Form
     {
         if (bodyType_IsSolid.Checked)
         {
+
+            bodyType_value_1.Enabled = true;
+            bodyType_value_2.Enabled = true;
+            bodyType_mask.Enabled = true;
+            bodyType_rect.Enabled = true;
+            bodyType_circle.Enabled = true;
+
             if (bodyType_circle.Checked)
             {
                 _currentObject.BodyDataType.Type = Instance.BodyData.BType.Circle;
-            }else if (bodyType_rect.Checked)
-            {
-                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Rect;
-            }else if (bodyType_mask.Checked)
-            {
-                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Sprite;
-            }
-        }
-        else
-        {
-            _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
-        }
-
-        bodyType_value_1.Enabled = true;
-        bodyType_value_2.Enabled = true;
-        bodyType_mask.Enabled = true;
-        bodyType_rect.Enabled = true;
-        bodyType_circle.Enabled = true;
-
-        switch (_currentObject.BodyDataType.Type)
-        {
-            case Instance.BodyData.BType.Circle:
                 bodyType_value_1.Visible = true;
                 lb_body_value.Visible = true;
                 lb_body_value.Text = "Radius";
 
                 bodyType_value_2.Visible = false;
                 lb_body_value_2.Visible = false;
-                break;
-            case Instance.BodyData.BType.Rect:
+            }
+            else if (bodyType_rect.Checked)
+            {
+                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Rect;
                 bodyType_value_1.Visible = true;
                 lb_body_value.Visible = true;
                 lb_body_value.Text = "Width";
 
                 bodyType_value_2.Visible = true;
                 lb_body_value_2.Visible = true;
-                break;
-            case Instance.BodyData.BType.None:
-                bodyType_value_1.Enabled = false;
-                bodyType_value_2.Enabled = false;
-                bodyType_mask.Enabled = false;
-                bodyType_rect.Enabled = false;
-                bodyType_circle.Enabled = false;
-                break;
-            case Instance.BodyData.BType.Sprite:
+            }
+            else if (bodyType_mask.Checked)
+            {
+                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Sprite;
                 bodyType_value_1.Visible = false;
                 lb_body_value.Visible = false;
 
                 bodyType_value_2.Visible = false;
                 lb_body_value_2.Visible = false;
-
-                break;
-
+            }
         }
+        else
+        {
+            _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
+            bodyType_value_1.Enabled = false;
+            bodyType_value_2.Enabled = false;
+            bodyType_mask.Enabled = false;
+            bodyType_rect.Enabled = false;
+            bodyType_circle.Enabled = false;
+        }
+
     }
 
     private void bodyType_mask_CheckedChanged(object sender, EventArgs e)

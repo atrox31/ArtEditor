@@ -59,20 +59,8 @@ public partial class ObjectManager : Form
             textBox1.Text = _currentObject.Name;
             comboBox1.Text = _currentObject.Sprite != null ? _currentObject.Sprite.Name : "<default>";
 
-            if (_currentObject.BodyDataType.Type != Instance.BodyData.BType.None)
-            {
-                bodyType_mask.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Sprite);
-                bodyType_rect.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Rect);
-                bodyType_circle.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Circle);
-                bodyType_value_1.Value = _currentObject.BodyDataType.Value1;
-                bodyType_value_2.Value = _currentObject.BodyDataType.Value2;
-                bodyType_IsSolid.Checked = true;
-            }
-            else
-            {
-                bodyType_IsSolid.Checked = false;
-            }
-            BodyTypeView();
+            bodyType_IsSolid.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.None);
+            RefreshBodyTypeView();
 
             foreach (Variable item in _currentObject.Variables)
             {
@@ -603,7 +591,7 @@ public partial class ObjectManager : Form
     /// <summary>
     /// Refresh body type view.
     /// </summary>
-    private void BodyTypeView()
+    private void RefreshBodyTypeView()
     {
         if (bodyType_IsSolid.Checked)
         {
@@ -659,24 +647,24 @@ public partial class ObjectManager : Form
     private void bodyType_mask_CheckedChanged(object sender, EventArgs e)
     {
 
-        BodyTypeView();
+        RefreshBodyTypeView();
     }
 
     private void bodyType_rect_CheckedChanged(object sender, EventArgs e)
     {
 
-        BodyTypeView();
+        RefreshBodyTypeView();
     }
 
     private void bodyType_circle_CheckedChanged(object sender, EventArgs e)
     {
-        BodyTypeView();
+        RefreshBodyTypeView();
     }
 
     private void bodyType_IsSolid_CheckedChanged(object sender, EventArgs e)
     {
 
-        BodyTypeView();
+        RefreshBodyTypeView();
     }
 
 }

@@ -31,6 +31,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
             public int X { get; set; }
             public int Y { get; set; }
             public float EditorMask { get; set; }
+            //TODO change Instance type to string type, for better saving system
             public Instance Instance { get; set; }
             public readonly Image Img;
             public SceneInstance(int x, int y, Instance instance)
@@ -38,29 +39,23 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
                 X = x;
                 Y = y;
                 Instance = instance;
+                Img = Properties.Resources.interrogation1;
 
-                if (instance == null)
+                if(instance?.Sprite != null)
                 {
-                    Img = Properties.Resources.interrogation1;
-                }
-                else
-                {
-                    if (instance.Sprite == null)
+                    // first search in sprite list, if not add
+                    if (!InstanceSprites.ContainsKey(instance.Sprite.FileName))
                     {
-                        Img = Properties.Resources.interrogation;
-                    }
-                    else
-                    {
-                        if (!InstanceSprites.ContainsKey(instance.Sprite.FileName))
-                        {
-                            Image tmp = Image.FromFile(GameProject.ProjectPath + "\\" + instance.Sprite.ProjectPath + "\\img\\0.png");
-                            InstanceSprites.Add(instance.Sprite.FileName, tmp);
-                        }
-                        Img = InstanceSprites[instance.Sprite.FileName];
-                    }
+                        string pathToArchive = StringExtensions.Combine(ProjectPath, instance.Sprite.DataPath);
+                        Bitmap image = ZipIO.ReadImageFromArchive(pathToArchive, "0.png");
+
+                        InstanceSprites.Add(instance.Sprite.FileName,
+                            image == null ? Properties.Resources.interrogation : image);
+                    } 
+                    Img = InstanceSprites[instance.Sprite.FileName];
                 }
 
-                EditorMask = (Img.Width + Img.Height) / 4;
+                EditorMask = (float)((Img.Width + Img.Height) / 4);
             }
         }
 
@@ -150,8 +145,17 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
                 }
                 else
                 {
-                    Instance_imagelist.Images.Add(Image.FromFile(ProjectPath + item.Value.Sprite.ProjectPath + "\\img\\0.png").GetThumbnailImage(64, 64, null, IntPtr.Zero));
-                    instanceListView.Items.Add(item.Key, Instance_imagelist.Images.Count - 1);
+                    Bitmap image = ZipIO.ReadImageFromArchive(
+                        StringExtensions.Combine(ProjectPath, item.Value.Sprite.DataPath),
+                        "0.png");
+                    if(image != null)
+                    {
+                        Instance_imagelist.Images.Add(image.GetThumbnailImage(64, 64, null, IntPtr.Zero));
+                    }
+
+                    instanceListView.Items.Add(item.Key,
+                        image == null ? 0 : Instance_imagelist.Images.Count - 1
+                        );
                 }
             }
             RedrawScene();

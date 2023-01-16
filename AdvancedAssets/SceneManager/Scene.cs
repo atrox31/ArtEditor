@@ -43,6 +43,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
         [JsonProperty] public bool EnableCamera;
 
         [JsonProperty] public Color BackGroundColor;
+        //TODO change Asset type to string type, for better saving system
         [JsonProperty] public Asset BackGroundTexture;
         [JsonProperty] public string BackGroundTextureName;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior.pickers;
@@ -63,13 +64,15 @@ public partial class ObjectManager : Form
                 bodyType_mask.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Sprite);
                 bodyType_rect.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Rect);
                 bodyType_circle.Checked = (_currentObject.BodyDataType.Type == Instance.BodyData.BType.Circle);
-                bodyType_value.Value = _currentObject.BodyDataType.Value;
+                bodyType_value_1.Value = _currentObject.BodyDataType.Value1;
+                bodyType_value_2.Value = _currentObject.BodyDataType.Value2;
                 bodyType_IsSolid.Checked = true;
             }
             else
             {
                 bodyType_IsSolid.Checked = false;
             }
+            BodyTypeView();
 
             foreach (Variable item in _currentObject.Variables)
             {
@@ -342,11 +345,13 @@ public partial class ObjectManager : Form
             if (bodyType_mask.Checked) { _currentObject.BodyDataType.Type = Instance.BodyData.BType.Sprite; }
             if (bodyType_rect.Checked) { _currentObject.BodyDataType.Type = Instance.BodyData.BType.Rect; }
             if (bodyType_circle.Checked) { _currentObject.BodyDataType.Type = Instance.BodyData.BType.Circle; }
-            _currentObject.BodyDataType.Value = (int)bodyType_value.Value;
+            _currentObject.BodyDataType.Value1 = (int)bodyType_value_1.Value;
+            _currentObject.BodyDataType.Value2 = (int)bodyType_value_2.Value;
         }
         else
         {
-            _currentObject.BodyDataType.Value = 0;
+            _currentObject.BodyDataType.Value1 = 0;
+            _currentObject.BodyDataType.Value2 = 0;
             _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
         }
 
@@ -374,25 +379,41 @@ public partial class ObjectManager : Form
     public void WriteObjectCode()
     {
         {
-            string instanceMain = "";
+            StringBuilder instanceMain = new StringBuilder();
             // main
-            instanceMain += "object " + _currentObject.Name + "\n";
+            instanceMain.Append("object " + _currentObject.Name + "\n");
             foreach (Variable item in _currentObject.Variables)
             {
-                instanceMain += "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n";
+                instanceMain.Append("local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n");
             }
             foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
             {
-                instanceMain += "define " + item.Key + "\n";
+                instanceMain.Append("define " + item.Key + "\n");
             }
-            instanceMain += "@end\n";
+            instanceMain.Append("@end\n");
             // default
-            instanceMain += "function " + _currentObject.Name + ":" + "DEF_VALUES" + "\n";
+            instanceMain.Append("function " + _currentObject.Name + ":" + "DEF_VALUES" + "\n");
             if (_currentObject.Sprite != null)
             {
-                instanceMain += $"set_self_sprite(get_sprite(\"{_currentObject.Sprite.Name}\"))" + "\n";
+                instanceMain.Append($"set_self_sprite(get_sprite(\"{_currentObject.Sprite.Name}\"))" + "\n");
             }
-            instanceMain += $"set_body_type(\"{_currentObject.BodyDataType.Type.ToString()}\", {_currentObject.BodyDataType.Value.ToString()})" + "\n";
+
+            switch (_currentObject.BodyDataType.Type)
+            {
+                case Instance.BodyData.BType.None:
+                    instanceMain.Append($"instance_set_body_none()\n");
+                    break;
+                case Instance.BodyData.BType.Circle:
+                    instanceMain.Append($"instance_set_body_as_circle({_currentObject.BodyDataType.Value1.ToString()})\n");
+                    break;
+                case Instance.BodyData.BType.Rect:
+                    instanceMain.Append($"instance_set_body_as_rect({_currentObject.BodyDataType.Value1.ToString()}, {_currentObject.BodyDataType.Value2.ToString()})\n");
+                    break;
+                case Instance.BodyData.BType.Sprite:
+                    instanceMain.Append($"instance_set_body_from_sprite()\n");
+                    break;
+            }
+            
             foreach (Variable item in _currentObject.Variables)
             {
                 if (item.Default != null && item.Default.Length > 0)
@@ -406,41 +427,41 @@ public partial class ObjectManager : Form
                             // can not
                             break;
                         case Variable.VariableType.VTypeSprite:
-                            instanceMain += $"{item.Name} := get_sprite(\"{item.Default}\")\n";
+                            instanceMain.Append($"{item.Name} := get_sprite(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypeTexture:
-                            instanceMain += $"{item.Name} := get_texture(\"{item.Default}\")\n";
+                            instanceMain.Append($"{item.Name} := get_texture(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypeSound:
-                            instanceMain += $"{item.Name} := get_sound(\"{item.Default}\")\n";
+                            instanceMain.Append($"{item.Name} := get_sound(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypeMusic:
-                            instanceMain += $"{item.Name} := get_music(\"{item.Default}\")\n";
+                            instanceMain.Append($"{item.Name} := get_music(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypeFont:
-                            instanceMain += $"{item.Name} := get_font(\"{item.Default}\")\n";
+                            instanceMain.Append($"{item.Name} := get_font(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypePoint:
                             string[] pt = item.Default.Split(':');
-                            instanceMain += $"{item.Name} := new_point( {pt[0]}, {pt[1]})\n";
+                            instanceMain.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
                             break;
                         case Variable.VariableType.VTypeRectangle:
                             break;
                         default:
-                            instanceMain += item.Name + " := " + item.Default + "\n";
+                            instanceMain.Append(item.Name + " := " + item.Default + "\n");
                             break;
                     }
                 }
             }
-            instanceMain += "@end\n";
+            instanceMain.Append("@end\n");
             // events
             foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
             {
-                instanceMain += "function " + _currentObject.Name + ":" + item.Key + "\n";
-                instanceMain += _eventsData[item.Key] + "\n";
-                instanceMain += "@end\n";
+                instanceMain.Append("function " + _currentObject.Name + ":" + item.Key + "\n");
+                instanceMain.Append(_eventsData[item.Key] + "\n");
+                instanceMain.Append("@end\n");
             }
-            File.WriteAllText(ProjectPath + "\\object\\" + _currentObject.Name + "\\main" + Program.FileExtensions_ArtCode, instanceMain);
+            File.WriteAllText(ProjectPath + "\\object\\" + _currentObject.Name + "\\main" + Program.FileExtensions_ArtCode, instanceMain.ToString());
         }
     }
 
@@ -485,21 +506,7 @@ public partial class ObjectManager : Form
         }
     }
 
-
-    private void bodyType_IsSolid_CheckedChanged(object sender, EventArgs e)
-    {
-        if (!bodyType_IsSolid.Checked)
-        {
-            _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
-        }
-        bodyType_circle.Enabled = bodyType_IsSolid.Checked;
-        bodyType_mask.Enabled = bodyType_IsSolid.Checked;
-        bodyType_rect.Enabled = bodyType_IsSolid.Checked;
-        bodyType_value.Enabled = bodyType_IsSolid.Checked;
-
-    }
-
-    private void Event_listobx_MouseDoubleClick(object sender, MouseEventArgs e)
+    private void Event_listbox_MouseDoubleClick(object sender, MouseEventArgs e)
     {
         listBox1_SelectedIndexChanged(sender, null);
         button8_Click(sender, e);
@@ -532,65 +539,154 @@ public partial class ObjectManager : Form
             Directory.CreateDirectory(sbPath);
         }
         PicFromList picFrom = new PicFromList(list);
-        if(picFrom.ShowDialog() == DialogResult.OK) { 
-            if(picFrom.Selected == "<new>")
+        if (picFrom.ShowDialog() != DialogResult.OK) return;
+        if(picFrom.Selected == "<new>")
+        {
+            string behName = GetString.Get("Give name of new Standard Behaviour");
+            if(behName == null)
             {
-                string behName = GetString.Get("Give name of new Standard Behaviour");
-                if(behName == null)
+                MessageBox.Show("Wrong name, can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            CodeEditor codeEditor = new CodeEditor( "//Standard Behaviour " + behName);
+            if(codeEditor.ShowDialog() == DialogResult.OK) {
+                File.WriteAllLines(sbPath + "\\" + behName + ".sbh", codeEditor.Code);
+                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
+                Event_treeview.Nodes.Clear();
+                foreach (string line in codeEditor.Code)
                 {
-                    MessageBox.Show("Wrong name, can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                CodeEditor codeEditor = new CodeEditor( "//Standard Behaviour " + behName);
-                if(codeEditor.ShowDialog() == DialogResult.OK) {
-                    File.WriteAllLines(sbPath + "\\" + behName + ".sbh", codeEditor.Code);
-                    _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
-                    Event_treeview.Nodes.Clear();
-                    foreach (string line in codeEditor.Code)
-                    {
-                        Event_treeview.Nodes.Add(line);
-                    }
-                }
-                else
-                {
-                    {
-                        MessageBox.Show("Can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                    Event_treeview.Nodes.Add(line);
                 }
             }
             else
             {
-                switch (MessageBox.Show("Do You like to insert or edit Standard Behaviour?\nYes to insert.\nNo to edit", "Standard Behaviour", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
                 {
-                    case DialogResult.Yes:
-                        if(File.Exists(sbPath + "\\" + picFrom.Selected + ".sbh"))
-                        {
-                            _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh");
-                            Event_treeview.Nodes.Clear();
-                            foreach (string line in _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split('\n'))
-                            {
-                                Event_treeview.Nodes.Add(line);
-                            }
-                        }
-                        break;
-                    case DialogResult.No:
-                        CodeEditor codeEditor = new CodeEditor( File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh"));
-                        if (codeEditor.ShowDialog() == DialogResult.OK)
-                        {
-                            File.WriteAllLines(sbPath + "\\" + picFrom.Selected + ".sbh", codeEditor.Code);
-                            _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
-                            Event_treeview.Nodes.Clear();
-                            foreach (string line in codeEditor.Code)
-                            {
-                                Event_treeview.Nodes.Add(line);
-                            }
-                        }
-                        break;
-                    case DialogResult.Cancel:
-                        return;
+                    MessageBox.Show("Can not create new Standard Begaviour", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
         }
+        else
+        {
+            switch (MessageBox.Show("Do You like to insert or edit Standard Behaviour?\nYes to insert.\nNo to edit", "Standard Behaviour", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+            {
+                case DialogResult.Yes:
+                    if(File.Exists(sbPath + "\\" + picFrom.Selected + ".sbh"))
+                    {
+                        _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh");
+                        Event_treeview.Nodes.Clear();
+                        foreach (string line in _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())].Split('\n'))
+                        {
+                            Event_treeview.Nodes.Add(line);
+                        }
+                    }
+                    break;
+                case DialogResult.No:
+                    CodeEditor codeEditor = new CodeEditor( File.ReadAllText(sbPath + "\\" + picFrom.Selected + ".sbh"));
+                    if (codeEditor.ShowDialog() == DialogResult.OK)
+                    {
+                        File.WriteAllLines(sbPath + "\\" + picFrom.Selected + ".sbh", codeEditor.Code);
+                        _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), Event_listobx.SelectedItem.ToString())] = String.Join("\n", codeEditor.Code);
+                        Event_treeview.Nodes.Clear();
+                        foreach (string line in codeEditor.Code)
+                        {
+                            Event_treeview.Nodes.Add(line);
+                        }
+                    }
+                    break;
+                case DialogResult.Cancel:
+                    return;
+            }
+        }
     }
+
+    /// <summary>
+    /// Refresh body type view.
+    /// </summary>
+    private void BodyTypeView()
+    {
+        if (bodyType_IsSolid.Checked)
+        {
+            if (bodyType_circle.Checked)
+            {
+                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Circle;
+            }else if (bodyType_rect.Checked)
+            {
+                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Rect;
+            }else if (bodyType_mask.Checked)
+            {
+                _currentObject.BodyDataType.Type = Instance.BodyData.BType.Sprite;
+            }
+        }
+        else
+        {
+            _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
+        }
+
+        bodyType_value_1.Enabled = true;
+        bodyType_value_2.Enabled = true;
+        bodyType_mask.Enabled = true;
+        bodyType_rect.Enabled = true;
+        bodyType_circle.Enabled = true;
+
+        switch (_currentObject.BodyDataType.Type)
+        {
+            case Instance.BodyData.BType.Circle:
+                bodyType_value_1.Visible = true;
+                lb_body_value.Visible = true;
+                lb_body_value.Text = "Radius";
+
+                bodyType_value_2.Visible = false;
+                lb_body_value_2.Visible = false;
+                break;
+            case Instance.BodyData.BType.Rect:
+                bodyType_value_1.Visible = true;
+                lb_body_value.Visible = true;
+                lb_body_value.Text = "Width";
+
+                bodyType_value_2.Visible = true;
+                lb_body_value_2.Visible = true;
+                break;
+            case Instance.BodyData.BType.None:
+                bodyType_value_1.Enabled = false;
+                bodyType_value_2.Enabled = false;
+                bodyType_mask.Enabled = false;
+                bodyType_rect.Enabled = false;
+                bodyType_circle.Enabled = false;
+                break;
+            case Instance.BodyData.BType.Sprite:
+                bodyType_value_1.Visible = false;
+                lb_body_value.Visible = false;
+
+                bodyType_value_2.Visible = false;
+                lb_body_value_2.Visible = false;
+
+                break;
+
+        }
+    }
+
+    private void bodyType_mask_CheckedChanged(object sender, EventArgs e)
+    {
+
+        BodyTypeView();
+    }
+
+    private void bodyType_rect_CheckedChanged(object sender, EventArgs e)
+    {
+
+        BodyTypeView();
+    }
+
+    private void bodyType_circle_CheckedChanged(object sender, EventArgs e)
+    {
+        BodyTypeView();
+    }
+
+    private void bodyType_IsSolid_CheckedChanged(object sender, EventArgs e)
+    {
+
+        BodyTypeView();
+    }
+
 }

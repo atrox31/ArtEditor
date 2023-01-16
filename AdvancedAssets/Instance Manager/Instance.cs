@@ -20,21 +20,22 @@ public class Instance : Asset
         };
 
         public BType Type;
-        public int Value;
+        public int Value1;
+        public int Value2;
 
         public BodyData()
         {
             Type = BType.None;
-            Value = 0;
+            Value1 = 0;
+            Value2 = 0;
         }
     }
 
     [JsonProperty] public BodyData BodyDataType { get; set; }
 
+    //TODO change Sprite type to string type, for better saving system
     [JsonProperty] public Sprite Sprite { get; set; }
-
-    // TODO
-    // dataset
+    
     [JsonProperty] public Dictionary<Event.EventType, string> Events { get; set; }
     [JsonProperty] public List<Variable> Variables { get; set; }
 

@@ -30,9 +30,11 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.lb_body_value_2 = new System.Windows.Forms.Label();
+            this.bodyType_value_2 = new System.Windows.Forms.NumericUpDown();
             this.bodyType_IsSolid = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.bodyType_value = new System.Windows.Forms.NumericUpDown();
+            this.lb_body_value = new System.Windows.Forms.Label();
+            this.bodyType_value_1 = new System.Windows.Forms.NumericUpDown();
             this.bodyType_circle = new System.Windows.Forms.RadioButton();
             this.bodyType_rect = new System.Windows.Forms.RadioButton();
             this.bodyType_mask = new System.Windows.Forms.RadioButton();
@@ -59,7 +61,8 @@
             this.button10 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_1)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -73,7 +76,7 @@
             this.groupBox1.Controls.Add(this.groupBox4);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Location = new System.Drawing.Point(14, 14);
+            this.groupBox1.Location = new System.Drawing.Point(13, 12);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -84,9 +87,11 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.lb_body_value_2);
+            this.groupBox6.Controls.Add(this.bodyType_value_2);
             this.groupBox6.Controls.Add(this.bodyType_IsSolid);
-            this.groupBox6.Controls.Add(this.label1);
-            this.groupBox6.Controls.Add(this.bodyType_value);
+            this.groupBox6.Controls.Add(this.lb_body_value);
+            this.groupBox6.Controls.Add(this.bodyType_value_1);
             this.groupBox6.Controls.Add(this.bodyType_circle);
             this.groupBox6.Controls.Add(this.bodyType_rect);
             this.groupBox6.Controls.Add(this.bodyType_mask);
@@ -97,37 +102,58 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "BodyData type";
             // 
-            // bodyType_IsSolid
+            // lb_body_value_2
             // 
-            this.bodyType_IsSolid.AutoSize = true;
-            this.bodyType_IsSolid.Location = new System.Drawing.Point(171, 70);
-            this.bodyType_IsSolid.Name = "bodyType_IsSolid";
-            this.bodyType_IsSolid.Size = new System.Drawing.Size(62, 19);
-            this.bodyType_IsSolid.TabIndex = 5;
-            this.bodyType_IsSolid.Text = "Is solid";
-            this.bodyType_IsSolid.UseVisualStyleBackColor = true;
-            this.bodyType_IsSolid.CheckedChanged += new System.EventHandler(this.bodyType_IsSolid_CheckedChanged);
+            this.lb_body_value_2.AutoSize = true;
+            this.lb_body_value_2.Location = new System.Drawing.Point(96, 67);
+            this.lb_body_value_2.Name = "lb_body_value_2";
+            this.lb_body_value_2.Size = new System.Drawing.Size(43, 15);
+            this.lb_body_value_2.TabIndex = 7;
+            this.lb_body_value_2.Text = "Height";
             // 
-            // label1
+            // bodyType_value_2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(107, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Value (px)";
-            // 
-            // bodyType_value
-            // 
-            this.bodyType_value.Location = new System.Drawing.Point(107, 37);
-            this.bodyType_value.Maximum = new decimal(new int[] {
+            this.bodyType_value_2.Location = new System.Drawing.Point(145, 65);
+            this.bodyType_value_2.Maximum = new decimal(new int[] {
             512,
             0,
             0,
             0});
-            this.bodyType_value.Name = "bodyType_value";
-            this.bodyType_value.Size = new System.Drawing.Size(120, 23);
-            this.bodyType_value.TabIndex = 3;
+            this.bodyType_value_2.Name = "bodyType_value_2";
+            this.bodyType_value_2.Size = new System.Drawing.Size(82, 23);
+            this.bodyType_value_2.TabIndex = 6;
+            // 
+            // bodyType_IsSolid
+            // 
+            this.bodyType_IsSolid.AutoSize = true;
+            this.bodyType_IsSolid.Location = new System.Drawing.Point(150, 0);
+            this.bodyType_IsSolid.Name = "bodyType_IsSolid";
+            this.bodyType_IsSolid.Size = new System.Drawing.Size(83, 19);
+            this.bodyType_IsSolid.TabIndex = 5;
+            this.bodyType_IsSolid.Text = "Have body";
+            this.bodyType_IsSolid.UseVisualStyleBackColor = true;
+            this.bodyType_IsSolid.CheckedChanged += new System.EventHandler(this.bodyType_IsSolid_CheckedChanged);
+            // 
+            // lb_body_value
+            // 
+            this.lb_body_value.AutoSize = true;
+            this.lb_body_value.Location = new System.Drawing.Point(100, 39);
+            this.lb_body_value.Name = "lb_body_value";
+            this.lb_body_value.Size = new System.Drawing.Size(39, 15);
+            this.lb_body_value.TabIndex = 4;
+            this.lb_body_value.Text = "Width";
+            // 
+            // bodyType_value_1
+            // 
+            this.bodyType_value_1.Location = new System.Drawing.Point(145, 37);
+            this.bodyType_value_1.Maximum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.bodyType_value_1.Name = "bodyType_value_1";
+            this.bodyType_value_1.Size = new System.Drawing.Size(82, 23);
+            this.bodyType_value_1.TabIndex = 3;
             // 
             // bodyType_circle
             // 
@@ -139,6 +165,7 @@
             this.bodyType_circle.TabStop = true;
             this.bodyType_circle.Text = "Circle";
             this.bodyType_circle.UseVisualStyleBackColor = true;
+            this.bodyType_circle.CheckedChanged += new System.EventHandler(this.bodyType_circle_CheckedChanged);
             // 
             // bodyType_rect
             // 
@@ -150,6 +177,7 @@
             this.bodyType_rect.TabStop = true;
             this.bodyType_rect.Text = "Rect";
             this.bodyType_rect.UseVisualStyleBackColor = true;
+            this.bodyType_rect.CheckedChanged += new System.EventHandler(this.bodyType_rect_CheckedChanged);
             // 
             // bodyType_mask
             // 
@@ -161,6 +189,7 @@
             this.bodyType_mask.TabStop = true;
             this.bodyType_mask.Text = "Sprite mask";
             this.bodyType_mask.UseVisualStyleBackColor = true;
+            this.bodyType_mask.CheckedChanged += new System.EventHandler(this.bodyType_mask_CheckedChanged);
             // 
             // groupBox5
             // 
@@ -312,7 +341,7 @@
             this.Event_listobx.Size = new System.Drawing.Size(237, 499);
             this.Event_listobx.TabIndex = 4;
             this.Event_listobx.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            this.Event_listobx.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Event_listobx_MouseDoubleClick);
+            this.Event_listobx.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Event_listbox_MouseDoubleClick);
             // 
             // button3
             // 
@@ -431,7 +460,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_1)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -466,12 +496,14 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckBox bodyType_IsSolid;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown bodyType_value;
+        private System.Windows.Forms.Label lb_body_value;
+        private System.Windows.Forms.NumericUpDown bodyType_value_1;
         private System.Windows.Forms.RadioButton bodyType_circle;
         private System.Windows.Forms.RadioButton bodyType_rect;
         private System.Windows.Forms.RadioButton bodyType_mask;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Label lb_body_value_2;
+        private System.Windows.Forms.NumericUpDown bodyType_value_2;
     }
 }

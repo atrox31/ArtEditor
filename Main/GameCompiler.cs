@@ -536,7 +536,7 @@ namespace ArtCore_Editor.Main
 
             // write first scene, if not set get first
             if (!ZipIO.WriteLineToArchive(GameProject.ProjectPath + "\\" + GameDataFileName, "scene\\StartingScene.txt",
-                     (GameProject.GetInstance().StartingScene.Length > 0 ?
+                     (GameProject.GetInstance().StartingScene?.Length > 0 ?
                          GameProject.GetInstance().StartingScene :
                          GameProject.GetInstance().Scenes.Values.First().Name)
                      , true)) return false;

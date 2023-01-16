@@ -322,6 +322,7 @@ public partial class ObjectManager : Form
             if (_assetId != _currentObject.Name)
             {
                 GetInstance().Instances.RenameKey(_assetId, _currentObject.Name);
+                _assetId = _currentObject.Name;
             }
         }
 

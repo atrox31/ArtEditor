@@ -1,23 +1,17 @@
 ﻿using ArtCore_Editor.Functions;
 using ArtCore_Editor.Main;
+
 using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Xml.Serialization;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
 using Image = System.Drawing.Image;
 
 namespace ArtCore_Editor.AdvancedAssets.SpriteManager
@@ -169,8 +163,6 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
                 // change sprite name
                 if(_aid != _currentSprite.Name)
                 {
-                    string oldProjectPath = $"\\assets\\sprite\\{_aid}";
-                    Functions.Functions.DeleteDirectory(StringExtensions.Combine(GameProject.ProjectPath, oldProjectPath));
                     GameProject.GetInstance().Sprites.RenameKey(_aid, _currentSprite.Name);
                     _aid = _currentSprite.Name;
                 }

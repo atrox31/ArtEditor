@@ -110,7 +110,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
 
         private void LoadFramesFromSpriteArchive()
         {
-            for (int i = 0; i <= _currentSprite.SpriteFrames; i++)
+            for (int i = 0; i < _currentSprite.SpriteFrames; i++)
             {
                 Bitmap image = ZipIO.ReadImageFromArchive(GetFramesDataFileName(), $"{i}.png");
                 if (image != null)
@@ -299,8 +299,8 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             if (_imageList.Count > 0 && _controlBoxFrame < _imageList.Count)
             {
                 sprite_preview.Image = _imageList[_controlBoxFrame];
+                lb_preview_info.Text = (_controlBoxFrame+1).ToString() + "/" + (_controlBoxAnimationTo+1).ToString();
             }
-            lb_preview_info.Text = _controlBoxFrame.ToString() + "/" + _controlBoxAnimationTo.ToString();
             sprite_preview.Refresh();
         }
 
@@ -373,7 +373,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             if (ls_animation_sequence.SelectedIndex == 0)
             {
                 _controlBoxAnimationFrom = 0;
-                _controlBoxAnimationTo = _currentSprite.SpriteFrames;
+                _controlBoxAnimationTo = _currentSprite.SpriteFrames-1;
                 _controlBoxFrame = _controlBoxAnimationFrom;
             }
             else
@@ -638,7 +638,7 @@ namespace ArtCore_Editor.AdvancedAssets.SpriteManager
             UpdateSpriteCenterBox();
 
             control_box_region.Enabled = true;
-            _currentSprite.SpriteFrames = _imageList.Count-1;
+            _currentSprite.SpriteFrames = _imageList.Count;
         }
 
         private void UpdateSpriteCenterBox()

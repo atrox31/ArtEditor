@@ -242,7 +242,7 @@ namespace ArtCore_Editor
 
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
         {//open sprite manager and create new asset
-            OpenManager(new SpriteEditor());  
+            OpenManager(new SpriteManager());  
         }
 
         private void newToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -277,7 +277,7 @@ namespace ArtCore_Editor
                     OpenManager(new TextureManager(name));
                     break;
                 case "sprites":
-                    OpenManager(new SpriteEditor(name));
+                    OpenManager(new SpriteManager(name));
                     break;
                 case "music":
                     OpenManager(new MusicManager(name));
@@ -560,7 +560,7 @@ namespace ArtCore_Editor
             Process compiler = new Process();
             compiler.StartInfo.FileName = fileNamePath;
             compiler.StartInfo.Arguments = (debugMode ? "-debug " : "")
-                                           + "-assets \""   + GameProject.ProjectPath + "\\output\\assets.pak\" "
+                                           + "-assets \"" + GameProject.ProjectPath + "\\output\\assets.pak\" "
                                            + "-game_dat \"" + GameProject.ProjectPath + "\\output\\game.dat\" "
                                            + "-platform \"" + GameProject.ProjectPath + "\\output\\Platform.dat\" ";
             compiler.StartInfo.UseShellExecute = false;
@@ -587,19 +587,17 @@ namespace ArtCore_Editor
             listBox1.Items.Add("Process exit with code: " + compiler.ExitCode.ToString());
 
             if (!debugMode) return;
-            {
-                listBox1.Items.Add("wait for console output...");
-                BackgroundWorker bw = new BackgroundWorker();
-                bw.DoWork += (sender, e) =>
-                {
-                    foreach (string line in (((StringBuilder)e.Argument)!).ToString().Split('\n'))
-                    {
-                        listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
-                    }
-                };
-                bw.RunWorkerAsync(sb);
-            }
 
+            listBox1.Items.Add("wait for console output...");
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += (sender, e) =>
+            {
+                foreach (string line in (((StringBuilder)e.Argument)!).ToString().Split('\n'))
+                {
+                    listBox1.Invoke(new Action(() => listBox1.Items.Add(line)));
+                }
+            };
+            bw.RunWorkerAsync(sb);
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -693,12 +691,12 @@ namespace ArtCore_Editor
         /// <returns>True if all files are ok</returns>
         bool CheckCoreFiles(bool showMsg = true)
         {
-            if (File.Exists(Program.ProgramDirectory + "\\" + "Core\\FileList.txt"))
+            if (File.Exists(StringExtensions.Combine(Program.ProgramDirectory, "Core\\FileList.txt")))
             {
-                List<string> list = StripFileList(File.ReadAllLines(Program.ProgramDirectory + "\\" + "Core\\FileList.txt").ToList());
+                List<string> list = StripFileList(File.ReadAllLines(StringExtensions.Combine(Program.ProgramDirectory, "Core\\FileList.txt")).ToList());
                 foreach (string line in list)
                 {
-                    if (!File.Exists(Program.ProgramDirectory + "\\" + line))
+                    if (!File.Exists(StringExtensions.Combine(Program.ProgramDirectory,line)))
                     {
                         if (showMsg)
                             MessageBox.Show("Cannot find '" + line + "', download latest release from github\n 'https://github.com/atrox31/ArtCore'", "Missing file", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -735,7 +733,7 @@ namespace ArtCore_Editor
                 fileName = file;
             }
 
-            string tempDirectory = Program.ProgramDirectory + "\\" + "temp";
+            string tempDirectory = StringExtensions.Combine(Program.ProgramDirectory, "temp");
             Functions.Functions.CleanDirectory(tempDirectory);
             try
             {
@@ -747,32 +745,29 @@ namespace ArtCore_Editor
                 return false;
             }
 
-            if (!File.Exists(tempDirectory + "\\Core\\FileList.txt"))
+            if (!File.Exists(StringExtensions.Combine(tempDirectory,"\\Core\\FileList.txt")))
             {
                 MessageBox.Show("Error while opening 'FileList.txt'\nDownload latest release from github\n 'https://github.com/atrox31/ArtCore'", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (Directory.Exists(Program.ProgramDirectory + "\\" + "Core"))
+            Functions.Functions.DeleteDirectory(StringExtensions.Combine(Program.ProgramDirectory, "Core"));
+
+            foreach (string content in StripFileList(File.ReadAllLines(StringExtensions.Combine(tempDirectory, "\\Core\\FileList.txt")).ToList()))
             {
-                Directory.Delete(Program.ProgramDirectory + "\\" + "Core", true);
-            }
-            foreach (string content in StripFileList(File.ReadAllLines(tempDirectory + "\\Core\\FileList.txt").ToList()))
-            {
-                string path = Program.ProgramDirectory + "\\" + Path.GetDirectoryName(content);
+                string path = StringExtensions.Combine(Program.ProgramDirectory, Path.GetDirectoryName(content));
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 
-                File.Copy(tempDirectory + "\\" + content, Program.ProgramDirectory + "\\" + content, true);
+                File.Copy(
+                    StringExtensions.Combine(tempDirectory, content),
+                    StringExtensions.Combine(Program.ProgramDirectory, content),
+                    true);
 
             }
-            if (Directory.Exists(tempDirectory))
-            {
-                Directory.Delete(tempDirectory, true);
-            }
-
+            Functions.Functions.DeleteDirectory(tempDirectory);
             Functions.Functions.FileDelete(fileName);
             
             if (file == null) // silent

@@ -300,7 +300,7 @@ namespace ArtCore_Editor
             }
         }
 
-        private void DeleteAssetFilesFromProject<T>(T list, string name) where T : Dictionary<string, Asset>
+        private void DeleteAssetFilesFromProject<T>(Dictionary<string, T> list, string name)
         {
             if (list.ContainsKey(name))
             {
@@ -322,7 +322,7 @@ namespace ArtCore_Editor
                     DeleteAssetFilesFromProject(GlobalProject.Textures, name);
                     break;
                 case "sprites":
-                    DeleteAssetFilesFromProject((GlobalProject.Sprites).ForceType<Dictionary<string, Asset>>(), name);
+                    DeleteAssetFilesFromProject((GlobalProject.Sprites), name);
                     break;
                 case "music":
                     DeleteAssetFilesFromProject(GlobalProject.Music, name);
@@ -334,10 +334,10 @@ namespace ArtCore_Editor
                     DeleteAssetFilesFromProject(GlobalProject.Fonts, name);
                     break;
                 case "instances":
-                    DeleteAssetFilesFromProject((GlobalProject.Instances).ForceType<Dictionary<string, Asset>>(), name);
+                    DeleteAssetFilesFromProject((GlobalProject.Instances), name);
                     break;
                 case "scenes":
-                    DeleteAssetFilesFromProject((GlobalProject.Scenes).ForceType<Dictionary<string, Asset>>(), name);
+                    DeleteAssetFilesFromProject((GlobalProject.Scenes), name);
                     break;
             }
         }

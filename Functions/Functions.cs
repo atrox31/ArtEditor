@@ -65,7 +65,7 @@ namespace ArtCore_Editor.Functions
             foreach (PropertyInfo destinationProp in y.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
             {
                 PropertyInfo sourceProp = x.GetProperty(destinationProp.Name);
-                if (sourceProp != null)
+                if (sourceProp != null && sourceProp.GetValue(obj) != null)
                 {
                     destinationProp.SetValue(res, sourceProp.GetValue(obj));
                 }

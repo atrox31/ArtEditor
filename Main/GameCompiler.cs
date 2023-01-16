@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -74,7 +75,7 @@ namespace ArtCore_Editor.Main
         }
         private static bool CancelRequest(BackgroundWorker obj, DoWorkEventArgs e)
         {
-            if (obj.CancellationPending != true) return false;
+            if (!obj.CancellationPending) return false;
             e.Cancel = true;
             return true;
         }
@@ -228,14 +229,18 @@ namespace ArtCore_Editor.Main
                         GameProject.ProjectPath + "\\" + AssetPackFileName,
                         "Sprites\\" + sprite.Value.FileName,
                         buffer, true)) return false;
-
-                foreach (string enumerateFile in Directory.EnumerateFiles( GameProject.ProjectPath + "\\" + sprite.Value.ProjectPath + "\\img\\" ))
+                
+                for(int i=0; i<sprite.Value.SpriteFrames; i++)
                 {
-                    if (!ZipIO.WriteFileToZipFile(
-                            GameProject.ProjectPath + "\\" + AssetPackFileName,
-                            "Sprites\\" + sprite.Value.Name + "\\" + Path.GetFileName(enumerateFile),
-                            enumerateFile,
-                            true)) return false;
+                    string frameName = i.ToString() + ".png";
+
+                    if (!ZipIO.CopyImageToArchive(
+                 /*ZipArchiveInput*/  StringExtensions.Combine(GameProject.ProjectPath, sprite.Value.DataPath),
+                 /*EntryNameInput*/   frameName,
+                 /*ZipArchiveOutput*/ StringExtensions.Combine(GameProject.ProjectPath, AssetPackFileName),
+                 /*EntryNameOutput*/  StringExtensions.Combine("Sprites",sprite.Value.Name, frameName)
+                        ))
+                        return false;
                 }
 
                 // add to file list so engine can access by normal name

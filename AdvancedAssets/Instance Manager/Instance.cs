@@ -39,12 +39,17 @@ public class Instance : Asset
     [JsonProperty] public Dictionary<Event.EventType, string> Events { get; set; }
     [JsonProperty] public List<Variable> Variables { get; set; }
 
+    [JsonProperty] public bool EditorShowInScene { get; set; }
+    [JsonProperty] public bool EditorShowInLevel { get; set; }
+
     public Instance()
     {
         Variables = new List<Variable>();
         Events = new Dictionary<Event.EventType, string>();
         Name = "new_instance";
         BodyDataType = new BodyData();
+        EditorShowInScene = true;
+        EditorShowInLevel = true;
     }
 
 }

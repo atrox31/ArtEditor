@@ -4,8 +4,6 @@ using System.IO.Compression;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Printing;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace ArtCore_Editor.Functions
 {
@@ -124,7 +122,7 @@ namespace ArtCore_Editor.Functions
             if(source == null)
             {
                 MessageBox.Show(
-                       $"Source is null. Can not copy file to archive",
+                       "Source is null. Can not copy file to archive",
                        "Null source", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
@@ -264,11 +262,11 @@ namespace ArtCore_Editor.Functions
 
                     ZipArchiveEntry fileEntry = archive.GetEntry(entryName);
 
-                    return fileEntry != null ? new StreamReader(fileEntry.Open()).ReadToEnd() : String.Empty;
+                    return fileEntry != null ? new StreamReader(fileEntry.Open()).ReadToEnd() : string.Empty;
                 }
                 catch (FileNotFoundException)
                 {
-                    return fileMustExists ? null : String.Empty;
+                    return fileMustExists ? null : string.Empty;
                 }
                 catch (InvalidDataException)
                 {
@@ -332,25 +330,74 @@ namespace ArtCore_Editor.Functions
             return null;
         }
         /// <summary>
-        /// Copy Bitmap (Image) from one archive to another
+        /// Get stream from archive
         /// </summary>
         /// <param name="zipArchive">Name (path included) to ZIP archive</param>
         /// <param name="entryName">Name (path included) to image file in ZIP archive</param>
-        /// <returns>succes status</returns>
-        public static bool CopyImageToArchive(string ZipArchiveInput, string EntryNameInput,
-            string ZipArchiveOutput, string EntryNameOutput )
+        /// <returns>object Bitmap or null on error</returns>
+        public static Stream ReadStreamFromArchive(string zipArchive, string entryName)
         {
-            if (!File.Exists(ZipArchiveInput))
+            DialogResult result = DialogResult.Retry;
+            while (result == DialogResult.Retry)
+            {
+                try
+                {
+                    using FileStream zipToOpen = new FileStream(zipArchive, FileMode.Open);
+                    using ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read);
+
+                    ZipArchiveEntry fileEntry = archive.GetEntry(entryName);
+
+                    if (fileEntry == null) return null;
+
+                    Stream returnStream = new MemoryStream();
+                    fileEntry.Open().CopyTo(returnStream);
+                    return returnStream;
+                }
+                catch (FileNotFoundException)
+                {
+                    return null;
+                }
+                catch (InvalidDataException)
+                {
+                    MessageBox.Show(
+                        $"Zip file '{zipArchive}' is corrupted. Delete it and retry action.",
+                        "Cannot access file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+                catch (IOException)
+                {
+                    result = MessageBox.Show(
+                        $"Zip file '{zipArchive}' is open in another program. Close it and retry action.",
+                        "Cannot access file", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    if (result == DialogResult.Cancel) return null;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Copy Bitmap (Image) from one archive to another
+        /// </summary>
+        /// <param name="zipArchiveInput">Name (path included) to ZIP archive</param>
+        /// <param name="entryNameInput">Name (path included) to image file in ZIP archive</param>
+        /// <param name="zipArchiveOutput">Name (path included) to ZIP archive</param>
+        /// <param name="entryNameOutput">Name (path included) to image file in ZIP archive</param>
+        /// <returns>success status</returns>
+        public static bool CopyImageToArchive(string zipArchiveInput, string entryNameInput,
+            string zipArchiveOutput, string entryNameOutput )
+        {
+            if (!File.Exists(zipArchiveInput))
             {
                 MessageBox.Show(
-                        $"File '{ZipArchiveInput}' not found.",
+                        $"File '{zipArchiveInput}' not found.",
                         "Input file not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            if (!File.Exists(ZipArchiveOutput))
+            if (!File.Exists(zipArchiveOutput))
             {
                 MessageBox.Show(
-                        $"File '{ZipArchiveOutput}' not found.",
+                        $"File '{zipArchiveOutput}' not found.",
                         "Output file not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
@@ -361,22 +408,22 @@ namespace ArtCore_Editor.Functions
             {
                 try
                 {
-                    using FileStream inputZip = new FileStream(ZipArchiveInput, FileMode.Open);
+                    using FileStream inputZip = new FileStream(zipArchiveInput, FileMode.Open);
                     using ZipArchive inputArchive = new ZipArchive(inputZip, ZipArchiveMode.Read);
                     
-                    using FileStream outputZip = new FileStream(ZipArchiveOutput, FileMode.OpenOrCreate);
+                    using FileStream outputZip = new FileStream(zipArchiveOutput, FileMode.OpenOrCreate);
                     using ZipArchive outputArchive = new ZipArchive(outputZip, ZipArchiveMode.Update);
 
-                    ZipArchiveEntry inputEntry = inputArchive.GetEntry(EntryNameInput);
+                    ZipArchiveEntry inputEntry = inputArchive.GetEntry(entryNameInput);
                     if (inputEntry == null)
                     {
                         MessageBox.Show(
-                        $"File '{EntryNameInput}' not found in archive '{ZipArchiveInput}'",
+                        $"File '{entryNameInput}' not found in archive '{zipArchiveInput}'",
                         "Input file not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
 
-                    ZipArchiveEntry outputEntry = GetEntry(EntryNameOutput, true, outputArchive);
+                    ZipArchiveEntry outputEntry = GetEntry(entryNameOutput, true, outputArchive);
                     if (outputEntry == null) return false;
 
                     using StreamReader inputStream  = new StreamReader(inputEntry.Open());
@@ -387,7 +434,6 @@ namespace ArtCore_Editor.Functions
 
                     inputStream.Close();
                     outputStream.Close();
-                    //TODO test this
                     return true;
                 }
                 catch (FileNotFoundException)
@@ -397,7 +443,7 @@ namespace ArtCore_Editor.Functions
                 catch (InvalidDataException e)
                 {
                     MessageBox.Show(
-                        $"Zip file '{ZipArchiveInput}' or '{ZipArchiveOutput}' is corrupted. Delete it and retry action.\n" +
+                        $"Zip file '{zipArchiveInput}' or '{zipArchiveOutput}' is corrupted. Delete it and retry action.\n" +
                         $"{e.Message}",
                         "Cannot access file", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
@@ -405,7 +451,7 @@ namespace ArtCore_Editor.Functions
                 catch (IOException e)
                 {
                     result = MessageBox.Show(
-                        $"Zip file '{ZipArchiveInput}' or '{ZipArchiveOutput}' is open in another program. Close it and retry action.\n" +
+                        $"Zip file '{zipArchiveInput}' or '{zipArchiveOutput}' is open in another program. Close it and retry action.\n" +
                          $"{e.Message}",
                         "Cannot access file", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                     if (result == DialogResult.Cancel) return false;
@@ -413,7 +459,7 @@ namespace ArtCore_Editor.Functions
                 catch (Exception e)
                 {
                     MessageBox.Show(
-                        $"Error thrown, message:\n" +
+                        "Error thrown, message:\n" +
                         $"{e.Message}",
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;

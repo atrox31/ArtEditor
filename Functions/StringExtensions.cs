@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace ArtCore_Editor.Functions
@@ -18,6 +19,16 @@ namespace ArtCore_Editor.Functions
             return new string(input.ToCharArray()
                 .Where(c => !Char.IsWhiteSpace(c))
                 .ToArray());
+        }
+
+        public static bool HaveExtension(this string input)
+        {
+            return input.Length != 0 && Path.GetFileName(input).Contains('.');
+        }
+
+        public static string WithoutExtension(this string input)
+        {
+            return Path.GetFileNameWithoutExtension(input);
         }
 
         // fix to microsoft Path.Combine

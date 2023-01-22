@@ -45,11 +45,14 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.editSchemaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guiTriggersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.listToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chb_enable_camera = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -76,10 +79,9 @@
             this.bc_color_pick_value = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.bc_color_box = new System.Windows.Forms.PictureBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Content = new System.Windows.Forms.PictureBox();
-            this.chb_enable_camera = new System.Windows.Forms.CheckBox();
+            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -108,7 +110,8 @@
             this.toolStripButton1,
             this.toolStripDropDownButton1,
             this.toolStripDropDownButton2,
-            this.toolStripButton2});
+            this.toolStripButton2,
+            this.toolStripDropDownButton3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1584, 25);
@@ -239,8 +242,28 @@
             this.guiTriggersToolStripMenuItem.Text = "Gui Triggers";
             this.guiTriggersToolStripMenuItem.Click += new System.EventHandler(this.guiTriggersToolStripMenuItem_Click);
             // 
+            // toolStripDropDownButton3
+            // 
+            this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createToolStripMenuItem,
+            this.listToolStripMenuItem});
+            this.toolStripDropDownButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton3.Image")));
+            this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            this.toolStripDropDownButton3.Size = new System.Drawing.Size(52, 22);
+            this.toolStripDropDownButton3.Text = "Levels";
+            // 
+            // listToolStripMenuItem
+            // 
+            this.listToolStripMenuItem.Name = "listToolStripMenuItem";
+            this.listToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.listToolStripMenuItem.Text = "List";
+            this.listToolStripMenuItem.Click += new System.EventHandler(this.listToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.AutoSize = true;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -261,7 +284,6 @@
             this.flowLayoutPanel1.Controls.Add(this.groupBox3);
             this.flowLayoutPanel1.Controls.Add(this.groupBox1);
             this.flowLayoutPanel1.Controls.Add(this.groupBox2);
-            this.flowLayoutPanel1.Controls.Add(this.groupBox6);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 3);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -303,6 +325,17 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "View dimensions";
+            // 
+            // chb_enable_camera
+            // 
+            this.chb_enable_camera.AutoSize = true;
+            this.chb_enable_camera.Enabled = false;
+            this.chb_enable_camera.Location = new System.Drawing.Point(12, 68);
+            this.chb_enable_camera.Name = "chb_enable_camera";
+            this.chb_enable_camera.Size = new System.Drawing.Size(103, 19);
+            this.chb_enable_camera.TabIndex = 2;
+            this.chb_enable_camera.Text = "Enable camera";
+            this.chb_enable_camera.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
@@ -566,7 +599,7 @@
             this.button2.TabIndex = 3;
             this.button2.Text = "Apply";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // bc_color_pick_value
             // 
@@ -596,15 +629,6 @@
             this.bc_color_box.TabIndex = 0;
             this.bc_color_box.TabStop = false;
             // 
-            // groupBox6
-            // 
-            this.groupBox6.Location = new System.Drawing.Point(3, 534);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(288, 179);
-            this.groupBox6.TabIndex = 3;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Properties";
-            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
@@ -630,16 +654,12 @@
             this.Content.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Content_MouseClick);
             this.Content.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Content_MouseMove);
             // 
-            // chb_enable_camera
+            // createToolStripMenuItem
             // 
-            this.chb_enable_camera.AutoSize = true;
-            this.chb_enable_camera.Enabled = false;
-            this.chb_enable_camera.Location = new System.Drawing.Point(12, 68);
-            this.chb_enable_camera.Name = "chb_enable_camera";
-            this.chb_enable_camera.Size = new System.Drawing.Size(103, 19);
-            this.chb_enable_camera.TabIndex = 2;
-            this.chb_enable_camera.Text = "Enable camera";
-            this.chb_enable_camera.UseVisualStyleBackColor = true;
+            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createToolStripMenuItem.Text = "Create";
+            this.createToolStripMenuItem.Click += new System.EventHandler(this.createToolStripMenuItem_Click);
             // 
             // SceneManager
             // 
@@ -710,7 +730,6 @@
         private System.Windows.Forms.ToolStripMenuItem dimensionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem snapToGridToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton r_bc_solidcolor;
         private System.Windows.Forms.GroupBox gb_bc_color_pic;
@@ -737,5 +756,8 @@
         private System.Windows.Forms.ToolStripMenuItem editTriggersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setStartupTriggerToolStripMenuItem;
         private System.Windows.Forms.CheckBox chb_enable_camera;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
+        private System.Windows.Forms.ToolStripMenuItem listToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
     }
 }

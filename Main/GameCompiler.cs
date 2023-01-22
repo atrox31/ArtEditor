@@ -8,6 +8,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager;
 using ArtCore_Editor.AdvancedAssets.SceneManager;
@@ -17,6 +20,8 @@ using ArtCore_Editor.Enums;
 using ArtCore_Editor.etc;
 using ArtCore_Editor.Functions;
 using Newtonsoft.Json;
+
+using static System.Formats.Asn1.AsnWriter;
 
 #pragma warning disable IDE0090
 
@@ -332,7 +337,7 @@ namespace ArtCore_Editor.Main
             return true;
         }
 
-        void CopyCoreFiles(string folder, string file, int c, int max)
+        private void CopyCoreFiles(string folder, string file, int c, int max)
         {
 
             if (!ZipIO.WriteFileToZipFile(
@@ -379,9 +384,113 @@ namespace ArtCore_Editor.Main
                 true);
         }
 
+        private static string MakeSceneCodeObject(Scene scene)
+        {
+            bool haveGuiTriggers = false;
+            StringBuilder content = new StringBuilder();
+            content.Append("object scene_" + scene.Name + "\n");
+            foreach (string enumerateFile in Directory.EnumerateFiles(
+                         GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
+                         "*" + Program.FileExtensions_ArtCode))
+            {
+                haveGuiTriggers = true;
+                content.Append("define " + Path.GetFileNameWithoutExtension(enumerateFile) + "\n");
+            }
+
+            foreach (Variable item in scene.SceneVariables)
+            {
+                content.Append(
+                    "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n");
+            }
+
+            content.Append("@end\n");
+
+            if (!haveGuiTriggers && scene.SceneVariables.Count <= 0) return content.ToString();
+
+            if (scene.SceneVariables.Count > 0)
+            {
+                content.Append("function scene_" + scene.Name + ":" + "DEF_VALUES" + "\n");
+                foreach (Variable item in scene.SceneVariables.Where(item => item.Default is
+                         {
+                             Length: > 0
+                         }))
+                {
+                    switch (item.Type)
+                    {
+                        case Variable.VariableType.VTypeObject:
+                        case Variable.VariableType.VTypeScene:
+                            // can not
+                            break;
+                        case Variable.VariableType.VTypeSprite:
+                            content.Append($"{item.Name} := get_sprite(\"{item.Default}\")\n");
+                            break;
+                        case Variable.VariableType.VTypeTexture:
+                            content.Append($"{item.Name} := get_texture(\"{item.Default}\")\n");
+                            break;
+                        case Variable.VariableType.VTypeSound:
+                            content.Append($"{item.Name} := get_sound(\"{item.Default}\")\n");
+                            break;
+                        case Variable.VariableType.VTypeMusic:
+                            content.Append($"{item.Name} := get_music(\"{item.Default}\")\n");
+                            break;
+                        case Variable.VariableType.VTypeFont:
+                            content.Append($"{item.Name} := get_font(\"{item.Default}\")\n");
+                            break;
+                        case Variable.VariableType.VTypePoint:
+                            string[] pt = item.Default.Split(':');
+                            content.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
+                            break;
+                        case Variable.VariableType.VTypeRectangle:
+                            break;
+                        default:
+                            content.Append(item.Name + " := " + item.Default + "\n");
+                            break;
+                    }
+                }
+
+                content.Append("@end\n");
+            }
+
+            // scene triggers
+            foreach (string enumerateFile in Directory.EnumerateFiles(
+                         GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
+                         "*" + Program.FileExtensions_ArtCode))
+            {
+                content.Append("function scene_" + scene.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n");
+                
+                content.Append(File.ReadAllText(enumerateFile));
+                content.Append('\n');
+                content.Append("@end\n");
+            }
+
+            // level triggers
+            foreach (string levelPath in Directory.EnumerateFiles(StringExtensions.Combine(
+                         GameProject.ProjectPath, scene.ProjectPath,
+                         "levels"), "*" + Program.FileExtensions_SceneLevel))
+            {
+                List<string> triggerList = ZipIO.ReadFromZip(
+                                            levelPath, "triggers.txt") 
+                /* get list of triggers */  .Split('\n').ToList();
+
+                foreach (string trigger in triggerList)
+                {
+                    string triggerContent = ZipIO.ReadFromZip(levelPath, trigger, true);
+                    if (string.IsNullOrEmpty(triggerContent)) continue;
+                    content.Append($"function {levelPath.WithoutExtension()}_{scene.Name}:{trigger.WithoutExtension()}\n");
+                    content.Append(triggerContent);
+                    content.Append('\n');
+                    content.Append("@end\n");
+                }
+            }
+
+            content.Append("@end\n");
+            return content.ToString();
+        }
+
         private bool CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e, int currentProgress, int progressMax)
         {
             if (GameProject.GetInstance().Scenes.Count == 0) return false;
+            string zipArchiveName = StringExtensions.Combine(GameProject.ProjectPath, GameDataFileName);
             float stepProgress = (float)(progressMax - currentProgress) / GameProject.GetInstance().Scenes.Count;
             float progress = (float)(currentProgress);
 
@@ -402,94 +511,19 @@ namespace ArtCore_Editor.Main
                 };
 
                 content.Add("[regions]");
-                foreach (Scene.Region regions in scene.Value.Regions)
-                {
-                    content.Add(regions.ToString());
-                }
+                content.AddRange(scene.Value.Regions.Select(regions => regions.ToString()));
 
                 content.Add("[triggers]");
-                foreach (string triggers in scene.Value.SceneTriggers)
-                {
-                    content.Add(triggers);
-                }
+                content.AddRange(scene.Value.SceneTriggers.Select(triggers => triggers.ToString()));
 
                 content.Add("[instance]");
-                foreach (SceneManager.SceneInstance sIns in scene.Value.SceneInstances)
-                {
-                    content.Add(sIns.Instance.Name + "|" + sIns.X + "|" + sIns.Y);
-                }
-                
+                content.AddRange(scene.Value.SceneInstances.Select(instance => instance.ToString()));
+
                 // gui events
-                bool haveGuiTriggers = false;
-                string guiTriggersContent = "object scene_"+scene.Value.Name + "\n";
-                foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\", "*" + Program.FileExtensions_ArtCode))
+                
                 {
-                    haveGuiTriggers = true;
-                    guiTriggersContent += "define " + Path.GetFileNameWithoutExtension(enumerateFile) + "\n";
-                }
-                foreach (Variable item in scene.Value.SceneVariables)
-                {
-                    guiTriggersContent += "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n";
-                }
-                guiTriggersContent += "@end\n";
-
-                if (haveGuiTriggers || scene.Value.SceneVariables.Count > 0)
-                {
-                    if (scene.Value.SceneVariables.Count > 0)
-                    {
-                        guiTriggersContent += "function scene_" + scene.Value.Name + ":" + "DEF_VALUES" + "\n";
-                        foreach (Variable item in scene.Value.SceneVariables.Where(item => item.Default is
-                                 {
-                                     Length: > 0
-                                 }))
-                        {
-                            switch (item.Type)
-                            {
-                                case Variable.VariableType.VTypeObject:
-                                case Variable.VariableType.VTypeScene:
-                                    // can not
-                                    break;
-                                case Variable.VariableType.VTypeSprite:
-                                    guiTriggersContent += $"{item.Name} := get_sprite(\"{item.Default}\")\n";
-                                    break;
-                                case Variable.VariableType.VTypeTexture:
-                                    guiTriggersContent += $"{item.Name} := get_texture(\"{item.Default}\")\n";
-                                    break;
-                                case Variable.VariableType.VTypeSound:
-                                    guiTriggersContent += $"{item.Name} := get_sound(\"{item.Default}\")\n";
-                                    break;
-                                case Variable.VariableType.VTypeMusic:
-                                    guiTriggersContent += $"{item.Name} := get_music(\"{item.Default}\")\n";
-                                    break;
-                                case Variable.VariableType.VTypeFont:
-                                    guiTriggersContent += $"{item.Name} := get_font(\"{item.Default}\")\n";
-                                    break;
-                                case Variable.VariableType.VTypePoint:
-                                    string[] pt = item.Default.Split(':');
-                                    guiTriggersContent += $"{item.Name} := new_point( {pt[0]}, {pt[1]})\n";
-                                    break;
-                                case Variable.VariableType.VTypeRectangle:
-                                    break;
-                                default:
-                                    guiTriggersContent += item.Name + " := " + item.Default + "\n";
-                                    break;
-                            }
-                        }
-                        guiTriggersContent += "@end\n";
-                    }
-                    foreach (string enumerateFile in Directory.EnumerateFiles(
-                                 GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Value.Name + "\\",
-                                 "*" + Program.FileExtensions_ArtCode))
-                    {
-                        guiTriggersContent += "function scene_" + scene.Value.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n"; ;
-                        guiTriggersContent += File.ReadAllText(enumerateFile);
-                        guiTriggersContent += "\n";
-                        guiTriggersContent += "@end\n";
-                    }
-
                     string tmpFilePath = GameProject.ProjectPath + "\\" + "tmp_scene_triggers" + Program.FileExtensions_ArtCode;
-                    File.WriteAllText(tmpFilePath, guiTriggersContent);
+                    File.WriteAllText(tmpFilePath, MakeSceneCodeObject( scene.Value ));
                     if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                             "-obj " + tmpFilePath, true)) return false;
 
@@ -498,7 +532,7 @@ namespace ArtCore_Editor.Main
                     if (CancelRequest(bgw, e)) return false;
 
                     if (!ZipIO.WriteFileToZipFile(
-                        GameProject.ProjectPath + "\\" + GameDataFileName,
+                            zipArchiveName,
                         "scene\\" + scene.Key + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                         GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                         true
@@ -506,26 +540,42 @@ namespace ArtCore_Editor.Main
                     Functions.Functions.FileDelete(GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode);
                 }
 
+                // pack scene file
                 if (CancelRequest(bgw, e)) return false;
                 if (!ZipIO.WriteListToArchive(
-                        GameProject.ProjectPath + "\\" + GameDataFileName,
+                        zipArchiveName,
                         "scene\\" + scene.Key + "\\" + scene.Key + "" + Program.FileExtensions_SceneObject,
                         content,
                         true
                     )) return false;
 
+                // pack gui schema
                 if (CancelRequest(bgw, e)) return false;
-                if (File.Exists(GameProject.ProjectPath + "\\" + "scene\\" + scene.Key + "\\" + "GuiSchema.json"))
+                if (File.Exists(StringExtensions.Combine(GameProject.ProjectPath, "scene", scene.Key, "GuiSchema.json")))
                 {
                     if (!ZipIO.WriteFileToZipFile(
-                            GameProject.ProjectPath + "\\" + GameDataFileName,
-                            "scene\\" + scene.Key + "\\GuiSchema.json",
-                            GameProject.ProjectPath + "\\" + "scene\\" + scene.Key + "\\" + "GuiSchema.json",
+                            zipArchiveName,
+                            $"scene\\{scene.Key}\\GuiSchema.json",
+                            StringExtensions.Combine(GameProject.ProjectPath, "scene", scene.Key, "GuiSchema.json"),
                             true
                         )) return false;
                 }
 
+                // pack all level data
                 if (CancelRequest(bgw, e)) return false;
+                foreach (string levelPath in Directory.EnumerateFiles( StringExtensions.Combine(
+                    GameProject.ProjectPath, scene.Value.ProjectPath,
+                    "levels"), "*" + Program.FileExtensions_SceneLevel))
+                {
+                    ZipIO.WriteToZipArchiveFromStream(
+                        zipArchiveName,
+                        $"scene\\{scene.Key}\\instances_{levelPath.WithoutExtension()}.txt",
+                        ZipIO.ReadStreamFromArchive(
+                            levelPath, "instances.txt"
+                            ),
+                        true
+                    );
+                }
                 
                 progress += stepProgress;
                 bgw.ReportProgress(1, new Message("Scene: " + scene.Key + "... done", (int)progress, true));

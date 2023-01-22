@@ -28,7 +28,9 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             {
                 // gui triggers
                 foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "gui_*" + Program.FileExtensions_ArtCode))
+                    Functions.StringExtensions.Combine(
+                             GameProject.ProjectPath, "scene", scene.Name ),
+                    "gui_*" + Program.FileExtensions_ArtCode))
                 {
                     if (!Path.GetFileNameWithoutExtension(enumerateFile).StartsWith("gui_")) continue;
                     string[] evName = Path.GetFileNameWithoutExtension(enumerateFile).Substring("gui_".Length)
@@ -47,7 +49,9 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.TriggerEditor
             {
                 // scene triggers
                 foreach (string enumerateFile in Directory.EnumerateFiles(
-                             GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\", "scene&*" + Program.FileExtensions_ArtCode))
+                    Functions.StringExtensions.Combine(
+                             GameProject.ProjectPath, "scene", scene.Name),
+                    "scene&*" + Program.FileExtensions_ArtCode))
                 {
                     if (!Path.GetFileNameWithoutExtension(enumerateFile).StartsWith("scene&")) continue;
                     string evName = Path.GetFileNameWithoutExtension(enumerateFile);

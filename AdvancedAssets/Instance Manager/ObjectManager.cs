@@ -65,6 +65,10 @@ public partial class ObjectManager : Form
             bodyType_mask.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Sprite);
             RefreshBodyTypeView();
 
+
+            chb_show_in_level.Checked = _currentObject.EditorShowInLevel;
+            chb_show_in_scene.Checked = _currentObject.EditorShowInScene;
+
             foreach (Variable item in _currentObject.Variables)
             {
                 Varible_listbox.Items.Add(item.Name + '[' + item.Type.ToString() + ']');
@@ -346,6 +350,9 @@ public partial class ObjectManager : Form
             _currentObject.BodyDataType.Value2 = 0;
             _currentObject.BodyDataType.Type = Instance.BodyData.BType.None;
         }
+
+        _currentObject.EditorShowInLevel = chb_show_in_level.Checked;
+        _currentObject.EditorShowInScene = chb_show_in_scene.Checked;
 
         GetInstance().Instances[_assetId] = (Instance)_currentObject.Clone();
 

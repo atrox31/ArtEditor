@@ -43,7 +43,6 @@
             this.button6 = new System.Windows.Forms.Button();
             this.Varible_listbox = new System.Windows.Forms.ListBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -59,6 +58,8 @@
             this.button9 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.button10 = new System.Windows.Forms.Button();
+            this.chb_show_in_scene = new System.Windows.Forms.CheckBox();
+            this.chb_show_in_level = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_2)).BeginInit();
@@ -240,8 +241,8 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.comboBox2);
-            this.groupBox4.Enabled = false;
+            this.groupBox4.Controls.Add(this.chb_show_in_level);
+            this.groupBox4.Controls.Add(this.chb_show_in_scene);
             this.groupBox4.Location = new System.Drawing.Point(7, 137);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox4.Name = "groupBox4";
@@ -249,20 +250,7 @@
             this.groupBox4.Size = new System.Drawing.Size(239, 51);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Data set";
-            this.groupBox4.Visible = false;
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "null"});
-            this.comboBox2.Location = new System.Drawing.Point(7, 20);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(224, 23);
-            this.comboBox2.TabIndex = 0;
+            this.groupBox4.Text = "Editor placement";
             // 
             // groupBox3
             // 
@@ -430,6 +418,26 @@
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
+            // chb_show_in_scene
+            // 
+            this.chb_show_in_scene.AutoSize = true;
+            this.chb_show_in_scene.Location = new System.Drawing.Point(6, 22);
+            this.chb_show_in_scene.Name = "chb_show_in_scene";
+            this.chb_show_in_scene.Size = new System.Drawing.Size(101, 19);
+            this.chb_show_in_scene.TabIndex = 0;
+            this.chb_show_in_scene.Text = "Show in scene";
+            this.chb_show_in_scene.UseVisualStyleBackColor = true;
+            // 
+            // chb_show_in_level
+            // 
+            this.chb_show_in_level.AutoSize = true;
+            this.chb_show_in_level.Location = new System.Drawing.Point(113, 22);
+            this.chb_show_in_level.Name = "chb_show_in_level";
+            this.chb_show_in_level.Size = new System.Drawing.Size(95, 19);
+            this.chb_show_in_level.TabIndex = 1;
+            this.chb_show_in_level.Text = "Show in level";
+            this.chb_show_in_level.UseVisualStyleBackColor = true;
+            // 
             // ObjectManager
             // 
             this.AcceptButton = this.button3;
@@ -464,6 +472,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bodyType_value_1)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -485,7 +494,6 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button button7;
@@ -505,5 +513,7 @@
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Label lb_body_value_2;
         private System.Windows.Forms.NumericUpDown bodyType_value_2;
+        private System.Windows.Forms.CheckBox chb_show_in_level;
+        private System.Windows.Forms.CheckBox chb_show_in_scene;
     }
 }

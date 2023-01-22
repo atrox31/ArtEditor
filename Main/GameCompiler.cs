@@ -482,8 +482,7 @@ namespace ArtCore_Editor.Main
                     content.Append("@end\n");
                 }
             }
-
-            content.Append("@end\n");
+            
             return content.ToString();
         }
 

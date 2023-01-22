@@ -2,3 +2,6 @@
 
 # CA1416: Walidacja zgodności z platformą
 dotnet_diagnostic.CA1416.severity = none
+
+# IDE0090: Użyj operatora „new(...)”
+dotnet_diagnostic.IDE0090.severity = none

@@ -58,7 +58,9 @@ internal static class Program
     // Art   [P][a]c[k]ed  Data 
     public const string FileExtensions_AssetPack = ".pak";          
     // Art   [D][a][t]a    File
-    public const string FileExtensions_GameDataPack = ".dat";       
+    public const string FileExtensions_GameDataPack = ".dat";            
+    // [A]rt   [L]evel    [F]ile
+    public const string FileExtensions_SceneLevel = ".alf";       
     // ReSharper restore InconsistentNaming CommentTypo
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Program exe directory

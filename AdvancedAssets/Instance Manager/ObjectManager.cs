@@ -29,7 +29,8 @@ public partial class ObjectManager : Form
 
     public ObjectManager(string assetId = null, int line = -1, string function = null)
     {
-        InitializeComponent(); Program.ApplyTheme(this);
+        InitializeComponent();
+        Program.ApplyTheme(this);
 
         // fill sprite selection
         foreach (KeyValuePair<string, Sprite> sprite in GetInstance().Sprites)
@@ -40,83 +41,90 @@ public partial class ObjectManager : Form
         _assetId = assetId;
         _eventsData = new Dictionary<Event.EventType, string>();
 
-        if (assetId != null)
-        {
-            string openingFileName = ProjectPath + "\\" + GetInstance().Instances[assetId].ProjectPath + "\\" + GetInstance().Instances[assetId].FileName;
-            if (!File.Exists(openingFileName))
-            {
-                MessageBox.Show("File: '" + openingFileName + "' not exists", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            using (StreamReader reader = new StreamReader(File.Open(openingFileName, FileMode.Open)))
-            {
-                _currentObject = JsonConvert.DeserializeObject<Instance>(reader.ReadToEnd());
-            }
-
-
-            if (_currentObject == null) return;
-            textBox1.Text = _currentObject.Name;
-            comboBox1.Text = _currentObject.Sprite != null ? _currentObject.Sprite.Name : "<default>";
-
-            bodyType_IsSolid.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.None);
-            bodyType_circle.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Circle);
-            bodyType_rect.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Rect);
-            bodyType_mask.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Sprite);
-            RefreshBodyTypeView();
-
-
-            chb_show_in_level.Checked = _currentObject.EditorShowInLevel;
-            chb_show_in_scene.Checked = _currentObject.EditorShowInScene;
-
-            foreach (Variable item in _currentObject.Variables)
-            {
-                Varible_listbox.Items.Add(item.Name + '[' + item.Type.ToString() + ']');
-            }
-
-            if (_currentObject.Events.Count > 0)
-            {
-                button5.Enabled = true;
-                button8.Enabled = true;
-                foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
-                {
-                    string path = ProjectPath + "\\object\\" + _currentObject.Name + "\\" + item.Value +
-                                  "" + Program.FileExtensions_ArtCode;
-                    if (File.Exists(path))
-                    {
-                        Event_listobx.Items.Add(item.Key);
-                        _eventsData[item.Key] = File.ReadAllText(path);
-                    }
-                    else
-                    {
-                        MessageBox.Show("File '" + _currentObject.Name + "\\" + item.Value + "" + Program.FileExtensions_ArtCode +
-                                        "' not found");
-                        File.CreateText(path).WriteLine("// file not found");
-                    }
-                }
-            }
-
-            if (line >= 0 && function != null)
-            {
-                // caller is game compiler, open wrong code
-                Event_listobx.SelectedIndex = Event_listobx.Items.IndexOf(function);
-                string code = _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)];
-
-                CodeEditor codeEditor = new CodeEditor(code,_currentObject.Variables, line);
-                if (codeEditor.ShowDialog() != DialogResult.OK) return;
-                _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)] = String.Join("\n", codeEditor.Code);
-                Event_treeview.Nodes.Clear();
-                foreach (string new_line in codeEditor.Code)
-                {
-                    Event_treeview.Nodes.Add(new_line);
-                }
-
-            }
-        }
-        else
+        if (assetId == null)
         {
             _currentObject = new Instance();
+            return;
         }
+
+        string openingFileName = ProjectPath + "\\" + GetInstance().Instances[assetId].ProjectPath + "\\" +
+                                 GetInstance().Instances[assetId].FileName;
+        if (!File.Exists(openingFileName))
+        {
+            MessageBox.Show("File: '" + openingFileName + "' not exists", "error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            return;
+        }
+
+        using (StreamReader reader = new StreamReader(File.Open(openingFileName, FileMode.Open)))
+        {
+            _currentObject = JsonConvert.DeserializeObject<Instance>(reader.ReadToEnd());
+        }
+
+
+        if (_currentObject == null) return;
+        textBox1.Text = _currentObject.Name;
+        comboBox1.Text = _currentObject.Sprite != null ? _currentObject.Sprite.Name : "<default>";
+
+        bodyType_IsSolid.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.None);
+        bodyType_circle.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Circle);
+        bodyType_rect.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Rect);
+        bodyType_mask.Checked = (_currentObject.BodyDataType.Type != Instance.BodyData.BType.Sprite);
+        RefreshBodyTypeView();
+
+
+        chb_show_in_level.Checked = _currentObject.EditorShowInLevel;
+        chb_show_in_scene.Checked = _currentObject.EditorShowInScene;
+
+        foreach (Variable item in _currentObject.Variables)
+        {
+            Varible_listbox.Items.Add(item.Name + '[' + item.Type.ToString() + ']');
+        }
+
+        if (_currentObject.Events.Count > 0)
+        {
+            button5.Enabled = true;
+            button8.Enabled = true;
+            foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
+            {
+                string path = ProjectPath + "\\object\\" + _currentObject.Name + "\\" + item.Value +
+                              "" + Program.FileExtensions_ArtCode;
+                if (File.Exists(path))
+                {
+                    Event_listobx.Items.Add(item.Key);
+                    _eventsData[item.Key] = File.ReadAllText(path);
+                }
+                else
+                {
+                    MessageBox.Show("File '" + _currentObject.Name + "\\" + item.Value + "" +
+                                    Program.FileExtensions_ArtCode +
+                                    "' not found");
+                    File.CreateText(path).WriteLine("// file not found");
+                }
+            }
+        }
+
+        if (line < 0 || function == null) return;
+
+        // caller is game compiler, open wrong code
+        Event_listobx.SelectedIndex = Event_listobx.Items.IndexOf(function);
+
+        if (!Enum.TryParse(function, out Event.EventType evType)) return;
+
+        if (!_eventsData.ContainsKey(evType)) return;
+
+        string code = _eventsData[evType];
+        CodeEditor codeEditor = new CodeEditor(code, _currentObject.Variables, line);
+        if (codeEditor.ShowDialog() != DialogResult.OK) return;
+
+        _eventsData[(Event.EventType)Enum.Parse(typeof(Event.EventType), function)] =
+            string.Join("\n", codeEditor.Code);
+        Event_treeview.Nodes.Clear();
+        foreach (string new_line in codeEditor.Code)
+        {
+            Event_treeview.Nodes.Add(new_line);
+        }
+
     }
 
     bool AddEvent()
@@ -441,10 +449,21 @@ public partial class ObjectManager : Form
                             instanceMain.Append($"{item.Name} := get_font(\"{item.Default}\")\n");
                             break;
                         case Variable.VariableType.VTypePoint:
+                        {
                             string[] pt = item.Default.Split(':');
-                            instanceMain.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
+                            if (pt.Length == 2)
+                                    instanceMain.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
+                        }
                             break;
                         case Variable.VariableType.VTypeRectangle:
+                        {
+                            string[] pt = item.Default.Split(':');
+                            if(pt.Length == 4)
+                                instanceMain.Append($"{item.Name} := new_rectangle( {pt[0]}, {pt[1]}, {pt[2]}, {pt[3]})\n");
+                        }
+                            break;
+                        case Variable.VariableType.VTypeBool:
+                            instanceMain.Append(item.Name + " := " + item.Default.ToLower() + "\n");
                             break;
                         default:
                             instanceMain.Append(item.Name + " := " + item.Default + "\n");

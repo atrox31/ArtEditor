@@ -318,7 +318,8 @@ public partial class ObjectManager : Form
         }
         Varible_listbox.Items.Remove(Varible_listbox.SelectedItem);
     }
-    public void Save()
+
+    private void Save()
     {
         if (Functions.Functions.ErrorCheck(textBox1.TextLength > 3, "Object name too short")) return;
         if (Functions.Functions.ErrorCheck(textBox1.TextLength < 24, "Object name too long")) return;
@@ -383,105 +384,7 @@ public partial class ObjectManager : Form
         
     }
 
-    public void WriteObjectCode()
-    {
-        {
-            StringBuilder instanceMain = new StringBuilder();
-            // main
-            instanceMain.Append("object " + _currentObject.Name + "\n");
-            foreach (Variable item in _currentObject.Variables)
-            {
-                instanceMain.Append("local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n");
-            }
-            foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
-            {
-                instanceMain.Append("define " + item.Key + "\n");
-            }
-            instanceMain.Append("@end\n");
-            // default
-            instanceMain.Append("function " + _currentObject.Name + ":" + "DEF_VALUES" + "\n");
-            if (_currentObject.Sprite != null)
-            {
-                instanceMain.Append($"set_self_sprite(get_sprite(\"{_currentObject.Sprite.Name}\"))" + "\n");
-            }
-
-            switch (_currentObject.BodyDataType.Type)
-            {
-                case Instance.BodyData.BType.None:
-                    instanceMain.Append($"instance_set_body_none()\n");
-                    break;
-                case Instance.BodyData.BType.Circle:
-                    instanceMain.Append($"instance_set_body_as_circle({_currentObject.BodyDataType.Value1.ToString()})\n");
-                    break;
-                case Instance.BodyData.BType.Rect:
-                    instanceMain.Append($"instance_set_body_as_rect({_currentObject.BodyDataType.Value1.ToString()}, {_currentObject.BodyDataType.Value2.ToString()})\n");
-                    break;
-                case Instance.BodyData.BType.Sprite:
-                    instanceMain.Append($"instance_set_body_from_sprite()\n");
-                    break;
-            }
-            
-            foreach (Variable item in _currentObject.Variables)
-            {
-                if (item.Default != null && item.Default.Length > 0)
-                {
-                    switch (item.Type)
-                    {
-                        case Variable.VariableType.VTypeObject:
-                            // can not
-                            break;
-                        case Variable.VariableType.VTypeScene:
-                            // can not
-                            break;
-                        case Variable.VariableType.VTypeSprite:
-                            instanceMain.Append($"{item.Name} := get_sprite(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeTexture:
-                            instanceMain.Append($"{item.Name} := get_texture(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeSound:
-                            instanceMain.Append($"{item.Name} := get_sound(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeMusic:
-                            instanceMain.Append($"{item.Name} := get_music(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeFont:
-                            instanceMain.Append($"{item.Name} := get_font(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypePoint:
-                        {
-                            string[] pt = item.Default.Split(':');
-                            if (pt.Length == 2)
-                                    instanceMain.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
-                        }
-                            break;
-                        case Variable.VariableType.VTypeRectangle:
-                        {
-                            string[] pt = item.Default.Split(':');
-                            if(pt.Length == 4)
-                                instanceMain.Append($"{item.Name} := new_rectangle( {pt[0]}, {pt[1]}, {pt[2]}, {pt[3]})\n");
-                        }
-                            break;
-                        case Variable.VariableType.VTypeBool:
-                            instanceMain.Append(item.Name + " := " + item.Default.ToLower() + "\n");
-                            break;
-                        default:
-                            instanceMain.Append(item.Name + " := " + item.Default + "\n");
-                            break;
-                    }
-                }
-            }
-            instanceMain.Append("@end\n");
-            // events
-            foreach (KeyValuePair<Event.EventType, string> item in _currentObject.Events)
-            {
-                instanceMain.Append("function " + _currentObject.Name + ":" + item.Key + "\n");
-                instanceMain.Append(_eventsData[item.Key] + "\n");
-                instanceMain.Append("@end\n");
-            }
-            File.WriteAllText(ProjectPath + "\\object\\" + _currentObject.Name + "\\main" + Program.FileExtensions_ArtCode, instanceMain.ToString());
-        }
-    }
+   
 
     private void button9_Click(object sender, EventArgs e)
     {

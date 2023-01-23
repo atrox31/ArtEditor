@@ -300,26 +300,207 @@ namespace ArtCore_Editor.Main
             }
             compiler.WaitForExit();
 
-            if (compiler.ExitCode != 0) return false;
-            return true;
+            return (compiler.ExitCode == 0);
         }
 
+        private static string WriteObjectCode(
+            string objectName,
+            List<Variable> variables,
+            List<string> functions,
+            string defaultValues,
+            StringBuilder eventData
+            )
+        {
+            StringBuilder content = new StringBuilder();
+
+            content.Append("object " + objectName + "\n");
+            foreach (string item in functions)
+            {
+                content.Append("define " + item + "\n");
+            }
+            foreach (Variable item in variables)
+            {
+                content.Append(
+                    "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n");
+            }
+            content.Append("@end\n");
+
+            List<string> defaultValuesList = new List<string>();
+            if(defaultValues != null) 
+                defaultValuesList.Add(defaultValues);
+            foreach (Variable item in variables.Where(item => !string.IsNullOrEmpty(item.Default)))
+            {
+                switch (item.Type)
+                {
+                    case Variable.VariableType.VTypeObject:
+                        // can not
+                        break;
+                    case Variable.VariableType.VTypeScene:
+                        // can not
+                        break;
+                    case Variable.VariableType.VTypeSprite:
+                        defaultValuesList.Add($"{item.Name} := get_sprite(\"{item.Default}\")\n");
+                        break;
+                    case Variable.VariableType.VTypeTexture:
+                        defaultValuesList.Add($"{item.Name} := get_texture(\"{item.Default}\")\n");
+                        break;
+                    case Variable.VariableType.VTypeSound:
+                        defaultValuesList.Add($"{item.Name} := get_sound(\"{item.Default}\")\n");
+                        break;
+                    case Variable.VariableType.VTypeMusic:
+                        defaultValuesList.Add($"{item.Name} := get_music(\"{item.Default}\")\n");
+                        break;
+                    case Variable.VariableType.VTypeFont:
+                        defaultValuesList.Add($"{item.Name} := get_font(\"{item.Default}\")\n");
+                        break;
+                    case Variable.VariableType.VTypePoint:
+                        {
+                            string[] pt = item.Default.Split(':');
+                            if (pt.Length == 2)
+                                defaultValuesList.Add($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
+                        }
+                        break;
+                    case Variable.VariableType.VTypeRectangle:
+                        {
+                            string[] pt = item.Default.Split(':');
+                            if (pt.Length == 4)
+                                defaultValuesList.Add(
+                                    $"{item.Name} := new_rectangle( {pt[0]}, {pt[1]}, {pt[2]}, {pt[3]})\n");
+                        }
+                        break;
+                    case Variable.VariableType.VTypeBool:
+                        defaultValuesList.Add(item.Name + " := " + item.Default.ToLower() + "\n");
+                        break;
+                    case Variable.VariableType.VTypeNull:
+                    case Variable.VariableType.VTypeInt:
+                    case Variable.VariableType.VTypeFloat:
+                    case Variable.VariableType.VTypeInstance:
+                    case Variable.VariableType.VTypeString:
+                    case Variable.VariableType.VTypeColor:
+                    case Variable.VariableType.VTypeEnum:
+                    default:
+                        defaultValuesList.Add(item.Name + " := " + item.Default + "\n");
+                        break;
+                }
+            }
+
+            if (defaultValuesList.Count > 0)
+            {
+                content.Append($"function {objectName}:DEF_VALUES\n");
+                foreach (string defaultValue in defaultValuesList)
+                {
+                    content.Append(defaultValue);
+                }
+                content.Append("\n@end\n");
+            }
+
+            content.Append(eventData);
+
+            //File.WriteAllText(GameProject.ProjectPath + "\\" + objectName + ".txt", content.ToString());
+            
+            return content.ToString();
+        }
+        private static string WriteSceneCode(Scene scene)
+        {
+            // get events
+            StringBuilder eventData = new StringBuilder();
+
+            // scene triggers
+            foreach (string enumerateFile in Directory.EnumerateFiles(
+                         GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
+                         "*" + Program.FileExtensions_ArtCode))
+            {
+                eventData.Append("function scene_" + scene.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n");
+                eventData.Append(File.ReadAllText(enumerateFile));
+                eventData.Append('\n');
+                eventData.Append("@end\n");
+            }
+
+            // level triggers
+            foreach (string levelPath in Directory.EnumerateFiles(StringExtensions.Combine(
+                         GameProject.ProjectPath, scene.ProjectPath,
+                         "levels"), "*" + Program.FileExtensions_SceneLevel))
+            {
+                List<string> triggerList = ZipIO.ReadFromZip(
+                        levelPath, "triggers.txt")
+                    /* get list of triggers */  .Split('\n').ToList();
+
+                foreach (string trigger in triggerList)
+                {
+                    string triggerContent = ZipIO.ReadFromZip(levelPath, trigger, true);
+                    if (string.IsNullOrEmpty(triggerContent)) continue;
+                    eventData.Append($"function {levelPath.WithoutExtension()}_{scene.Name}:{trigger.WithoutExtension()}\n");
+                    eventData.Append(triggerContent);
+                    eventData.Append('\n');
+                    eventData.Append("@end\n");
+                }
+            }
+
+            return WriteObjectCode(
+                "scene_" + scene.Name,
+                scene.SceneVariables,
+                Directory.EnumerateFiles(
+                    GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
+                    "*" + Program.FileExtensions_ArtCode)
+                    .Select(Path.GetFileNameWithoutExtension)
+                    .ToList(),
+                null,
+                eventData
+            );
+        }
+
+
+        private static string WriteObjectCode(Instance currentObject)
+        {
+            // get body type
+            string instanceBody = (currentObject.Sprite == null
+                ? ""
+                : $"set_self_sprite(get_sprite(\"{currentObject.Sprite.Name}\"))\n");
+
+            instanceBody += currentObject.BodyDataType.Type switch
+            {
+                Instance.BodyData.BType.None => $"instance_set_body_none()",
+                Instance.BodyData.BType.Circle => $"instance_set_body_as_circle({currentObject.BodyDataType.Value1})",
+                Instance.BodyData.BType.Rect => $"instance_set_body_as_rect({currentObject.BodyDataType.Value1}, {currentObject.BodyDataType.Value2})",
+                _ => "instance_set_body_from_sprite()",
+            };
+
+            // get events
+            StringBuilder eventData = new StringBuilder();
+            // value is only string name of target event
+            foreach (KeyValuePair<Event.EventType, string> item in currentObject.Events)
+            {
+                string pathToObjectData = StringExtensions.Combine(
+                    GameProject.ProjectPath, currentObject.ProjectPath,
+                    item.Value + Program.FileExtensions_ArtCode);
+
+                if (!File.Exists(pathToObjectData)) continue;
+
+                eventData.Append("function " + currentObject.Name + ":" + item.Value + "\n");
+                eventData.Append(File.ReadAllText(pathToObjectData));
+                eventData.Append("\n@end\n");
+            }
+
+            return WriteObjectCode(
+                currentObject.Name,
+                currentObject.Variables,
+                currentObject.Events.Values.ToList(),
+                instanceBody,
+                eventData
+            );
+        }
         private static bool CreateObjectDefinitions(BackgroundWorker sender, DoWorkEventArgs e)
         {
-            // make sure if every object have main.asc by save all
-            foreach (KeyValuePair<string, Instance> ins in GameProject.GetInstance().Instances)
-            {
-                ObjectManager obm = new ObjectManager(ins.Key);
-                obm.WriteObjectCode();
-                obm.Dispose();
-            }
-            if (CancelRequest(sender, e)) return false;
-
             // get all objects input
             string inputs = "";
             foreach (KeyValuePair<string, Instance> obj in GameProject.GetInstance().Instances)
             {
-                inputs += "-obj \"" + GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main" + Program.FileExtensions_ArtCode + "\" ";
+                string pathToObjectData = GameProject.ProjectPath + "\\object\\" + obj.Key.ToString() + "\\main" +
+                                          Program.FileExtensions_ArtCode;
+
+                File.WriteAllText(pathToObjectData, WriteObjectCode(obj.Value));
+
+                inputs += "-obj \"" + pathToObjectData + "\" ";
             }
 
             if (!RunArtCompiler(sender, e, GameProject.ProjectPath + "\\" + "object_compile" + Program.FileExtensions_CompiledArtCode, inputs)) return false;
@@ -384,108 +565,6 @@ namespace ArtCore_Editor.Main
                 true);
         }
 
-        private static string MakeSceneCodeObject(Scene scene)
-        {
-            bool haveGuiTriggers = false;
-            StringBuilder content = new StringBuilder();
-            content.Append("object scene_" + scene.Name + "\n");
-            foreach (string enumerateFile in Directory.EnumerateFiles(
-                         GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
-                         "*" + Program.FileExtensions_ArtCode))
-            {
-                haveGuiTriggers = true;
-                content.Append("define " + Path.GetFileNameWithoutExtension(enumerateFile) + "\n");
-            }
-
-            foreach (Variable item in scene.SceneVariables)
-            {
-                content.Append(
-                    "local " + item.Type.ToString().ToLower()["vtype".Length..] + " " + item.Name + "\n");
-            }
-
-            content.Append("@end\n");
-
-            if (!haveGuiTriggers && scene.SceneVariables.Count <= 0) return content.ToString();
-
-            if (scene.SceneVariables.Count > 0)
-            {
-                content.Append("function scene_" + scene.Name + ":" + "DEF_VALUES" + "\n");
-                foreach (Variable item in scene.SceneVariables.Where(item => item.Default is
-                         {
-                             Length: > 0
-                         }))
-                {
-                    switch (item.Type)
-                    {
-                        case Variable.VariableType.VTypeObject:
-                        case Variable.VariableType.VTypeScene:
-                            // can not
-                            break;
-                        case Variable.VariableType.VTypeSprite:
-                            content.Append($"{item.Name} := get_sprite(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeTexture:
-                            content.Append($"{item.Name} := get_texture(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeSound:
-                            content.Append($"{item.Name} := get_sound(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeMusic:
-                            content.Append($"{item.Name} := get_music(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypeFont:
-                            content.Append($"{item.Name} := get_font(\"{item.Default}\")\n");
-                            break;
-                        case Variable.VariableType.VTypePoint:
-                            string[] pt = item.Default.Split(':');
-                            content.Append($"{item.Name} := new_point( {pt[0]}, {pt[1]})\n");
-                            break;
-                        case Variable.VariableType.VTypeRectangle:
-                            break;
-                        default:
-                            content.Append(item.Name + " := " + item.Default + "\n");
-                            break;
-                    }
-                }
-
-                content.Append("@end\n");
-            }
-
-            // scene triggers
-            foreach (string enumerateFile in Directory.EnumerateFiles(
-                         GameProject.ProjectPath + "\\" + "scene" + "\\" + scene.Name + "\\",
-                         "*" + Program.FileExtensions_ArtCode))
-            {
-                content.Append("function scene_" + scene.Name + ":" + Path.GetFileNameWithoutExtension(enumerateFile) + "\n");
-                
-                content.Append(File.ReadAllText(enumerateFile));
-                content.Append('\n');
-                content.Append("@end\n");
-            }
-
-            // level triggers
-            foreach (string levelPath in Directory.EnumerateFiles(StringExtensions.Combine(
-                         GameProject.ProjectPath, scene.ProjectPath,
-                         "levels"), "*" + Program.FileExtensions_SceneLevel))
-            {
-                List<string> triggerList = ZipIO.ReadFromZip(
-                                            levelPath, "triggers.txt") 
-                /* get list of triggers */  .Split('\n').ToList();
-
-                foreach (string trigger in triggerList)
-                {
-                    string triggerContent = ZipIO.ReadFromZip(levelPath, trigger, true);
-                    if (string.IsNullOrEmpty(triggerContent)) continue;
-                    content.Append($"function {levelPath.WithoutExtension()}_{scene.Name}:{trigger.WithoutExtension()}\n");
-                    content.Append(triggerContent);
-                    content.Append('\n');
-                    content.Append("@end\n");
-                }
-            }
-            
-            return content.ToString();
-        }
-
         private bool CreateSceneDefinitions(BackgroundWorker bgw, DoWorkEventArgs e, int currentProgress, int progressMax)
         {
             if (GameProject.GetInstance().Scenes.Count == 0) return false;
@@ -522,7 +601,7 @@ namespace ArtCore_Editor.Main
                 
                 {
                     string tmpFilePath = GameProject.ProjectPath + "\\" + "tmp_scene_triggers" + Program.FileExtensions_ArtCode;
-                    File.WriteAllText(tmpFilePath, MakeSceneCodeObject( scene.Value ));
+                    File.WriteAllText(tmpFilePath, WriteSceneCode( scene.Value ));
                     if (!RunArtCompiler(bgw, e, GameProject.ProjectPath + "\\" + "scene_triggers" + Program.FileExtensions_CompiledArtCode,
                             "-obj " + tmpFilePath, true)) return false;
 

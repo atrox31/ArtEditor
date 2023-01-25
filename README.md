@@ -10,3 +10,5 @@ ArtCore Editor is created in Visual Studio 2022. There is no cmake file to creat
 Editor downloaded from release tab is ready to run. For clean compilation just clone code and open "ArtCore Editor.sln". After first run application ask for Core.tar file.
 You can download it from release tab or create own core file from ArtCore Engine compilation. Core.tar contains engine executable, ArtScript libray and basic files like font or shaders and ArtCompiler.<br>
 Without basic engine files editor can open game projects but can not run or release it.
+
+# WORK IN PROGRESS

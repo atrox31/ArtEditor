@@ -3,6 +3,7 @@ ArtCore Editor is main tool to create games in ArtCore Engine. Manage assets, cr
 To see more about ArtCore Engine, go to the engine repository.
 Demo game projects are included in the Release tab. Tutorial how to create simple game is aweable in tutorial.md<br>
 <hr>
+
 ## ArtCore
 ArtCore is a 2D game engine, currently for Windows, later for Android and Linux. The whole system consists of 3 components: engine, editor and compilator. For more information about engine or compilator go to their repositiries.<br>
 
@@ -18,7 +19,7 @@ NuGet-packed VLC is included; it`s used by sound managers.
 
 ## Run
 To run the game, you need to compile it. To do this, go to the "Game" menu and select "Release" or use the arrow buttons (blue is release and red is debug).
-Aditional to run game you need to have ArtCore Engine executable and compiller.All nessesary files are included in Core.tar file. 
+Aditional to run game you need to have ArtCore Engine executable and compiller.All nessesary files are included in Core.tar file.Â 
 You can download it from the release tab or create your own core file from the ArtCore Engine compilation. <br>
 
 # Editor
@@ -35,7 +36,8 @@ The main window is divided into two parts: left and center. Left part is used to
 On upper part of main window are buttons:
 * Project <- new, save, load project and Update Core (Core.tar)
 * Game <- tests and compilation, ArtCore settings, starting scene, and release options.
-* Other buttons to create new assets, objects, and scenes
+* Other buttons to create new assets, objects, and scenes<br>
+
 On the right side are buttons to compile and run the game in release or debug mode. <br>
 
 ## Assets
@@ -52,6 +54,7 @@ To delete asset right click on list and select "Delete".<br>
 
 ## Objects (Instances) aka Entity
 > Every game engine has another name for objects. In Unity, they are called "prefabs" in Unreal Engine "blueprints" in Godot "nodes," and in ArtCore "objects" <br>
+
 Every object has a definition to create new instances. They are used to create new objects in the game called "instances." <br>
 The object manager window is divided into three parts: left, center, and right. The left part is used to manage object properties like body variables or sprites.
 The center part is used to add and edit events. The right part is used to manage scripts for selected events.
@@ -66,7 +69,7 @@ Scene is a collection of objects. They are used to create levels in the game. Th
 The left part is used to manage scene properties like view dimensions, background, and the list of available instances. The right part is used to manage objects in the scene. <br>
 To add new object to scene drag and drop it from left part to right part. To delete an object from the scene, right-click on it and select "Delete".<br>
 Upper buttons are:
-* Editor <- Change the grid size and show or  hide the grid. Objects are snapped to the grid by default.
+* Editor <- Change the grid size and show orÂ  hide the grid. Objects are snapped to the grid by default.
 * Settings <- Scene variables and scene triggers Like in objects but triggers must be called by other objects except starting trigger, that is executed on scene load.
 * Scene Gui: interface system, schema, and triggers
 * Levels <- These are levels for the target scene. They are used to create levels in the game. They are not required to create games. <br>

@@ -1,0 +1,4 @@
+var namespace_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1variable =
+[
+    [ "VariableEditor", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1variable_1_1_variable_editor.html", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1variable_1_1_variable_editor" ]
+];

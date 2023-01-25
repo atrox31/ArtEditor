@@ -68,15 +68,20 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager
                 EditorMask = ((float)(Img.Width + Img.Height) / 4);
             }
         }
-
         private SceneInstance _selectedSceneInstance;
 
+        /// <summary>
+        /// Make change to scene, and set title to unsaved
+        /// </summary>
         private void MakeChange()
         {
             _saved = false;
             Text = "SceneManager - \"" + _cScene.Name + "\" *";
         }
 
+        /// <summary>
+        /// Set title to saved
+        /// </summary>
         private void MakeSaved()
         {
             _saved = true;

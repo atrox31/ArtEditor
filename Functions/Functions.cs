@@ -55,7 +55,12 @@ namespace ArtCore_Editor.Functions
             Directory.CreateDirectory(pathToDirectory);
         }
 
-        // Convert object to target type <T>
+        /// <summary>
+        /// Convert type to another type
+        /// </summary>
+        /// <typeparam name="T">Target type</typeparam>
+        /// <param name="obj">Sender</param>
+        /// <returns>Converted type</returns>
         public static T ForceType<T>(this object obj)
         {
             T res = Activator.CreateInstance<T>();

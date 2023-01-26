@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using ArtCore_Editor.AdvancedAssets.Instance_Manager;
+using ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior;
 using ArtCore_Editor.AdvancedAssets.SceneManager;
 using ArtCore_Editor.AdvancedAssets.SpriteManager;
 using ArtCore_Editor.Assets;
@@ -91,7 +92,7 @@ namespace ArtCore_Editor.Main
 
             {   // saving project
                 Bgw.ReportProgress(1, new Message("Saving project", 2, false));
-                    GameProject.GetInstance().SaveToFile();
+                    Invoke(new Action(GameProject.GetInstance().SaveToFile));
                 Bgw.ReportProgress(1, new Message("Saving project ..done", -1, true));
                 if (CancelRequest(Bgw, e)) return;
 
@@ -108,16 +109,16 @@ namespace ArtCore_Editor.Main
                 if (CancelRequest(Bgw, e)) return;
             }
             {   // assets
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Textures", 10, 20)) return;
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Textures, "Texture", 10, 20)) return;
                 if (CancelRequest(Bgw, e)) return;
 
                 if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Music, "Music", 20, 30)) return;
                 if (CancelRequest(Bgw, e)) return;
 
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sounds", 30, 40)) return;
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Sounds, "Sound", 30, 40)) return;
                 if (CancelRequest(Bgw, e)) return;
 
-                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Fonts", 40, 50)) return;
+                if (!PrepareAssets(Bgw, e, GameProject.GetInstance().Fonts, "Font", 40, 50)) return;
                 if (CancelRequest(Bgw, e)) return;
 
                 if (!CreateSpriteDefinitions(Bgw, e, 50, 65)) return;
@@ -232,7 +233,7 @@ namespace ArtCore_Editor.Main
                 string buffer = JsonConvert.SerializeObject(sprite.Value);
                 if (!ZipIO.WriteLineToArchive(
                         GameProject.ProjectPath + "\\" + AssetPackFileName,
-                        "Sprites\\" + sprite.Value.FileName,
+                        "Sprite\\" + sprite.Value.FileName,
                         buffer, true)) return false;
                 
                 for(int i=0; i<sprite.Value.SpriteFrames; i++)
@@ -249,7 +250,7 @@ namespace ArtCore_Editor.Main
                 }
 
                 // add to file list so engine can access by normal name
-                _fileList.Add("Sprites\\" + sprite.Value.FileName + ";" + sprite.Value.Name);
+                _fileList.Add("Sprite\\" + sprite.Value.FileName + ";" + sprite.Value.Name);
                 if (CancelRequest(sender, e)) return false;
                 cProgress += progressStep;
                 sender.ReportProgress(1,

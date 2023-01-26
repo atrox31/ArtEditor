@@ -55,6 +55,7 @@ namespace ArtCore_Editor.AdvancedAssets.SceneManager.GuiEditor
                     new Variable(Variable.VariableType.VTypeColor, "Pallet_frame", "#000000"),
                     new Variable(Variable.VariableType.VTypeColor, "Pallet_active", "#000000"),
                     new Variable(Variable.VariableType.VTypeColor, "Pallet_font", "#000000"),
+                    new Variable(Variable.VariableType.VTypeSound, "on_click_sound", "nul"),
                 }
             },
             {

@@ -17,7 +17,7 @@ internal static class Program
     // name for new created project files
     public const string ProjectFilename = "Project.acg";
     // global program version
-    public const float Version = 0.60f;
+    public const float Version = 0.61f;
     // list of filet that is packed to game release archive
     public static readonly List<string[]> coreFiles = new List<string[]>()
     {

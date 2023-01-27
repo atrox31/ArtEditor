@@ -244,7 +244,7 @@ namespace ArtCore_Editor.Main
                  /*ZipArchiveInput*/  StringExtensions.Combine(GameProject.ProjectPath, sprite.Value.DataPath),
                  /*EntryNameInput*/   frameName,
                  /*ZipArchiveOutput*/ StringExtensions.Combine(GameProject.ProjectPath, AssetPackFileName),
-                 /*EntryNameOutput*/  StringExtensions.Combine("Sprites",sprite.Value.Name, frameName)
+                 /*EntryNameOutput*/  StringExtensions.Combine("Sprite",sprite.Value.Name, frameName)
                         ))
                         return false;
                 }

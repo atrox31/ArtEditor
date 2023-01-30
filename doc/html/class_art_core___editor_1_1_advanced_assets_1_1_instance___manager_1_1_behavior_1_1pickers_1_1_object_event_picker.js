@@ -1,6 +1,4 @@
 var class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker =
 [
-    [ "ObjectEventPicker", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker.html#aab8d1051cecc7c3df2b73863c869a197", null ],
-    [ "Dispose", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker.html#aad9a4c63a75fae76a83e11bc74cba6ad", null ],
-    [ "Type", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker.html#a9c99761183e3e61e102c3548a9a45ade", null ]
+    [ "Dispose", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker.html#aad9a4c63a75fae76a83e11bc74cba6ad", null ]
 ];

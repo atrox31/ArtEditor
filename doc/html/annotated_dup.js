@@ -7,7 +7,7 @@ var annotated_dup =
             [ "pickers", "namespace_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers.html", [
               [ "ObjectEventPicker", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker.html", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1pickers_1_1_object_event_picker" ]
             ] ],
-            [ "Function", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_function.html", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_function" ],
+            [ "Function", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_function.html", null ],
             [ "ScriptEditor", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_script_editor.html", "class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_script_editor" ]
           ] ],
           [ "code", "namespace_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1code.html", [
@@ -22,7 +22,7 @@ var annotated_dup =
         [ "SceneManager", "namespace_art_core___editor_1_1_advanced_assets_1_1_scene_manager.html", [
           [ "GuiEditor", "namespace_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor.html", [
             [ "GuiEditor", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_editor.html", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_editor" ],
-            [ "GuiElement", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_element.html", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_element" ]
+            [ "GuiElement", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_element.html", null ]
           ] ],
           [ "LevelEditor", "namespace_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_level_editor.html", [
             [ "LevelEditorMain", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_level_editor_1_1_level_editor_main.html", "class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_level_editor_1_1_level_editor_main" ],
@@ -60,11 +60,11 @@ var annotated_dup =
         [ "Texture", "namespace_art_core___editor_1_1_assets_1_1_texture.html", [
           [ "TextureManager", "class_art_core___editor_1_1_assets_1_1_texture_1_1_texture_manager.html", "class_art_core___editor_1_1_assets_1_1_texture_1_1_texture_manager" ]
         ] ],
-        [ "Asset", "class_art_core___editor_1_1_assets_1_1_asset.html", "class_art_core___editor_1_1_assets_1_1_asset" ],
-        [ "AssetManagerTemplate", "class_art_core___editor_1_1_assets_1_1_asset_manager_template.html", "class_art_core___editor_1_1_assets_1_1_asset_manager_template" ]
+        [ "Asset", "class_art_core___editor_1_1_assets_1_1_asset.html", null ],
+        [ "AssetManagerTemplate", "class_art_core___editor_1_1_assets_1_1_asset_manager_template.html", null ]
       ] ],
       [ "Enums", "namespace_art_core___editor_1_1_enums.html", [
-        [ "Variable", "class_art_core___editor_1_1_enums_1_1_variable.html", "class_art_core___editor_1_1_enums_1_1_variable" ]
+        [ "Variable", "class_art_core___editor_1_1_enums_1_1_variable.html", null ]
       ] ],
       [ "etc", "namespace_art_core___editor_1_1etc.html", [
         [ "ArtCoreSettings", "class_art_core___editor_1_1etc_1_1_art_core_settings.html", "class_art_core___editor_1_1etc_1_1_art_core_settings" ],
@@ -75,7 +75,7 @@ var annotated_dup =
       ] ],
       [ "Main", "namespace_art_core___editor_1_1_main.html", [
         [ "GameCompiler", "class_art_core___editor_1_1_main_1_1_game_compiler.html", "class_art_core___editor_1_1_main_1_1_game_compiler" ],
-        [ "GameProject", "class_art_core___editor_1_1_main_1_1_game_project.html", "class_art_core___editor_1_1_main_1_1_game_project" ],
+        [ "GameProject", "class_art_core___editor_1_1_main_1_1_game_project.html", null ],
         [ "NewProjectWindow", "class_art_core___editor_1_1_main_1_1_new_project_window.html", "class_art_core___editor_1_1_main_1_1_new_project_window" ]
       ] ],
       [ "Pick_forms", "namespace_art_core___editor_1_1_pick__forms.html", [

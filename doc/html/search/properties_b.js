@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['name_0',['Name',['../class_art_core___editor_1_1_advanced_assets_1_1_instance___manager_1_1_behavior_1_1_function.html#a33fb39d0844926b20e6b03e0f3e44f5e',1,'ArtCore_Editor.AdvancedAssets.Instance_Manager.Behavior.Function.Name()'],['../class_art_core___editor_1_1_assets_1_1_asset.html#af292e781e7591d6cf1527b136b61bb2d',1,'ArtCore_Editor.Assets.Asset.Name()'],['../class_art_core___editor_1_1_enums_1_1_variable.html#a007d1175ddd93f9834dd64c3dc0cede4',1,'ArtCore_Editor.Enums.Variable.Name()']]]
+  ['palette_0',['palette',['../class_art_core___editor_1_1_properties_1_1_resources.html#a7e4f79ae75a3f95bce5a978ce90c6bbf',1,'ArtCore_Editor::Properties::Resources']]],
+  ['picture_1',['picture',['../class_art_core___editor_1_1_properties_1_1_resources.html#a0c93f0f661b84b69d96f887be8ff275b',1,'ArtCore_Editor::Properties::Resources']]],
+  ['play_2',['play',['../class_art_core___editor_1_1_properties_1_1_resources.html#a2dd86528edff0d75c2a16a4e70a2715b',1,'ArtCore_Editor::Properties::Resources']]]
 ];

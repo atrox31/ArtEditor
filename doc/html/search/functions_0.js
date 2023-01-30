@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_5binstance_20initializer_5d_0',['[instance initializer]',['../_main_window_8cs.html#afdd745bf88ca6d5689fd7b8fd3523d11',1,'MainWindow.cs']]]
+  ['artcoresettings_0',['ArtCoreSettings',['../class_art_core___editor_1_1etc_1_1_art_core_settings.html#ae12f5801b3f41f40e27583fa68522e6a',1,'ArtCore_Editor::etc::ArtCoreSettings']]]
 ];

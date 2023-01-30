@@ -28,8 +28,18 @@ var NAVTREE =
     [ "ArtCore Editor", "md__r_e_a_d_m_e.html", [
       [ "ArtCore", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
       [ "Compilation", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "WORK IN PROGRESS", "md__r_e_a_d_m_e.html#autotoc_md3", null ]
+      [ "Requirements", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
+      [ "Run", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
+      [ "Editor", "md__r_e_a_d_m_e.html#autotoc_md5", [
+        [ "Technical and Game Archives", "md__r_e_a_d_m_e.html#autotoc_md6", null ],
+        [ "Main Window", "md__r_e_a_d_m_e.html#autotoc_md7", null ],
+        [ "Assets", "md__r_e_a_d_m_e.html#autotoc_md8", null ],
+        [ "Objects (Instances) aka Entity", "md__r_e_a_d_m_e.html#autotoc_md9", null ],
+        [ "Scenes", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
+        [ "Compilation process", "md__r_e_a_d_m_e.html#autotoc_md11", null ]
+      ] ]
     ] ],
+    [ "tutorial", "md_tutorial.html", null ],
     [ "Packages", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ]
     ] ],
@@ -38,19 +48,9 @@ var NAVTREE =
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", "functions_dup" ],
+        [ "All", "functions.html", null ],
         [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ],
-        [ "Enumerations", "functions_enum.html", null ],
         [ "Properties", "functions_prop.html", null ]
-      ] ]
-    ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ],
-      [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ],
-        [ "Typedefs", "globals_type.html", null ]
       ] ]
     ] ]
   ] ]
@@ -58,10 +58,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_art_core_01_settings_8_designer_8cs.html",
-"class_art_core___editor_1_1_advanced_assets_1_1_scene_manager_1_1_gui_editor_1_1_gui_element.html#a667525ff22f2fbd78672bb881d5f3ed0",
-"class_art_core___editor_1_1_assets_1_1_asset_manager_template.html#a8d17e19b7011f74d192f980097ee9c98",
-"dir_a71c3b2ad23b9ff58220dd012d201987.html"
+"annotated.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

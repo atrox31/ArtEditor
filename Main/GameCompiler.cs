@@ -418,22 +418,27 @@ namespace ArtCore_Editor.Main
             }
 
             // level triggers
-            foreach (string levelPath in Directory.EnumerateFiles(StringExtensions.Combine(
-                         GameProject.ProjectPath, scene.ProjectPath,
-                         "levels"), "*" + Program.FileExtensions_SceneLevel))
-            {
-                List<string> triggerList = ZipIO.ReadFromZip(
-                        levelPath, "triggers.txt")
-                    /* get list of triggers */  .Split('\n').ToList();
-
-                foreach (string trigger in triggerList)
+            string direction = StringExtensions.Combine(
+                GameProject.ProjectPath, scene.ProjectPath,
+                "levels");
+            if (Directory.Exists(direction)){
+                foreach (string levelPath in Directory.EnumerateFiles(direction,
+                             "*" + Program.FileExtensions_SceneLevel))
                 {
-                    string triggerContent = ZipIO.ReadFromZip(levelPath, trigger, true);
-                    if (string.IsNullOrEmpty(triggerContent)) continue;
-                    eventData.Append($"function {levelPath.WithoutExtension()}_{scene.Name}:{trigger.WithoutExtension()}\n");
-                    eventData.Append(triggerContent);
-                    eventData.Append('\n');
-                    eventData.Append("@end\n");
+                    List<string> triggerList = ZipIO.ReadFromZip(
+                            levelPath, "triggers.txt")
+                        /* get list of triggers */.Split('\n').ToList();
+
+                    foreach (string trigger in triggerList)
+                    {
+                        string triggerContent = ZipIO.ReadFromZip(levelPath, trigger, true);
+                        if (string.IsNullOrEmpty(triggerContent)) continue;
+                        eventData.Append(
+                            $"function {levelPath.WithoutExtension()}_{scene.Name}:{trigger.WithoutExtension()}\n");
+                        eventData.Append(triggerContent);
+                        eventData.Append('\n');
+                        eventData.Append("@end\n");
+                    }
                 }
             }
 
@@ -642,20 +647,25 @@ namespace ArtCore_Editor.Main
 
                 // pack all level data
                 if (CancelRequest(bgw, e)) return false;
-                foreach (string levelPath in Directory.EnumerateFiles( StringExtensions.Combine(
+                string direction = StringExtensions.Combine(
                     GameProject.ProjectPath, scene.Value.ProjectPath,
-                    "levels"), "*" + Program.FileExtensions_SceneLevel))
+                    "levels");
+                if (Directory.Exists(direction))
                 {
-                    ZipIO.WriteToZipArchiveFromStream(
-                        zipArchiveName,
-                        $"scene\\{scene.Key}\\instances_{levelPath.WithoutExtension()}.txt",
-                        ZipIO.ReadStreamFromArchive(
-                            levelPath, "instances.txt"
+                    foreach (string levelPath in Directory.EnumerateFiles(direction,
+                                 "*" + Program.FileExtensions_SceneLevel))
+                    {
+                        ZipIO.WriteToZipArchiveFromStream(
+                            zipArchiveName,
+                            $"scene\\{scene.Key}\\instances_{levelPath.WithoutExtension()}.txt",
+                            ZipIO.ReadStreamFromArchive(
+                                levelPath, "instances.txt"
                             ),
-                        true
-                    );
+                            true
+                        );
+                    }
                 }
-                
+
                 progress += stepProgress;
                 bgw.ReportProgress(1, new Message("Scene: " + scene.Key + "... done", (int)progress, true));
             }

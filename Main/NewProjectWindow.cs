@@ -23,7 +23,9 @@ namespace ArtCore_Editor.Main
 
         private void NewProjectWindow_Load(object sender, System.EventArgs e)
         {
-            foreach (string enumerateFile in Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "\\StandardBehaviour"))
+            string directory1 = Directory.GetCurrentDirectory() + "\\" + "StandardBehaviour" + "\\";
+            Directory.CreateDirectory(directory1);
+            foreach (string enumerateFile in Directory.EnumerateFiles(directory1))
             {
                 cbl_standard_behaviour.Items.Add(Path.GetFileNameWithoutExtension(enumerateFile));
             }
@@ -32,11 +34,13 @@ namespace ArtCore_Editor.Main
             chb_target_2.Text = "Linux (x64)    --IN VERSION 1.0"; chb_target_2.Enabled = false;
             chb_target_4.Text = "Android (x64)  --IN VERSION 1.0"; chb_target_4.Enabled = false;
 
-
-            foreach (string enumerateFile in Directory.EnumerateFiles(
-                         Program.ProgramDirectory + "\\" + "Core" + "\\" + "StandardBehaviourTemplates" + "\\"))
+            string directory2 = Program.ProgramDirectory + "\\" + "Core" + "\\" + "StandardBehaviourTemplates" + "\\";
+            if (Directory.Exists(directory2))
             {
-                cbl_standard_behaviour.Items.Add(Path.GetFileNameWithoutExtension(enumerateFile));
+                foreach (string enumerateFile in Directory.EnumerateFiles(directory2))
+                {
+                    cbl_standard_behaviour.Items.Add(Path.GetFileNameWithoutExtension(enumerateFile));
+                }
             }
         }
         
